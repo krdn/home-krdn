@@ -44,7 +44,7 @@ docker-compose up -d
 | 환경 | URL | 포트 |
 |------|-----|------|
 | 개발 | http://localhost:3005 | 3005 |
-| 프로덕션 (Docker) | http://localhost:8082 | 8082 |
+| 프로덕션 | https://home.krdn.kr | 443 |
 
 ## 라이선스
 

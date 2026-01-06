@@ -88,7 +88,7 @@ export const services: Service[] = [
     techStack: ["Next.js", "Node.js", "MongoDB", "TypeScript", "Docker"],
     port: 8081,
     path: "/data/home-data/projects/n8n/gonsai2",
-    url: "http://localhost:8081",
+    url: "https://gonsai.krdn.kr",
     features: [
       "n8n 워크플로우 시각화",
       "실시간 실행 모니터링",
@@ -133,7 +133,7 @@ export const services: Service[] = [
     techStack: ["Django", "FastAPI", "Celery", "Streamlit", "PostgreSQL", "Redis"],
     port: 3010,
     path: "/data/home-data/projects/n8n/news-sentiment-analyzer2",
-    url: "http://localhost:3010",
+    url: "https://news.krdn.kr",
     features: [
       "뉴스 기사 자동 수집",
       "감정 분석 (긍정/부정/중립)",
@@ -160,7 +160,7 @@ export const services: Service[] = [
     status: "running",
     techStack: ["Node.js", "TypeScript", "PostgreSQL", "Redis"],
     port: 5678,
-    url: "http://localhost:5678",
+    url: "https://n8n.krdn.kr",
     features: [
       "400+ 앱 통합",
       "시각적 워크플로우 빌더",
@@ -183,7 +183,7 @@ export const services: Service[] = [
     status: "running",
     techStack: ["Python", "Svelte", "FastAPI"],
     port: 8088,
-    url: "http://localhost:8088",
+    url: "https://webui.krdn.kr",
     features: [
       "멀티 모델 지원",
       "대화 내역 관리",
@@ -203,7 +203,7 @@ export const services: Service[] = [
     status: "running",
     techStack: ["Node.js", "TypeScript"],
     port: 8080,
-    url: "http://localhost:8080",
+    url: "https://code.krdn.kr",
     features: [
       "브라우저 기반 IDE",
       "VS Code 확장 지원",
