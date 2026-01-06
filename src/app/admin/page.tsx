@@ -1,23 +1,14 @@
-import {
-  Activity,
-  Box,
-  Cpu,
-  HardDrive,
-  Layers,
-  MemoryStick,
-} from "lucide-react";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { StatusBadge } from "@/components/services/StatusBadge";
-import { services, getRunningServices } from "@/config/services";
+import { Activity, Box, Layers } from 'lucide-react';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/services/StatusBadge';
+import { DashboardStats } from '@/components/admin/DashboardStats';
+import { ContainerStats } from '@/components/admin/ContainerStats';
+import { services, getRunningServices } from '@/config/services';
 
 export default function AdminDashboardPage() {
   const runningServices = getRunningServices();
-  const totalContainers = services.reduce(
-    (acc, s) => acc + s.containers.length,
-    0
-  );
 
   return (
     <div className="space-y-6">
@@ -29,62 +20,11 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Services
-            </CardTitle>
-            <Layers className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{services.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {runningServices.length} running
-            </p>
-          </CardContent>
-        </Card>
+      {/* System Stats - Real-time */}
+      <DashboardStats />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Containers
-            </CardTitle>
-            <Box className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalContainers}</div>
-            <p className="text-xs text-muted-foreground">Docker containers</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              CPU Usage
-            </CardTitle>
-            <Cpu className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Load average</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Memory
-            </CardTitle>
-            <MemoryStick className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Used / Total</p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Container Stats - Real-time */}
+      <ContainerStats />
 
       {/* Running Services */}
       <Card>
@@ -109,7 +49,7 @@ export default function AdminDashboardPage() {
                     <div>
                       <p className="font-medium">{service.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {service.port ? `Port ${service.port}` : "No port"}
+                        {service.port ? `Port ${service.port}` : 'No port'}
                       </p>
                     </div>
                   </div>
@@ -125,9 +65,6 @@ export default function AdminDashboardPage() {
                         </a>
                       </Button>
                     )}
-                    <Button variant="outline" size="sm">
-                      Stop
-                    </Button>
                   </div>
                 </div>
               ))}
