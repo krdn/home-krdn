@@ -106,12 +106,14 @@ Plans:
 
 **Goal**: 회원가입, 비밀번호 찾기, 역할 관리 기능 확장
 **Depends on**: Phase 17
-**Research**: Likely (기존 jose 확장 또는 next-auth 도입)
-**Research topics**: next-auth vs jose 확장 비교, OAuth 제공자 통합 옵션
-**Plans**: TBD
+**Research**: Level 1 - Quick Verification (기존 jose 확장 채택)
+**Status**: Planning complete
+**Plans**: 3
 
 Plans:
-- [ ] 18-01: TBD
+- [ ] 18-01: Core Auth Flow (로그인 DB 전환 + 회원가입)
+- [ ] 18-02: Password Reset (비밀번호 재설정)
+- [ ] 18-03: Role Management (역할 관리 API)
 
 #### Phase 19: RBAC Access Control
 
@@ -200,7 +202,7 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 15. Admin Dashboard | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 16. E2E Testing | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 17. Database Infrastructure | v2.0 | 2/2 | ✅ Complete | 2026-01-15 |
-| 18. Auth System Extension | v2.0 | 0/? | Not started | - |
+| 18. Auth System Extension | v2.0 | 0/3 | Planning complete | - |
 | 19. RBAC Access Control | v2.0 | 0/? | Not started | - |
 | 20. User Dashboard Settings | v2.0 | 0/? | Not started | - |
 | 21. Team Features | v2.0 | 0/? | Not started | - |
