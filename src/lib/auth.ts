@@ -1,11 +1,15 @@
 /**
  * Authentication Library
  * JWT 기반 인증 유틸리티 함수들
+ *
+ * v1.0: 환경변수 기반 단일 관리자 인증
+ * v2.0: Prisma DB 기반 다중 사용자 인증 (Phase 17+)
  */
 
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import type { User, JWTPayload, TokenVerifyResult } from "@/types/auth";
+import { findUserByUsername, toUserDto, updateLastLogin } from "./user-service";
 
 // JWT 설정
 const JWT_ALGORITHM = "HS256";
@@ -144,10 +148,11 @@ export function getAdminPasswordHash(): string {
 }
 
 /**
- * 사용자 로그인을 처리합니다.
+ * 사용자 로그인을 처리합니다 (Legacy - 환경변수 기반)
  * @param username 사용자명
  * @param password 비밀번호
  * @returns 인증 결과 (성공 시 토큰 포함)
+ * @deprecated Phase 18 이후 authenticateUserFromDB 사용 권장
  */
 export async function authenticateUser(
   username: string,
@@ -170,6 +175,43 @@ export async function authenticateUser(
 
   // 토큰 생성
   const token = await createToken(adminUser);
+
+  return { success: true, token };
+}
+
+/**
+ * 데이터베이스 기반 사용자 인증 (v2.0)
+ *
+ * Prisma DB에서 사용자를 조회하고 비밀번호를 검증합니다.
+ * 기존 authenticateUser()와 병행 운영 가능합니다.
+ *
+ * @param username 사용자명
+ * @param password 비밀번호
+ * @returns 인증 결과 (성공 시 토큰 포함)
+ */
+export async function authenticateUserFromDB(
+  username: string,
+  password: string
+): Promise<{ success: boolean; token?: string; error?: string }> {
+  // DB에서 사용자 조회
+  const user = await findUserByUsername(username);
+
+  if (!user) {
+    return { success: false, error: "잘못된 사용자명 또는 비밀번호" };
+  }
+
+  // 비밀번호 검증
+  const isValid = await comparePassword(password, user.passwordHash);
+
+  if (!isValid) {
+    return { success: false, error: "잘못된 사용자명 또는 비밀번호" };
+  }
+
+  // 로그인 시간 업데이트
+  await updateLastLogin(user.id);
+
+  // JWT 토큰 생성 (기존 User 타입 호환)
+  const token = await createToken(toUserDto(user));
 
   return { success: true, token };
 }

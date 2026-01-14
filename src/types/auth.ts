@@ -125,3 +125,19 @@ export type PrismaUserCompat = {
   updatedAt: Date;
   lastLoginAt: Date | null;
 };
+
+/**
+ * 팀 정보가 포함된 사용자 타입 (Phase 21 준비)
+ * 사용자가 속한 팀 목록과 각 팀에서의 역할을 포함합니다.
+ */
+export interface UserWithTeams {
+  id: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  teams: {
+    id: string;
+    name: string;
+    role: UserRole;
+  }[];
+}
