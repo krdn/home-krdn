@@ -9,4 +9,102 @@ datasource db {
   provider = "sqlite"
 }
 
-// 스키마 모델은 Task 3에서 추가됨
+// ============================================================
+// 사용자 및 팀 관련 모델
+// ============================================================
+
+// 사용자 역할
+// SQLite는 native enum을 지원하지 않으므로 String으로 저장됨
+enum Role {
+  ADMIN
+  USER
+  VIEWER
+}
+
+// 사용자 모델
+model User {
+  id           String @id @default(cuid())
+  email        String @unique
+  username     String @unique
+  passwordHash String
+
+  // 역할 (기본값: USER)
+  role Role @default(USER)
+
+  // 프로필 정보
+  displayName String?
+  avatarUrl   String?
+
+  // 타임스탬프
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+
+  // 관계: 소유한 팀
+  ownedTeams Team[] @relation("TeamOwner")
+
+  // 관계: 팀 멤버십 (다대다)
+  teamMemberships TeamMember[]
+
+  // 관계: 사용자 설정 (1:1)
+  settings UserSettings?
+}
+
+// 팀 모델
+model Team {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+
+  // 팀 소유자
+  ownerId String
+  owner   User   @relation("TeamOwner", fields: [ownerId], references: [id])
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 관계: 팀 멤버
+  members TeamMember[]
+}
+
+// 팀 멤버십 (다대다 조인 테이블)
+model TeamMember {
+  id   String @id @default(cuid())
+  role Role   @default(USER)
+
+  // 사용자 외래키
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 팀 외래키
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // 가입 시간
+  joinedAt DateTime @default(now())
+
+  // 유니크 제약: 한 사용자가 한 팀에 한 번만 가입 가능
+  @@unique([userId, teamId])
+}
+
+// 사용자 설정 모델 (Phase 20 준비)
+model UserSettings {
+  id String @id @default(cuid())
+
+  // 사용자 연결 (1:1)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 대시보드 설정
+  dashboardLayout String? // JSON string으로 저장
+  theme           String  @default("dark")
+
+  // 알림 설정
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(false)
+
+  // 타임스탬프
+  updatedAt DateTime @updatedAt
+}
