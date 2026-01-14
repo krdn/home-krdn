@@ -65,14 +65,14 @@ Plans:
 Plans:
 - [x] 10-01: Real-time Metrics Streaming (서버 브로드캐스트 + useRealtimeMetrics 훅)
 
-### Phase 11: Real-time Containers
+### Phase 11: Real-time Containers ✅
 **Goal**: Docker 컨테이너 상태 변경을 실시간으로 클라이언트에 푸시
 **Depends on**: Phase 10
 **Research**: Unlikely (내부 패턴 - Docker Events API 활용)
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
 
 Plans:
-- [ ] 11-01: TBD
+- [x] 11-01: Real-time Containers Streaming (서버 브로드캐스트 + useRealtimeContainers 훅)
 
 ### Phase 12: Email Notification
 **Goal**: 이메일 알림 채널 구현 (임계값 초과 시 이메일 발송)
@@ -131,7 +131,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 |-------|-----------|----------------|--------|-----------|
 | 9. WebSocket Infrastructure | v1.1 | 2/2 | ✅ Complete | 2026-01-15 |
 | 10. Real-time Metrics | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
-| 11. Real-time Containers | v1.1 | 0/? | Not started | - |
+| 11. Real-time Containers | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 12. Email Notification | v1.1 | 0/? | Not started | - |
 | 13. Slack Integration | v1.1 | 0/? | Not started | - |
 | 14. Project Admin CRUD | v1.1 | 0/? | Not started | - |

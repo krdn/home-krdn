@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 10 of 16 (Real-time Metrics) ✅ Complete
+Phase: 11 of 16 (Real-time Containers) ✅ Complete
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-15 — Phase 10 complete (10-01)
+Last activity: 2026-01-15 — Completed 11-01-PLAN.md
 
-Progress: ██░░░░░░░░ 18.75% (3/16 plans estimated)
+Progress: ███░░░░░░░ 25% (4/16 plans estimated)
 
 ## Performance Metrics
 
@@ -28,7 +28,7 @@ Progress: ██░░░░░░░░ 18.75% (3/16 plans estimated)
 |-------|-------|-----------|--------|
 | 9. WebSocket Infrastructure | 2 | 2 | ✅ Complete |
 | 10. Real-time Metrics | 1 | 1 | ✅ Complete |
-| 11. Real-time Containers | ? | 0 | Not started |
+| 11. Real-time Containers | 1 | 1 | ✅ Complete |
 | 12. Email Notification | ? | 0 | Not started |
 | 13. Slack Integration | ? | 0 | Not started |
 | 14. Project Admin CRUD | ? | 0 | Not started |
@@ -56,6 +56,9 @@ Recent decisions affecting current work:
 - Exponential backoff for WebSocket reconnection (09-02)
 - 서버 시작 시 무조건 브로드캐스트 (구독자 체크 없이 단순 구현) (10-01)
 - WebSocket fallback to polling 기본 활성화 (10-01)
+- WSContainersData에 image, ports, created 포함 (ContainerData와 동일) (11-01)
+- 컨테이너 액션 후 500ms 지연 뒤 전체 브로드캐스트 (11-01)
+- getLogs는 HTTP API 유지 (로그 대용량으로 WebSocket 비적합) (11-01)
 
 ### Deferred Issues
 
@@ -77,5 +80,5 @@ None — v1.0 MVP completed successfully.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Phase 10 complete, ready for Phase 11
+Stopped at: Phase 11 complete, ready for Phase 12
 Resume file: None
