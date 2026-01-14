@@ -47,15 +47,14 @@ See: [v1.0-MVP.md](milestones/v1.0-MVP.md)
 
 **Milestone Goal:** 실시간 업데이트(WebSocket), 외부 알림 채널(이메일/Slack), 프로젝트 관리 Admin 기능 추가
 
-### Phase 9: WebSocket Infrastructure
+### Phase 9: WebSocket Infrastructure ✅
 **Goal**: WebSocket 서버/클라이언트 기반 설정 및 연결 관리
 **Depends on**: v1.0 complete
-**Research**: Likely (WebSocket 아키텍처 - Socket.io vs ws vs native)
-**Research topics**: Next.js 16 WebSocket 패턴, Edge Runtime 호환성, 재연결 전략
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
 
 Plans:
-- [ ] 09-01: TBD (run /gsd:plan-phase 9 to break down)
+- [x] 09-01: WebSocket Server Infrastructure (ws + next-ws, UPGRADE handler)
+- [x] 09-02: WebSocket Client Hook (useWebSocket, reconnection, heartbeat)
 
 ### Phase 10: Real-time Metrics
 **Goal**: 시스템 메트릭(CPU, 메모리, 디스크)을 WebSocket으로 실시간 스트리밍
@@ -130,7 +129,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. WebSocket Infrastructure | v1.1 | 0/? | Not started | - |
+| 9. WebSocket Infrastructure | v1.1 | 2/2 | ✅ Complete | 2026-01-15 |
 | 10. Real-time Metrics | v1.1 | 0/? | Not started | - |
 | 11. Real-time Containers | v1.1 | 0/? | Not started | - |
 | 12. Email Notification | v1.1 | 0/? | Not started | - |
