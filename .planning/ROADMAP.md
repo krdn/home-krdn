@@ -92,9 +92,9 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 06-01: 데이터 페칭 최적화 (캐싱, 중복 요청 제거)
-- [ ] 06-02: 번들 사이즈 최적화
-- [ ] 06-03: 렌더링 성능 개선
+- [ ] 06-01: React Query 데이터 페칭 최적화 — PLANNED
+- [ ] 06-02: 번들 사이즈 최적화 (Dynamic Import) — PLANNED
+- [ ] 06-03: 렌더링 성능 최적화 (React.memo) — PLANNED
 
 ### Phase 7: Alert System
 **Goal**: 실시간 알림 및 경고 시스템 구현
@@ -131,6 +131,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Testing Infrastructure | 3/3 | Complete | 2026-01-14 |
 | 4. UI/UX Enhancement | 3/3 | Complete | 2026-01-14 |
 | 5. Monitoring Upgrade | 3/3 | Complete | 2026-01-14 |
-| 6. Performance Optimization | 0/3 | Not started | - |
+| 6. Performance Optimization | 0/3 | Planned | - |
 | 7. Alert System | 0/3 | Not started | - |
 | 8. Project Gallery | 0/3 | Not started | - |
