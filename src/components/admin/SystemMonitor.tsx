@@ -62,7 +62,7 @@ export function SystemMonitor() {
           <p className="mb-4 text-muted-foreground">
             Failed to load system metrics
           </p>
-          <Button onClick={refetch} variant="outline">
+          <Button onClick={() => refetch()} variant="outline">
             <RefreshCw className="mr-2 h-4 w-4" />
             Retry
           </Button>
@@ -166,7 +166,7 @@ export function SystemMonitor() {
             <Server className="h-5 w-5" />
             System Information
           </CardTitle>
-          <Button onClick={refetch} variant="ghost" size="sm">
+          <Button onClick={() => refetch()} variant="ghost" size="sm">
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>

@@ -126,7 +126,7 @@ export function ContainerList() {
           <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
           <p className="mb-2 font-medium">Failed to connect to Docker</p>
           <p className="mb-4 text-sm text-muted-foreground">{error}</p>
-          <Button onClick={refetch} variant="outline">
+          <Button onClick={() => refetch()} variant="outline">
             <RefreshCw className="mr-2 h-4 w-4" />
             Retry
           </Button>
@@ -177,7 +177,7 @@ export function ContainerList() {
           >
             Stopped
           </Button>
-          <Button variant="ghost" size="sm" onClick={refetch}>
+          <Button variant="ghost" size="sm" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * 클라이언트 측 메트릭 스냅샷 타입
@@ -38,71 +38,67 @@ export interface ChartDataPoint {
 const HISTORY_REFRESH_INTERVAL = 30 * 1000;
 
 /**
- * 메트릭 히스토리를 가져오고 차트 렌더링용 데이터를 제공하는 훅
+ * 원본 스냅샷 데이터를 차트용 데이터로 변환
+ */
+function transformToChartData(rawData: MetricsSnapshotData[]): ChartDataPoint[] {
+  return rawData.map((snapshot) => ({
+    time: new Date(snapshot.timestamp).toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+    timestamp: snapshot.timestamp,
+    cpu: snapshot.cpu,
+    memory: snapshot.memory,
+    disk: snapshot.disk,
+    networkRxMB: Math.round((snapshot.networkRx / 1024 / 1024) * 100) / 100,
+    networkTxMB: Math.round((snapshot.networkTx / 1024 / 1024) * 100) / 100,
+  }));
+}
+
+/**
+ * 메트릭 히스토리를 가져오고 차트 렌더링용 데이터를 제공하는 훅 (React Query 기반)
+ *
  * @param minutes 조회할 시간 범위 (분). 기본값: 60
  * @returns 히스토리 데이터, 로딩 상태, 에러, 재조회 함수
  */
 export function useMetricsHistory(minutes: number = 60) {
-  const [data, setData] = useState<MetricsSnapshotData[]>([]);
-  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchHistory = useCallback(async () => {
-    try {
+  const { data, isLoading, error, refetch } = useQuery({
+    // minutes를 queryKey에 포함하여 다른 범위 요청 시 캐시 분리
+    queryKey: ['metrics-history', minutes],
+    queryFn: async (): Promise<{
+      raw: MetricsSnapshotData[];
+      chart: ChartDataPoint[];
+    }> => {
       const res = await fetch(`/api/system/history?minutes=${minutes}`);
       const json = await res.json();
 
-      if (json.success) {
-        const rawData: MetricsSnapshotData[] = json.data;
-        setData(rawData);
-
-        // 차트용 데이터 포맷팅
-        const formatted: ChartDataPoint[] = rawData.map((snapshot) => ({
-          time: new Date(snapshot.timestamp).toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-          timestamp: snapshot.timestamp,
-          cpu: snapshot.cpu,
-          memory: snapshot.memory,
-          disk: snapshot.disk,
-          networkRxMB: Math.round((snapshot.networkRx / 1024 / 1024) * 100) / 100,
-          networkTxMB: Math.round((snapshot.networkTx / 1024 / 1024) * 100) / 100,
-        }));
-
-        setChartData(formatted);
-        setError(null);
-      } else {
-        setError(json.error || 'Failed to fetch history');
+      if (!json.success) {
+        throw new Error(json.error || 'Failed to fetch history');
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Network error');
-    } finally {
-      setLoading(false);
-    }
-  }, [minutes]);
 
-  useEffect(() => {
-    // 초기 로딩
-    fetchHistory();
+      const rawData: MetricsSnapshotData[] = json.data;
+      const chartData = transformToChartData(rawData);
 
-    // 30초마다 히스토리 갱신
-    const interval = setInterval(fetchHistory, HISTORY_REFRESH_INTERVAL);
+      return {
+        raw: rawData,
+        chart: chartData,
+      };
+    },
+    refetchInterval: HISTORY_REFRESH_INTERVAL,
+    staleTime: HISTORY_REFRESH_INTERVAL / 2,
+  });
 
-    return () => clearInterval(interval);
-  }, [fetchHistory]);
-
+  // 기존 API 형태 유지 (backward compatibility)
   return {
     /** 원본 스냅샷 데이터 */
-    data,
+    data: data?.raw ?? [],
     /** 차트 렌더링용 포맷된 데이터 */
-    chartData,
+    chartData: data?.chart ?? [],
     /** 로딩 상태 */
-    loading,
+    loading: isLoading,
     /** 에러 메시지 */
-    error,
+    error: error?.message ?? null,
     /** 수동 재조회 함수 */
-    refetch: fetchHistory,
+    refetch,
   };
 }

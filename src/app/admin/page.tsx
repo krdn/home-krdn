@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import { Activity, Box, ExternalLink, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -6,34 +5,8 @@ import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/services/StatusBadge';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { ContainerStats } from '@/components/admin/ContainerStats';
+import { LazyMetricsCharts } from '@/components/admin/LazyMetricsCharts';
 import { getRunningServices } from '@/config/services';
-
-/**
- * MetricsCharts 컴포넌트를 dynamic import로 로드
- * - Recharts 번들 (약 386KB)이 별도 청크로 분리됨
- * - 초기 페이지 로드 성능 개선
- * - SSR 비활성화 (차트는 클라이언트에서만 렌더링)
- */
-const MetricsCharts = dynamic(
-  () =>
-    import('@/components/admin/MetricsCharts').then((mod) => ({
-      default: mod.MetricsCharts,
-    })),
-  {
-    loading: () => (
-      <div className="grid gap-4 lg:grid-cols-2">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="h-64 animate-pulse rounded-lg bg-muted"
-            aria-label="차트 로딩 중"
-          />
-        ))}
-      </div>
-    ),
-    ssr: false,
-  }
-);
 
 /**
  * 관리자 대시보드 페이지
@@ -119,9 +92,9 @@ export default function AdminDashboardPage() {
         <DashboardStats />
       </section>
 
-      {/* Section 2: System Metrics History Charts */}
+      {/* Section 2: System Metrics History Charts (Lazy-loaded) */}
       <section aria-label="System Metrics Charts">
-        <MetricsCharts />
+        <LazyMetricsCharts />
       </section>
 
       {/* Section 3: Containers + Running Services - Secondary (2열) */}
