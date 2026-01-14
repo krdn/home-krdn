@@ -11,8 +11,10 @@ import {
   type WSClientState,
   type WSChannel,
   type WSMetricsData,
+  type WSContainersData,
 } from '@/types/websocket';
 import { getSystemMetrics } from '@/lib/system';
+import { listContainers, startContainer, stopContainer, restartContainer, type ContainerInfo } from '@/lib/docker';
 
 // ============================================================
 // 클라이언트 관리
@@ -177,7 +179,9 @@ export function handleMessage(ws: WebSocket, data: unknown): void {
       break;
 
     case 'container-action':
-      handleContainerAction(ws, message.action, message.containerId);
+      handleContainerAction(ws, message.action, message.containerId).catch((err) => {
+        console.error('[WS] Container action handler error:', err);
+      });
       break;
 
     case 'ping':
@@ -206,8 +210,11 @@ function handleSubscribe(
     sendCurrentMetrics(ws).catch((err) => {
       console.error('[WS] Failed to send initial metrics:', err);
     });
+  } else if (channel === 'containers') {
+    sendCurrentContainers(ws).catch((err) => {
+      console.error('[WS] Failed to send initial containers:', err);
+    });
   }
-  // containers 채널은 Phase 11에서 구현 예정
 }
 
 /**
@@ -223,24 +230,57 @@ function handleUnsubscribe(
 }
 
 /**
- * 컨테이너 액션 처리 (stub - Phase 9-02에서 구현)
+ * 컨테이너 액션 처리
+ * 실제 Docker 액션 실행 후 결과 응답 및 전체 컨테이너 목록 브로드캐스트
  */
-function handleContainerAction(
+async function handleContainerAction(
   ws: WebSocket,
   action: 'start' | 'stop' | 'restart',
   containerId: string
-): void {
+): Promise<void> {
   console.log(`[WS] Container action: ${action} on ${containerId}`);
 
-  // TODO: 실제 Docker 액션 실행은 Phase 9-02에서 구현
+  let success = false;
+  let message = '';
+
+  try {
+    switch (action) {
+      case 'start':
+        success = await startContainer(containerId);
+        message = success ? 'Container started successfully' : 'Failed to start container';
+        break;
+      case 'stop':
+        success = await stopContainer(containerId);
+        message = success ? 'Container stopped successfully' : 'Failed to stop container';
+        break;
+      case 'restart':
+        success = await restartContainer(containerId);
+        message = success ? 'Container restarted successfully' : 'Failed to restart container';
+        break;
+    }
+  } catch (error) {
+    success = false;
+    message = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error(`[WS] Container action error:`, error);
+  }
+
+  // 액션 결과 응답
   sendToClient(ws, {
     type: 'container-ack',
     action,
     containerId,
-    success: false,
-    message: 'Not implemented yet',
+    success,
+    message,
     timestamp: Date.now(),
   });
+
+  // 액션 성공 시 전체 구독자에게 컨테이너 목록 브로드캐스트
+  if (success) {
+    // 약간의 지연 후 컨테이너 목록 갱신 (Docker 상태 반영 대기)
+    setTimeout(async () => {
+      await sendCurrentContainers();
+    }, 500);
+  }
 }
 
 /**
@@ -388,4 +428,91 @@ export function stopMetricsBroadcast(): void {
  */
 export function isMetricsBroadcastRunning(): boolean {
   return metricsBroadcastInterval !== null;
+}
+
+// ============================================================
+// 컨테이너 브로드캐스트
+// ============================================================
+
+/** 컨테이너 브로드캐스트 인터벌 ID */
+let containersBroadcastInterval: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * ContainerInfo를 WSContainersData로 변환
+ */
+function transformToWSContainersData(containers: ContainerInfo[]): WSContainersData[] {
+  return containers.map((c) => ({
+    id: c.id,
+    name: c.name,
+    image: c.image,
+    state: c.state,
+    status: c.status,
+    ports: c.ports,
+    created: c.created.toISOString(),
+  }));
+}
+
+/**
+ * 현재 컨테이너 목록을 즉시 전송
+ * @param ws 특정 클라이언트에게만 전송 (없으면 전체 채널 브로드캐스트)
+ */
+export async function sendCurrentContainers(ws?: WebSocket): Promise<void> {
+  try {
+    const containers = await listContainers(true);
+    const wsContainers = transformToWSContainersData(containers);
+    const message: WSServerMessage = {
+      type: 'containers',
+      data: wsContainers,
+      timestamp: Date.now(),
+    };
+
+    if (ws) {
+      sendToClient(ws, message);
+    } else {
+      broadcastToChannel('containers', message);
+    }
+  } catch (error) {
+    console.error('[WS] Failed to send containers:', error);
+  }
+}
+
+/**
+ * 컨테이너 브로드캐스트 시작
+ * @param intervalMs 브로드캐스트 간격 (밀리초)
+ * @returns 정리용 cleanup 함수
+ */
+export function startContainersBroadcast(intervalMs: number): () => void {
+  // 이미 실행 중이면 기존 인터벌 정리
+  if (containersBroadcastInterval) {
+    clearInterval(containersBroadcastInterval);
+  }
+
+  console.log(`[WS] Containers broadcast started (interval: ${intervalMs}ms)`);
+
+  containersBroadcastInterval = setInterval(async () => {
+    await sendCurrentContainers();
+  }, intervalMs);
+
+  // cleanup 함수 반환
+  return () => {
+    stopContainersBroadcast();
+  };
+}
+
+/**
+ * 컨테이너 브로드캐스트 중지
+ */
+export function stopContainersBroadcast(): void {
+  if (containersBroadcastInterval) {
+    clearInterval(containersBroadcastInterval);
+    containersBroadcastInterval = null;
+    console.log('[WS] Containers broadcast stopped');
+  }
+}
+
+/**
+ * 컨테이너 브로드캐스트 실행 여부 확인
+ */
+export function isContainersBroadcastRunning(): boolean {
+  return containersBroadcastInterval !== null;
 }

@@ -122,15 +122,24 @@ export const WSMetricsMessageSchema = z.object({
   timestamp: z.number(),
 });
 
+/**
+ * 확장된 컨테이너 데이터 스키마
+ * ContainerData와 유사한 구조로 확장
+ */
+export const WSContainersDataSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  image: z.string(),
+  state: z.string(),
+  status: z.string(),
+  ports: z.array(z.string()),
+  created: z.string(),  // ISO 날짜 문자열
+});
+
 /** 컨테이너 목록 메시지 */
 export const WSContainersMessageSchema = z.object({
   type: z.literal('containers'),
-  data: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    state: z.string(),
-    status: z.string(),
-  })),
+  data: z.array(WSContainersDataSchema),
   timestamp: z.number(),
 });
 
@@ -184,6 +193,7 @@ export type WSClientMessage = z.infer<typeof WSClientMessageSchema>;
 export type WSConnectedMessage = z.infer<typeof WSConnectedMessageSchema>;
 export type WSMetricsData = z.infer<typeof WSMetricsDataSchema>;
 export type WSMetricsMessage = z.infer<typeof WSMetricsMessageSchema>;
+export type WSContainersData = z.infer<typeof WSContainersDataSchema>;
 export type WSContainersMessage = z.infer<typeof WSContainersMessageSchema>;
 export type WSContainerAckMessage = z.infer<typeof WSContainerAckMessageSchema>;
 export type WSHeartbeatMessage = z.infer<typeof WSHeartbeatMessageSchema>;

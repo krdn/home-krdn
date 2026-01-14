@@ -67,6 +67,8 @@ export const WEBSOCKET_CONFIG = {
   MAX_RECONNECT_DELAY: 30000,
   /** 메트릭 브로드캐스트 간격 (ms) - POLLING_INTERVALS.SYSTEM_METRICS와 동일 */
   METRICS_BROADCAST_INTERVAL: 5000,
+  /** 컨테이너 브로드캐스트 간격 (ms) - POLLING_INTERVALS.CONTAINERS와 동일 */
+  CONTAINERS_BROADCAST_INTERVAL: 10000,
 } as const;
 
 // 타입 추론을 위한 타입 정의
