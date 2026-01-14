@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 import {
   Play,
   Square,
@@ -14,16 +14,39 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useContainers, ContainerData } from '@/hooks/useContainers';
 
-function ContainerRow({
-  container,
-  onAction,
-  isLoading,
-}: {
+/**
+ * 컨테이너 행 Props
+ */
+interface ContainerRowProps {
   container: ContainerData;
   onAction: (id: string, action: 'start' | 'stop' | 'restart') => void;
   isLoading: boolean;
-}) {
+}
+
+/**
+ * 컨테이너 행 컴포넌트
+ * memo()로 감싸서 해당 컨테이너 데이터 변경 시에만 리렌더링됩니다.
+ */
+const ContainerRow = memo(function ContainerRow({
+  container,
+  onAction,
+  isLoading,
+}: ContainerRowProps) {
   const isRunning = container.state === 'running';
+
+  // 액션 핸들러 메모이제이션 - 컨테이너별로 안정적인 참조 유지
+  const handleStart = useCallback(
+    () => onAction(container.name, 'start'),
+    [container.name, onAction]
+  );
+  const handleStop = useCallback(
+    () => onAction(container.name, 'stop'),
+    [container.name, onAction]
+  );
+  const handleRestart = useCallback(
+    () => onAction(container.name, 'restart'),
+    [container.name, onAction]
+  );
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -54,7 +77,7 @@ function ContainerRow({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onAction(container.name, 'restart')}
+              onClick={handleRestart}
               disabled={isLoading}
             >
               <RotateCw className="mr-1 h-3 w-3" />
@@ -63,7 +86,7 @@ function ContainerRow({
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => onAction(container.name, 'stop')}
+              onClick={handleStop}
               disabled={isLoading}
             >
               <Square className="mr-1 h-3 w-3" />
@@ -74,7 +97,7 @@ function ContainerRow({
           <Button
             variant="default"
             size="sm"
-            onClick={() => onAction(container.name, 'start')}
+            onClick={handleStart}
             disabled={isLoading}
           >
             <Play className="mr-1 h-3 w-3" />
@@ -84,7 +107,15 @@ function ContainerRow({
       </div>
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // 커스텀 비교 함수: 컨테이너 ID와 상태, 로딩 상태만 비교
+  return (
+    prevProps.container.id === nextProps.container.id &&
+    prevProps.container.state === nextProps.container.state &&
+    prevProps.container.name === nextProps.container.name &&
+    prevProps.isLoading === nextProps.isLoading
+  );
+});
 
 export function ContainerList() {
   const { containers, summary, loading, error, refetch, performAction } =
@@ -92,20 +123,24 @@ export function ContainerList() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'running' | 'stopped'>('all');
 
-  const handleAction = async (
-    id: string,
-    action: 'start' | 'stop' | 'restart'
-  ) => {
-    setActionLoading(id);
-    await performAction(id, action);
-    setActionLoading(null);
-  };
+  // 액션 핸들러 메모이제이션 - ContainerRow에 안정적인 참조 전달
+  const handleAction = useCallback(
+    async (id: string, action: 'start' | 'stop' | 'restart') => {
+      setActionLoading(id);
+      await performAction(id, action);
+      setActionLoading(null);
+    },
+    [performAction]
+  );
 
-  const filteredContainers = containers.filter((c) => {
-    if (filter === 'running') return c.state === 'running';
-    if (filter === 'stopped') return c.state !== 'running';
-    return true;
-  });
+  // 필터링된 컨테이너 목록 메모이제이션
+  const filteredContainers = useMemo(() => {
+    return containers.filter((c) => {
+      if (filter === 'running') return c.state === 'running';
+      if (filter === 'stopped') return c.state !== 'running';
+      return true;
+    });
+  }, [containers, filter]);
 
   if (loading) {
     return (
