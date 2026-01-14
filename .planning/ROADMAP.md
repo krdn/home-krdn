@@ -74,15 +74,13 @@ Plans:
 Plans:
 - [x] 11-01: Real-time Containers Streaming (서버 브로드캐스트 + useRealtimeContainers 훅)
 
-### Phase 12: Email Notification
+### Phase 12: Email Notification ✅
 **Goal**: 이메일 알림 채널 구현 (임계값 초과 시 이메일 발송)
 **Depends on**: Phase 9
-**Research**: Likely (이메일 서비스 선택 - Resend vs Nodemailer vs SendGrid)
-**Research topics**: Resend API, 이메일 템플릿, 발송 제한/큐잉
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
 
 Plans:
-- [ ] 12-01: TBD
+- [x] 12-01: 이메일 알림 채널 (Resend API, 설정 UI, 훅 통합)
 
 ### Phase 13: Slack Integration
 **Goal**: Slack 웹훅을 통한 알림 전송 기능 구현
@@ -132,7 +130,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 9. WebSocket Infrastructure | v1.1 | 2/2 | ✅ Complete | 2026-01-15 |
 | 10. Real-time Metrics | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 11. Real-time Containers | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
-| 12. Email Notification | v1.1 | 0/? | Not started | - |
+| 12. Email Notification | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 13. Slack Integration | v1.1 | 0/? | Not started | - |
 | 14. Project Admin CRUD | v1.1 | 0/? | Not started | - |
 | 15. Admin Dashboard | v1.1 | 0/? | Not started | - |

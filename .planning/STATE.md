@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 11 of 16 (Real-time Containers) ✅ Complete
+Phase: 12 of 16 (Email Notification) ✅ Complete
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-15 — Completed 11-01-PLAN.md
+Last activity: 2026-01-15 — Completed 12-01-PLAN.md
 
-Progress: ███░░░░░░░ 25% (4/16 plans estimated)
+Progress: ████░░░░░░ 31% (5/16 plans estimated)
 
 ## Performance Metrics
 
@@ -29,7 +29,7 @@ Progress: ███░░░░░░░ 25% (4/16 plans estimated)
 | 9. WebSocket Infrastructure | 2 | 2 | ✅ Complete |
 | 10. Real-time Metrics | 1 | 1 | ✅ Complete |
 | 11. Real-time Containers | 1 | 1 | ✅ Complete |
-| 12. Email Notification | ? | 0 | Not started |
+| 12. Email Notification | 1 | 1 | ✅ Complete |
 | 13. Slack Integration | ? | 0 | Not started |
 | 14. Project Admin CRUD | ? | 0 | Not started |
 | 15. Admin Dashboard | ? | 0 | Not started |
@@ -59,6 +59,9 @@ Recent decisions affecting current work:
 - WSContainersData에 image, ports, created 포함 (ContainerData와 동일) (11-01)
 - 컨테이너 액션 후 500ms 지연 뒤 전체 브로드캐스트 (11-01)
 - getLogs는 HTTP API 유지 (로그 대용량으로 WebSocket 비적합) (11-01)
+- Resend API 선택 (개발자 친화적, Edge Runtime 호환) (12-01)
+- Critical 알림만 기본 이메일 발송 (사용자 피로도 고려) (12-01)
+- 인메모리 쿨다운 + 일일 발송 제한 50건 (안전장치) (12-01)
 
 ### Deferred Issues
 
@@ -80,5 +83,5 @@ None — v1.0 MVP completed successfully.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Phase 11 complete, ready for Phase 12
+Stopped at: Phase 12 complete, ready for Phase 13
 Resume file: None
