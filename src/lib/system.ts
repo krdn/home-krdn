@@ -185,6 +185,75 @@ function getNetworkInfo(): NetworkInterface[] {
 }
 
 // ==========================================
+// 프로세스 메트릭 타입 및 함수
+// ==========================================
+
+/**
+ * 프로세스 정보 타입
+ */
+export interface ProcessInfo {
+  pid: number;
+  name: string;
+  cpu: number;     // CPU 사용률 (%)
+  memory: number;  // 메모리 사용률 (%)
+}
+
+/**
+ * ps aux 출력을 파싱합니다. (순수 함수)
+ * @param output ps aux --sort 명령의 출력
+ * @returns 파싱된 프로세스 목록
+ */
+export function parseProcessList(output: string): ProcessInfo[] {
+  if (!output || typeof output !== 'string') {
+    return [];
+  }
+
+  const lines = output.split('\n');
+  const processes: ProcessInfo[] = [];
+
+  // 첫 줄은 헤더이므로 skip
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    // ps aux 형식: USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND
+    const parts = line.split(/\s+/);
+    if (parts.length < 11) continue;
+
+    const pid = parseInt(parts[1], 10);
+    const cpu = parseFloat(parts[2]);
+    const memory = parseFloat(parts[3]);
+    // COMMAND는 공백을 포함할 수 있으므로 나머지 전체를 합침
+    const name = parts.slice(10).join(' ');
+
+    if (isNaN(pid) || isNaN(cpu) || isNaN(memory)) continue;
+
+    processes.push({
+      pid,
+      name,
+      cpu,
+      memory,
+    });
+  }
+
+  return processes;
+}
+
+/**
+ * 상위 프로세스 정보를 가져옵니다 (CPU 사용량 기준).
+ * @param limit 가져올 프로세스 수 (기본값: 5)
+ */
+function getTopProcesses(limit: number = 5): ProcessInfo[] {
+  try {
+    // CPU 사용률 기준으로 정렬된 프로세스 목록 가져오기
+    const output = execSync(`ps aux --sort=-%cpu | head -${limit + 1}`).toString();
+    return parseProcessList(output).slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+// ==========================================
 // 타입 정의
 // ==========================================
 
