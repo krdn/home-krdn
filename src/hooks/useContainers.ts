@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { POLLING_INTERVALS, DOCKER_CONFIG } from '@/config/constants';
 
 export interface ContainerData {
   id: string;
@@ -18,7 +19,7 @@ export interface ContainerSummary {
   stopped: number;
 }
 
-export function useContainers(refreshInterval: number = 10000) {
+export function useContainers(refreshInterval: number = POLLING_INTERVALS.CONTAINERS) {
   const [containers, setContainers] = useState<ContainerData[]>([]);
   const [summary, setSummary] = useState<ContainerSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,7 @@ export function useContainers(refreshInterval: number = 10000) {
 
         if (json.success) {
           // 액션 성공 후 컨테이너 목록 새로고침
-          setTimeout(fetchContainers, 1000);
+          setTimeout(fetchContainers, POLLING_INTERVALS.CONTAINER_ACTION_DELAY);
           return { success: true, message: json.message };
         } else {
           return { success: false, message: json.error };
@@ -79,7 +80,7 @@ export function useContainers(refreshInterval: number = 10000) {
     [fetchContainers]
   );
 
-  const getLogs = useCallback(async (id: string, tail: number = 100) => {
+  const getLogs = useCallback(async (id: string, tail: number = DOCKER_CONFIG.DEFAULT_LOG_TAIL_LINES) => {
     try {
       const res = await fetch(`/api/docker/containers/${id}`, {
         method: 'POST',
