@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Code Quality** - 중복 제거, 타입 안전성 강화, 코드 정리
 - [x] **Phase 3: Testing Infrastructure** - 테스트 프레임워크 설정 및 핵심 기능 테스트
 - [x] **Phase 4: UI/UX Enhancement** - 모던하고 직관적인 인터페이스 개선
-- [ ] **Phase 5: Monitoring Upgrade** - 상세 메트릭, 히스토리, 시각화 강화
+- [x] **Phase 5: Monitoring Upgrade** - 상세 메트릭, 히스토리, 시각화 강화
 - [ ] **Phase 6: Performance Optimization** - 폴링 개선, 캐싱, 리소스 최적화
 - [ ] **Phase 7: Alert System** - 실시간 알림/경고 시스템 구현
 - [ ] **Phase 8: Project Gallery** - 작업물 전시 기능 추가
@@ -77,12 +77,12 @@ Plans:
 **Goal**: 상세 메트릭 수집 및 히스토리 시각화
 **Depends on**: Phase 4
 **Research**: Unlikely (extending existing monitoring patterns)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: 메트릭 수집 강화 (네트워크, 프로세스)
-- [ ] 05-02: 히스토리 저장 및 조회 기능
-- [ ] 05-03: 차트/그래프 시각화
+- [x] 05-01: 메트릭 수집 강화 (네트워크, 프로세스) ✓
+- [x] 05-02: 히스토리 저장 및 조회 기능 ✓
+- [x] 05-03: 차트/그래프 시각화 ✓
 
 ### Phase 6: Performance Optimization
 **Goal**: 폴링 주기 최적화, 캐싱 전략, 리소스 사용 효율화
@@ -130,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Code Quality | 3/3 | Complete | 2026-01-14 |
 | 3. Testing Infrastructure | 3/3 | Complete | 2026-01-14 |
 | 4. UI/UX Enhancement | 3/3 | Complete | 2026-01-14 |
-| 5. Monitoring Upgrade | 0/3 | Not started | - |
+| 5. Monitoring Upgrade | 3/3 | Complete | 2026-01-14 |
 | 6. Performance Optimization | 0/3 | Not started | - |
 | 7. Alert System | 0/3 | Not started | - |
 | 8. Project Gallery | 0/3 | Not started | - |
