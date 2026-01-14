@@ -3,6 +3,8 @@ import {
   parseProcStat,
   calculateCpuPercent,
   parseProcMeminfo,
+  parseNetDev,
+  parseProcessList,
   type CpuStatValues,
 } from './system';
 
@@ -271,6 +273,156 @@ MemAvailable:   12288000 kB`;
       memTotal: 16384000 * 1024,
       memFree: 8192000 * 1024,
       memAvailable: 12288000 * 1024,
+    });
+  });
+});
+
+describe('parseNetDev', () => {
+  it('should parse valid /proc/net/dev content', () => {
+    const content = `Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo: 12345678   98765    0    0    0     0          0         0 12345678   98765    0    0    0     0       0          0
+  eth0: 987654321 123456    0    0    0     0          0         0 123456789  654321    0    0    0     0       0          0`;
+    const result = parseNetDev(content);
+    expect(result).toEqual([
+      {
+        name: 'lo',
+        rxBytes: 12345678,
+        rxPackets: 98765,
+        txBytes: 12345678,
+        txPackets: 98765,
+      },
+      {
+        name: 'eth0',
+        rxBytes: 987654321,
+        rxPackets: 123456,
+        txBytes: 123456789,
+        txPackets: 654321,
+      },
+    ]);
+  });
+
+  it('should return empty array for empty input', () => {
+    expect(parseNetDev('')).toEqual([]);
+  });
+
+  it('should return empty array for null/undefined input', () => {
+    expect(parseNetDev(null as unknown as string)).toEqual([]);
+    expect(parseNetDev(undefined as unknown as string)).toEqual([]);
+  });
+
+  it('should return empty array for header-only input', () => {
+    const content = `Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed`;
+    expect(parseNetDev(content)).toEqual([]);
+  });
+
+  it('should handle interface names with spaces', () => {
+    const content = `Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+enp0s3: 1000 100 0 0 0 0 0 0 2000 200 0 0 0 0 0 0`;
+    const result = parseNetDev(content);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('enp0s3');
+  });
+
+  it('should handle real-world /proc/net/dev format', () => {
+    const content = `Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:  116232     980    0    0    0     0          0         0   116232     980    0    0    0     0       0          0
+enp3s0: 1634560864 1239450    0    0    0     0          0     14921 62945398  550188    0    0    0     0       0          0
+docker0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0`;
+    const result = parseNetDev(content);
+    expect(result).toHaveLength(3);
+    expect(result[1]).toEqual({
+      name: 'enp3s0',
+      rxBytes: 1634560864,
+      rxPackets: 1239450,
+      txBytes: 62945398,
+      txPackets: 550188,
+    });
+  });
+
+  it('should skip invalid lines', () => {
+    const content = `Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo: 1000 100 0 0 0 0 0 0 2000 200 0 0 0 0 0 0
+invalid line without colon
+  eth0: 3000 300 0 0 0 0 0 0 4000 400 0 0 0 0 0 0`;
+    const result = parseNetDev(content);
+    expect(result).toHaveLength(2);
+    expect(result[0].name).toBe('lo');
+    expect(result[1].name).toBe('eth0');
+  });
+});
+
+describe('parseProcessList', () => {
+  it('should parse valid ps aux output', () => {
+    const output = `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1 169368 11480 ?        Ss   Jan13   0:06 /sbin/init
+www-data    1234 25.5 12.3 987654 123456 ?      Sl   10:30   5:23 /usr/bin/node server.js
+postgres    5678  5.2  8.7 654321 87654 ?       Ss   09:00   2:15 postgres: main process`;
+    const result = parseProcessList(output);
+    expect(result).toEqual([
+      { pid: 1, name: '/sbin/init', cpu: 0.0, memory: 0.1 },
+      { pid: 1234, name: '/usr/bin/node server.js', cpu: 25.5, memory: 12.3 },
+      { pid: 5678, name: 'postgres: main process', cpu: 5.2, memory: 8.7 },
+    ]);
+  });
+
+  it('should return empty array for empty input', () => {
+    expect(parseProcessList('')).toEqual([]);
+  });
+
+  it('should return empty array for null/undefined input', () => {
+    expect(parseProcessList(null as unknown as string)).toEqual([]);
+    expect(parseProcessList(undefined as unknown as string)).toEqual([]);
+  });
+
+  it('should return empty array for header-only input', () => {
+    const output = `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND`;
+    expect(parseProcessList(output)).toEqual([]);
+  });
+
+  it('should handle commands with multiple spaces', () => {
+    const output = `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+user         100  1.0  2.0 10000  1000 pts/0    R+   10:00   0:01 python script.py --arg1 value1 --arg2 value2`;
+    const result = parseProcessList(output);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('python script.py --arg1 value1 --arg2 value2');
+  });
+
+  it('should skip lines with insufficient columns', () => {
+    const output = `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1 169368
+user         100  1.0  2.0 10000  1000 pts/0    R+   10:00   0:01 valid_process`;
+    const result = parseProcessList(output);
+    expect(result).toHaveLength(1);
+    expect(result[0].pid).toBe(100);
+  });
+
+  it('should handle floating point CPU and memory values', () => {
+    const output = `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+user         999 99.9 50.5 10000  1000 pts/0    R+   10:00   0:01 heavy_process`;
+    const result = parseProcessList(output);
+    expect(result[0].cpu).toBe(99.9);
+    expect(result[0].memory).toBe(50.5);
+  });
+
+  it('should handle real-world ps aux output', () => {
+    const output = `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0 167532 11884 ?        Ss   Jan13   0:07 /sbin/init splash
+root           2  0.0  0.0      0     0 ?        S    Jan13   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   Jan13   0:00 [rcu_gp]
+gon        12345 15.3  5.2 1234567 543210 ?     Sl   10:00  25:30 /usr/bin/code --unity-launch
+mysql      67890  2.1  3.4 2345678 345678 ?     Ssl  09:00  10:15 /usr/sbin/mysqld`;
+    const result = parseProcessList(output);
+    expect(result).toHaveLength(5);
+    expect(result[3]).toEqual({
+      pid: 12345,
+      name: '/usr/bin/code --unity-launch',
+      cpu: 15.3,
+      memory: 5.2,
     });
   });
 });
