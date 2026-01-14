@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { POLLING_INTERVALS } from '@/config/constants';
 
 export interface SystemMetricsData {
   cpu: {
@@ -30,7 +31,7 @@ export interface SystemMetricsData {
   platform: string;
 }
 
-export function useSystemMetrics(refreshInterval: number = 5000) {
+export function useSystemMetrics(refreshInterval: number = POLLING_INTERVALS.SYSTEM_METRICS) {
   const [data, setData] = useState<SystemMetricsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
