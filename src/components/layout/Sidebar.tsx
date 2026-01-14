@@ -9,11 +9,13 @@ import {
   ScrollText,
   Activity,
   ChevronLeft,
+  FolderKanban,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Projects", href: "/admin/projects", icon: FolderKanban },
   { name: "Services", href: "/admin/services", icon: Layers },
   { name: "Containers", href: "/admin/containers", icon: Box },
   { name: "Logs", href: "/admin/logs", icon: ScrollText },
