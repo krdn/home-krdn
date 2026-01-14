@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { POLLING_INTERVALS } from '@/config/constants';
 
 export interface NetworkInterfaceData {
@@ -50,37 +50,34 @@ export interface SystemMetricsData {
   platform: string;
 }
 
+/**
+ * 시스템 메트릭을 가져오는 훅 (React Query 기반)
+ *
+ * @param refreshInterval 폴링 간격 (ms). 기본값: 5000ms
+ * @returns data, loading, error, refetch - 기존 API 호환
+ */
 export function useSystemMetrics(refreshInterval: number = POLLING_INTERVALS.SYSTEM_METRICS) {
-  const [data, setData] = useState<SystemMetricsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchMetrics = useCallback(async () => {
-    try {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['system-metrics'],
+    queryFn: async (): Promise<SystemMetricsData> => {
       const res = await fetch('/api/system');
       const json = await res.json();
 
-      if (json.success) {
-        setData(json.data);
-        setError(null);
-      } else {
-        setError(json.error || 'Failed to fetch metrics');
+      if (!json.success) {
+        throw new Error(json.error || 'Failed to fetch metrics');
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Network error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
-  useEffect(() => {
-    fetchMetrics();
+      return json.data;
+    },
+    refetchInterval: refreshInterval > 0 ? refreshInterval : false,
+    staleTime: refreshInterval > 0 ? refreshInterval / 2 : 1000 * 30,
+  });
 
-    if (refreshInterval > 0) {
-      const interval = setInterval(fetchMetrics, refreshInterval);
-      return () => clearInterval(interval);
-    }
-  }, [fetchMetrics, refreshInterval]);
-
-  return { data, loading, error, refetch: fetchMetrics };
+  // 기존 API 형태 유지 (backward compatibility)
+  return {
+    data: data ?? null,
+    loading: isLoading,
+    error: error?.message ?? null,
+    refetch,
+  };
 }
