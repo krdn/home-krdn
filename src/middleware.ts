@@ -25,11 +25,19 @@ function getJwtSecret(): Uint8Array {
 }
 
 /**
- * JWT 토큰을 검증합니다. (Edge Runtime 호환)
- * @param token JWT 토큰 문자열
- * @returns 유효 여부
+ * 토큰 검증 결과 타입
  */
-async function verifyTokenEdge(token: string): Promise<boolean> {
+interface TokenVerifyResult {
+  valid: boolean;
+  role?: string;
+}
+
+/**
+ * JWT 토큰을 검증하고 역할 정보를 반환합니다. (Edge Runtime 호환)
+ * @param token JWT 토큰 문자열
+ * @returns 검증 결과 (유효 여부 + 역할)
+ */
+async function verifyTokenEdge(token: string): Promise<TokenVerifyResult> {
   try {
     const secret = getJwtSecret();
     const { payload } = await jwtVerify(token, secret, {
@@ -37,19 +45,27 @@ async function verifyTokenEdge(token: string): Promise<boolean> {
     });
 
     // 필수 필드 확인
-    return (
+    const isValid =
       typeof payload.userId === "string" &&
       typeof payload.username === "string" &&
-      typeof payload.role === "string"
-    );
+      typeof payload.role === "string";
+
+    if (isValid) {
+      return {
+        valid: true,
+        role: payload.role as string,
+      };
+    }
+
+    return { valid: false };
   } catch {
-    return false;
+    return { valid: false };
   }
 }
 
 /**
  * 미들웨어 함수
- * 보호된 경로에 대한 인증 검사를 수행합니다.
+ * 보호된 경로에 대한 인증 및 역할 검사를 수행합니다.
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -57,8 +73,11 @@ export async function middleware(request: NextRequest) {
   // 쿠키에서 토큰 추출
   const token = request.cookies.get(COOKIE_NAME)?.value;
 
+  // 토큰 검증
+  const result = token ? await verifyTokenEdge(token) : { valid: false };
+
   // 토큰이 없거나 유효하지 않은 경우
-  if (!token || !(await verifyTokenEdge(token))) {
+  if (!result.valid) {
     // API 요청인 경우: 401 JSON 응답
     if (pathname.startsWith("/api/")) {
       return NextResponse.json(
@@ -71,6 +90,15 @@ export async function middleware(request: NextRequest) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // 관리자 전용 라우트 역할 검사
+  // JWT의 role은 lowercase (admin, user, viewer)
+  if (pathname.startsWith("/api/admin/") && result.role !== "admin") {
+    return NextResponse.json(
+      { error: "관리자 권한이 필요합니다", code: "FORBIDDEN" },
+      { status: 403 }
+    );
   }
 
   // 인증 성공: 요청 통과
@@ -87,6 +115,8 @@ export const config = {
     "/api/system/:path*",
     // Docker 관리 API
     "/api/docker/:path*",
+    // 관리자 API (ADMIN 역할 필요)
+    "/api/admin/:path*",
     // 관리자 페이지
     "/admin/:path*",
   ],
