@@ -55,12 +55,12 @@ Plans:
 **Depends on**: Phase 2
 **Research**: Likely (test framework setup for Next.js 16)
 **Research topics**: Jest vs Vitest for Next.js 16, React Testing Library, API route testing
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: 테스트 환경 설정 (Vitest/Jest)
-- [ ] 03-02: 유틸리티 및 서비스 레이어 테스트
-- [ ] 03-03: API 엔드포인트 통합 테스트
+- [ ] 03-01: Vitest 테스트 환경 설정
+- [ ] 03-02: 유틸리티 함수 단위 테스트 (utils.ts, system.ts)
+- [ ] 03-03: API 엔드포인트 통합 테스트 (system, auth/session)
 
 ### Phase 4: UI/UX Enhancement
 **Goal**: 모던하고 직관적인 사용자 인터페이스 구현
@@ -128,7 +128,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Security Foundation | 3/3 | Complete | 2026-01-14 |
 | 2. Code Quality | 3/3 | Complete | 2026-01-14 |
-| 3. Testing Infrastructure | 0/3 | Not started | - |
+| 3. Testing Infrastructure | 0/3 | Planned | - |
 | 4. UI/UX Enhancement | 0/3 | Not started | - |
 | 5. Monitoring Upgrade | 0/3 | Not started | - |
 | 6. Performance Optimization | 0/3 | Not started | - |
