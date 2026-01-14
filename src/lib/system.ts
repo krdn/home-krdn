@@ -7,6 +7,125 @@ import { execSync } from 'child_process';
 import * as os from 'os';
 import { formatUptime } from './utils';
 
+// ==========================================
+// 순수 함수들 (테스트 가능)
+// ==========================================
+
+/**
+ * /proc/stat CPU 라인 파싱 결과 타입
+ */
+export interface CpuStatValues {
+  user: number;
+  nice: number;
+  system: number;
+  idle: number;
+  iowait: number;
+  irq: number;
+  softirq: number;
+}
+
+/**
+ * /proc/stat 내용을 파싱합니다. (순수 함수)
+ * @param content /proc/stat 파일 내용
+ * @returns 파싱된 CPU 값들 또는 null
+ */
+export function parseProcStat(content: string): CpuStatValues | null {
+  if (!content || typeof content !== 'string') {
+    return null;
+  }
+
+  const lines = content.split('\n');
+  const cpuLine = lines.find(line => line.startsWith('cpu '));
+
+  if (!cpuLine) {
+    return null;
+  }
+
+  const values = cpuLine.split(/\s+/).slice(1, 8).map(Number);
+
+  if (values.length < 7 || values.some(isNaN)) {
+    return null;
+  }
+
+  const [user, nice, system, idle, iowait, irq, softirq] = values;
+
+  return { user, nice, system, idle, iowait, irq, softirq };
+}
+
+/**
+ * CPU 사용률을 계산합니다. (순수 함수)
+ * @param stats CpuStatValues 객체
+ * @returns CPU 사용률 (0-100)
+ */
+export function calculateCpuPercent(stats: CpuStatValues): number {
+  const { user, nice, system, idle, iowait, irq, softirq } = stats;
+  const total = user + nice + system + idle + iowait + irq + softirq;
+
+  if (total === 0) {
+    return 0;
+  }
+
+  const active = total - idle - iowait;
+  return Math.round((active / total) * 100);
+}
+
+/**
+ * /proc/meminfo 파싱 결과 타입
+ */
+export interface MeminfoValues {
+  memTotal: number;      // bytes
+  memFree: number;       // bytes
+  memAvailable: number;  // bytes
+}
+
+/**
+ * /proc/meminfo 내용을 파싱합니다. (순수 함수)
+ * @param content /proc/meminfo 파일 내용
+ * @returns 파싱된 메모리 값들 또는 null
+ */
+export function parseProcMeminfo(content: string): MeminfoValues | null {
+  if (!content || typeof content !== 'string') {
+    return null;
+  }
+
+  const lines = content.split('\n');
+  const values: Partial<MeminfoValues> = {};
+
+  for (const line of lines) {
+    const match = line.match(/^(\w+):\s+(\d+)\s+kB/);
+    if (match) {
+      const [, key, value] = match;
+      const bytes = parseInt(value, 10) * 1024; // KB -> bytes
+
+      switch (key) {
+        case 'MemTotal':
+          values.memTotal = bytes;
+          break;
+        case 'MemFree':
+          values.memFree = bytes;
+          break;
+        case 'MemAvailable':
+          values.memAvailable = bytes;
+          break;
+      }
+    }
+  }
+
+  if (values.memTotal === undefined || values.memFree === undefined) {
+    return null;
+  }
+
+  return {
+    memTotal: values.memTotal,
+    memFree: values.memFree,
+    memAvailable: values.memAvailable ?? values.memFree, // memAvailable이 없으면 memFree 사용
+  };
+}
+
+// ==========================================
+// 타입 정의
+// ==========================================
+
 export interface SystemMetrics {
   cpu: {
     usage: number;        // 0-100
