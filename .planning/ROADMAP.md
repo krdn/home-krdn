@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Depends on**: Nothing (first phase)
 **Research**: Likely (authentication system, technology choice)
 **Research topics**: NextAuth vs custom JWT, middleware patterns, API route protection
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: 인증 아키텍처 설계 및 미들웨어 구현
-- [ ] 01-02: API 라우트 보호 적용
-- [ ] 01-03: 로그인/인증 UI 구현
+- [ ] 01-01: 인증 인프라 설정 (jose, bcryptjs, JWT 유틸리티)
+- [ ] 01-02: 인증 API 엔드포인트 (login, session, logout)
+- [ ] 01-03: API 보호 미들웨어
 
 ### Phase 2: Code Quality
 **Goal**: 중복 코드 제거, 타입 안전성 강화, 일관된 코드 스타일
