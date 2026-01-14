@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   Layers,
+  FolderKanban,
   Settings,
   Menu,
   X,
@@ -17,6 +18,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 const navigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Services", href: "/services", icon: Layers },
+  { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Admin", href: "/admin", icon: Settings },
 ];
 
