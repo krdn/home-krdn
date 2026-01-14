@@ -90,14 +90,14 @@ Plans:
 Plans:
 - [x] 13-01: Slack 웹훅 알림 채널 (Block Kit 메시지, 설정 UI, 훅 통합)
 
-### Phase 14: Project Admin CRUD
+### Phase 14: Project Admin CRUD ✅
 **Goal**: 프로젝트 생성/수정/삭제 기능 (Admin 전용)
 **Depends on**: Phase 9
 **Research**: Unlikely (CRUD 패턴 - 기존 API 패턴 활용)
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
 
 Plans:
-- [ ] 14-01: TBD
+- [x] 14-01: Project Admin CRUD (JSON 저장소, REST API, Admin UI)
 
 ### Phase 15: Admin Dashboard
 **Goal**: 관리자 대시보드 UI (프로젝트 관리, 알림 설정 통합)
@@ -130,6 +130,6 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 11. Real-time Containers | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 12. Email Notification | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 13. Slack Integration | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
-| 14. Project Admin CRUD | v1.1 | 0/? | Not started | - |
+| 14. Project Admin CRUD | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 15. Admin Dashboard | v1.1 | 0/? | Not started | - |
 | 16. E2E Testing | v1.1 | 0/? | Not started | - |

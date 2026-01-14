@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 13 of 16 (Slack Integration) ✅ Complete
+Phase: 14 of 16 (Project Admin CRUD) ✅ Complete
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-15 — Completed 13-01-PLAN.md
+Last activity: 2026-01-15 — Completed 14-01-PLAN.md
 
-Progress: █████░░░░░ 37% (6/16 plans estimated)
+Progress: ██████░░░░ 44% (7/16 plans estimated)
 
 ## Performance Metrics
 
@@ -31,7 +31,7 @@ Progress: █████░░░░░ 37% (6/16 plans estimated)
 | 11. Real-time Containers | 1 | 1 | ✅ Complete |
 | 12. Email Notification | 1 | 1 | ✅ Complete |
 | 13. Slack Integration | 1 | 1 | ✅ Complete |
-| 14. Project Admin CRUD | ? | 0 | Not started |
+| 14. Project Admin CRUD | 1 | 1 | ✅ Complete |
 | 15. Admin Dashboard | ? | 0 | Not started |
 | 16. E2E Testing | ? | 0 | Not started |
 
@@ -65,6 +65,9 @@ Recent decisions affecting current work:
 - Native fetch for Slack webhook (SDK 불필요) (13-01)
 - Slack Block Kit 메시지 포맷 (시각적으로 풍부한 알림) (13-01)
 - Webhook URL 클라이언트 저장 (서버 환경변수 불필요) (13-01)
+- JSON 파일 저장 방식 (DB 대신 심플한 파일 기반) (14-01)
+- route-level 인증 체크 (GET public, 쓰기만 인증) (14-01)
+- Radix Dialog 인라인 폼 (별도 페이지 없이 빠른 CRUD) (14-01)
 
 ### Deferred Issues
 
@@ -86,5 +89,5 @@ None — v1.0 MVP completed successfully.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Phase 13 complete, ready for Phase 14
+Stopped at: Phase 14 complete, ready for Phase 15
 Resume file: None
