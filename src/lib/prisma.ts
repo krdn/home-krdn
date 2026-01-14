@@ -8,8 +8,7 @@
  */
 
 import { PrismaClient } from '@prisma/client'
-import { PrismaBetterSQLite } from '@prisma/adapter-better-sqlite3'
-import Database from 'better-sqlite3'
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import path from 'node:path'
 
 // Global 타입 확장
@@ -30,11 +29,8 @@ function createPrismaClient(): PrismaClient {
     ? dbPath
     : path.join(process.cwd(), dbPath)
 
-  // SQLite 데이터베이스 연결
-  const sqlite = new Database(absolutePath)
-
-  // Prisma 어댑터 생성
-  const adapter = new PrismaBetterSQLite(sqlite)
+  // Prisma 7 어댑터 생성 (config 객체를 받음)
+  const adapter = new PrismaBetterSqlite3({ url: absolutePath })
 
   // PrismaClient 생성
   return new PrismaClient({

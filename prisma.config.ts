@@ -7,6 +7,12 @@ const dbPath = process.env.DATABASE_URL || 'file:./prisma/dev.db'
 
 export default defineConfig({
   schema: path.join(__dirname, 'prisma/schema.prisma'),
+  datasource: {
+    url: dbPath,
+  },
+  migrations: {
+    seed: 'npx tsx prisma/seed.ts',
+  },
   migrate: {
     adapter: async () => {
       const { PrismaBetterSQLite } = await import('@prisma/adapter-better-sqlite3')
