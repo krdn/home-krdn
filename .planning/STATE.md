@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 17 of 24 (Database Infrastructure)
-Plan: 2 of 2 complete
+Phase: 18 of 24 (Auth System Extension)
+Plan: 3 of 3 complete
 Status: Phase complete
-Last activity: 2026-01-15 — Completed Phase 17 (17-01, 17-02)
+Last activity: 2026-01-15 — Completed Phase 18 (18-01, 18-02, 18-03)
 
-Progress: █░░░░░░░░░ 12.5% (v2.0 Phase 17 complete)
+Progress: ██░░░░░░░░ 25% (v2.0 Phase 18 complete)
 
 ## Performance Metrics
 
@@ -43,6 +43,8 @@ Key technology decisions for v2.0:
 - UserSettings 1:1 분리 (대시보드 커스터마이징 준비)
 - 싱글톤 PrismaClient 패턴 (Next.js hot reload 대응)
 - authenticateUser vs authenticateUserFromDB 병행 운영 (점진적 전환)
+- 이중 역할 검사: 미들웨어(빠른 거부) + API(상세 에러)
+- JWT role lowercase 형식 유지 (Prisma enum과 서비스 레이어에서 변환)
 
 ### Constraints (v2.0)
 
@@ -71,6 +73,6 @@ None — Starting fresh milestone v2.0.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 17 Database Infrastructure
+Stopped at: Completed Phase 18 Auth System Extension
 Resume file: None
-Next action: `/gsd:plan-phase 18` (Auth System Extension)
+Next action: `/gsd:plan-phase 19` (RBAC Access Control)
