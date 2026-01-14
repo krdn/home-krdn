@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { AlertRulesPanel } from '@/components/admin/AlertRulesPanel';
 import { AlertRuleForm } from '@/components/admin/AlertRuleForm';
 import { AlertHistoryPanel } from '@/components/admin/AlertHistoryPanel';
+import { EmailSettings } from '@/components/admin/EmailSettings';
 import { Bell } from 'lucide-react';
 import type { AlertRule } from '@/types/alert';
 
@@ -59,6 +60,9 @@ export default function AlertsPage() {
         {/* 알림 히스토리 패널 */}
         <AlertHistoryPanel />
       </div>
+
+      {/* 이메일 알림 설정 */}
+      <EmailSettings />
 
       {/* 규칙 추가/수정 폼 */}
       <AlertRuleForm
