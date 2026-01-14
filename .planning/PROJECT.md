@@ -2,7 +2,7 @@
 
 ## What This Is
 
-홈서버의 모든 서비스, 컨테이너, 시스템 리소스를 한눈에 파악하고 관리할 수 있는 통합 대시보드입니다. Next.js 16 기반으로 구축되어 실시간 모니터링과 Docker 컨테이너 제어 기능을 제공합니다.
+홈서버의 모든 서비스, 컨테이너, 시스템 리소스를 한눈에 파악하고 관리할 수 있는 통합 대시보드입니다. Next.js 16 기반으로 구축되어 WebSocket 실시간 모니터링, Docker 컨테이너 제어, 다중 채널 알림(Toast/이메일/Slack) 기능을 제공합니다.
 
 ## Core Value
 
@@ -42,42 +42,61 @@
 - ✓ 프로젝트 카드/상세 페이지 UI — Phase 8
 - ✓ Next.js Image 최적화 (shimmer, fallback) — Phase 8
 
+**v1.1 Enhancement (신규 구현)**
+- ✓ WebSocket 서버/클라이언트 인프라 (ws + next-ws) — Phase 9
+- ✓ WebSocket 재연결 + heartbeat 전략 — Phase 9
+- ✓ 실시간 메트릭 스트리밍 (폴링 대체) — Phase 10
+- ✓ 실시간 컨테이너 상태 Push — Phase 11
+- ✓ 이메일 알림 채널 (Resend API) — Phase 12
+- ✓ Slack 웹훅 알림 (Block Kit 메시지) — Phase 13
+- ✓ 프로젝트 Admin CRUD (JSON 저장소) — Phase 14
+- ✓ Admin Dashboard UI — Phase 15
+- ✓ Playwright E2E 테스트 — Phase 16
+
 ### Active
 
 <!-- 다음 버전 빌드 목표 -->
 
-- [ ] WebSocket 실시간 업데이트 (폴링 대체)
-- [ ] 이메일/Slack 알림 채널 추가
-- [ ] 프로젝트 관리 CRUD (Admin 페이지)
 - [ ] 멀티 유저 지원
-- [ ] E2E 테스트 (Playwright)
+- [ ] PWA 오프라인 지원
+- [ ] 대시보드 커스터마이징 (위젯 배치)
 
 ### Out of Scope
 
 <!-- 명시적 경계 -->
 
 - 모바일 네이티브 앱 (React Native)
-- Kubernetes 지원
+- Kubernetes 지원 (별도 도구 사용)
 - 외부 클라우드 서비스 통합
 
 ## Context
 
-### 기술 스택 (v1.0)
+### 기술 스택 (v1.1)
 
 - **Framework**: Next.js 16.1.1, React 19.2.3
 - **Language**: TypeScript 5.x
 - **Styling**: Tailwind CSS 4, Framer Motion
 - **State**: Zustand, TanStack Query
-- **Testing**: Vitest
+- **Testing**: Vitest, Playwright
 - **Charts**: Recharts
 - **Validation**: Zod
 - **Auth**: jose (JWT), bcryptjs
+- **Real-time**: ws, next-ws
+- **Notifications**: Resend API, Slack Webhook
 
 ### 아키텍처
 
 - **레이어 구조**: Presentation → API → Service → Type
 - **Docker 통합**: Unix 소켓 기반 직접 통신
+- **WebSocket**: 양방향 실시간 통신 (메트릭, 컨테이너)
 - **파일 구조**: Feature-based 컴포넌트 + 중앙화된 설정
+
+### 현재 상태 (v1.1 완료)
+
+- **코드베이스**: 15,718 lines TypeScript
+- **테스트**: Vitest 단위/통합 + Playwright E2E
+- **파일 수**: ~140 TypeScript 파일
+- **마일스톤**: v1.0 MVP + v1.1 Enhancement 완료
 
 ## Constraints
 
@@ -94,6 +113,11 @@
 | Zustand 상태 관리 | Redux 대비 간결, 보일러플레이트 최소 | ✅ Validated |
 | Recharts 시각화 | React 네이티브, 커스터마이징 용이 | ✅ Validated |
 | Dynamic Import | 초기 로드 시간 단축, 코드 분할 | ✅ Validated |
+| ws + next-ws | Socket.io 대비 경량, Edge 호환 가능성 | ✅ Validated |
+| Resend API | 개발자 친화적, Edge Runtime 호환 | ✅ Validated |
+| Slack Block Kit | 시각적으로 풍부한 알림, SDK 불필요 | ✅ Validated |
+| JSON 파일 저장 | DB 대비 심플, 소규모 데이터 적합 | ✅ Validated |
+| Playwright E2E | Cypress 대비 빠름, 멀티 브라우저 지원 | ✅ Validated |
 
 ---
-*Last updated: 2026-01-15 after v1.0 MVP completion*
+*Last updated: 2026-01-15 after v1.1 milestone*

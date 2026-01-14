@@ -5,89 +5,63 @@
 See: .planning/PROJECT.md (updated 2026-01-15)
 
 **Core value:** 통합 모니터링 허브 — 모든 서비스와 컨테이너를 한눈에 파악하고 관리하는 중앙 대시보드
-**Current focus:** Milestone v1.1 Enhancement — ✅ Complete
+**Current focus:** v2.0 계획 대기 중
 
 ## Current Position
 
-Phase: 16 of 16 (E2E Testing) ✅ Complete
-Plan: 1 of 1 in current phase
-Status: **Milestone v1.1 Complete**
-Last activity: 2026-01-15 — Completed 16-01-PLAN.md
+Phase: All 16 phases complete
+Plan: N/A
+Status: **v1.1 Enhancement Shipped**
+Last activity: 2026-01-15 — Completed v1.1 milestone
 
-Progress: ██████████ 100% (9/9 plans in v1.1)
+Progress: ██████████ 100% (v1.0 + v1.1 완료)
 
 ## Performance Metrics
 
 **Velocity:**
 - Milestone v1.0: 24 plans completed in ~60min (parallelized)
-- Current milestone: Not started
+- Milestone v1.1: 9 plans completed in ~7hrs
 
-**By Phase (v1.1):**
+**By Milestone:**
 
-| Phase | Plans | Completed | Status |
-|-------|-------|-----------|--------|
-| 9. WebSocket Infrastructure | 2 | 2 | ✅ Complete |
-| 10. Real-time Metrics | 1 | 1 | ✅ Complete |
-| 11. Real-time Containers | 1 | 1 | ✅ Complete |
-| 12. Email Notification | 1 | 1 | ✅ Complete |
-| 13. Slack Integration | 1 | 1 | ✅ Complete |
-| 14. Project Admin CRUD | 1 | 1 | ✅ Complete |
-| 15. Admin Dashboard | 1 | 1 | ✅ Complete |
-| 16. E2E Testing | 1 | 1 | ✅ Complete |
+| Milestone | Phases | Plans | Status | Completed |
+|-----------|--------|-------|--------|-----------|
+| v1.0 MVP | 1-8 | 24 | ✅ Shipped | 2026-01-15 |
+| v1.1 Enhancement | 9-16 | 9 | ✅ Shipped | 2026-01-15 |
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+Key technology decisions for v1.1:
 
-- jose over jsonwebtoken (Edge Runtime 호환성)
-- bcryptjs for pure JS password hashing
-- 15-minute JWT expiry with httpOnly cookies
-- Zod for runtime type validation (Docker API)
-- Centralized constants in src/config/constants.ts
-- React Query for data fetching
-- Dynamic Import for bundle optimization
-- Zustand persist for alert rules state
-- Radix Toast + Browser Notification API for alerts
-- ws + next-ws for WebSocket (09-01)
-- Zod discriminatedUnion for WebSocket message types (09-01)
-- Exponential backoff for WebSocket reconnection (09-02)
-- 서버 시작 시 무조건 브로드캐스트 (구독자 체크 없이 단순 구현) (10-01)
-- WebSocket fallback to polling 기본 활성화 (10-01)
-- WSContainersData에 image, ports, created 포함 (ContainerData와 동일) (11-01)
-- 컨테이너 액션 후 500ms 지연 뒤 전체 브로드캐스트 (11-01)
-- getLogs는 HTTP API 유지 (로그 대용량으로 WebSocket 비적합) (11-01)
-- Resend API 선택 (개발자 친화적, Edge Runtime 호환) (12-01)
-- Critical 알림만 기본 이메일 발송 (사용자 피로도 고려) (12-01)
-- 인메모리 쿨다운 + 일일 발송 제한 50건 (안전장치) (12-01)
-- Native fetch for Slack webhook (SDK 불필요) (13-01)
-- Slack Block Kit 메시지 포맷 (시각적으로 풍부한 알림) (13-01)
-- Webhook URL 클라이언트 저장 (서버 환경변수 불필요) (13-01)
-- JSON 파일 저장 방식 (DB 대신 심플한 파일 기반) (14-01)
-- route-level 인증 체크 (GET public, 쓰기만 인증) (14-01)
-- Radix Dialog 인라인 폼 (별도 페이지 없이 빠른 CRUD) (14-01)
+- ws + next-ws for WebSocket (Socket.io 대비 경량)
+- Resend API for email (Edge Runtime 호환)
+- Slack Block Kit for rich notifications
+- JSON file storage for projects (DB 불필요)
+- Playwright for E2E testing (빠른 실행, 멀티 브라우저)
 
 ### Deferred Issues
 
-None yet.
+None.
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns Carried Forward
 
-None — v1.0 MVP completed successfully.
+None — v1.1 Enhancement completed successfully.
 
 ### Roadmap Evolution
 
 - v1.0 MVP completed: 8 phases (1-8), shipped 2026-01-15
-- v1.1 Enhancement completed: WebSocket + 외부 알림 + Admin + E2E, 8 phases (9-16), shipped 2026-01-15
+- v1.1 Enhancement completed: 8 phases (9-16), shipped 2026-01-15
+- v2.0 planned: 멀티 유저, PWA 오프라인, 대시보드 커스터마이징
 
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: **v1.1 Milestone Complete** - 모든 Phase 완료
+Stopped at: **v1.1 Milestone Complete** - 아카이브 완료
 Resume file: None
