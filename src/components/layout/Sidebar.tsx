@@ -30,9 +30,9 @@ export function Sidebar() {
         <div className="border-b p-4">
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+            className="group flex items-center gap-2 text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1" />
             Back to Home
           </Link>
         </div>
@@ -50,13 +50,17 @@ export function Sidebar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  // 기본 트랜지션 및 그룹 호버
+                  "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    // 액티브 상태 강조 (shadow 추가)
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    // 호버 효과 강화 (translate-x 추가)
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground hover:translate-x-1"
                 )}
               >
-                <item.icon className="h-4 w-4" />
+                {/* 아이콘 호버 효과 */}
+                <item.icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
                 {item.name}
               </Link>
             );
