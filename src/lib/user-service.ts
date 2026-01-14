@@ -9,7 +9,7 @@
 import prisma from '@/lib/prisma'
 import { z } from 'zod/v4'
 import crypto from 'crypto'
-import type { User, PasswordResetToken } from '@prisma/client'
+import type { User, PasswordResetToken, Role } from '@prisma/client'
 import type { UserRole } from '@/types/auth'
 import { PrismaRoleToLegacy } from '@/types/auth'
 import { hashPassword } from './auth'
@@ -326,4 +326,100 @@ export async function deleteExpiredTokens(): Promise<number> {
   })
 
   return result.count
+}
+
+// ============================================================
+// 역할 관리 관련 함수 (Phase 18)
+// ============================================================
+
+/**
+ * 역할 변경 입력 스키마
+ */
+export const UpdateRoleInputSchema = z.object({
+  role: z.enum(['ADMIN', 'USER', 'VIEWER'], {
+    error: '유효한 역할(ADMIN, USER, VIEWER)을 입력해주세요',
+  }),
+})
+
+export type UpdateRoleInput = z.infer<typeof UpdateRoleInputSchema>
+
+/**
+ * 사용자 정보 (passwordHash 제외)
+ */
+export type UserWithoutPassword = Omit<User, 'passwordHash'>
+
+/**
+ * 사용자 역할을 변경합니다.
+ *
+ * @param userId 대상 사용자 ID
+ * @param role 새 역할 (ADMIN, USER, VIEWER)
+ * @returns 업데이트된 사용자 정보 (passwordHash 제외)
+ * @throws 사용자가 없으면 Prisma 에러 발생
+ */
+export async function updateUserRole(
+  userId: string,
+  role: Role
+): Promise<UserWithoutPassword> {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { role },
+  })
+
+  // passwordHash 제외하고 반환
+  const { passwordHash: _, ...userWithoutPassword } = user
+  return userWithoutPassword
+}
+
+/**
+ * 사용자 목록 조회 옵션
+ */
+export interface GetAllUsersOptions {
+  skip?: number
+  take?: number
+  role?: Role
+}
+
+/**
+ * 사용자 목록을 조회합니다.
+ * 페이지네이션과 역할 필터링을 지원합니다.
+ *
+ * @param options 조회 옵션 (skip, take, role)
+ * @returns 사용자 목록 (passwordHash 제외)
+ */
+export async function getAllUsers(
+  options?: GetAllUsersOptions
+): Promise<UserWithoutPassword[]> {
+  const { skip, take, role } = options ?? {}
+
+  const users = await prisma.user.findMany({
+    where: role ? { role } : undefined,
+    skip,
+    take,
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      role: true,
+      displayName: true,
+      avatarUrl: true,
+      createdAt: true,
+      updatedAt: true,
+      lastLoginAt: true,
+    },
+  })
+
+  return users
+}
+
+/**
+ * 특정 역할을 가진 사용자 수를 조회합니다.
+ *
+ * @param role 역할
+ * @returns 해당 역할의 사용자 수
+ */
+export async function countUsersByRole(role: Role): Promise<number> {
+  return prisma.user.count({
+    where: { role },
+  })
 }
