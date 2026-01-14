@@ -35,7 +35,23 @@ export const AUTH_CONFIG = {
   TOKEN_REVALIDATE_INTERVAL: 3600,
 } as const;
 
+/**
+ * 알림 시스템 설정
+ * 알림 엔진에서 사용되는 상수입니다.
+ */
+export const ALERT_CONFIG = {
+  /** 기본 쿨다운 시간 (초) - 5분 */
+  DEFAULT_COOLDOWN: 300,
+  /** 최대 저장 알림 개수 */
+  MAX_ALERTS: 100,
+  /** 알림 Toast 기본 표시 시간 (ms) */
+  TOAST_DURATION: 5000,
+  /** Critical 알림 Toast 표시 시간 (ms) */
+  TOAST_DURATION_CRITICAL: 10000,
+} as const;
+
 // 타입 추론을 위한 타입 정의
 export type PollingIntervalsType = typeof POLLING_INTERVALS;
 export type DockerConfigType = typeof DOCKER_CONFIG;
 export type AuthConfigType = typeof AUTH_CONFIG;
+export type AlertConfigType = typeof ALERT_CONFIG;
