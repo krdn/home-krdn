@@ -5,6 +5,7 @@ import { AlertRulesPanel } from '@/components/admin/AlertRulesPanel';
 import { AlertRuleForm } from '@/components/admin/AlertRuleForm';
 import { AlertHistoryPanel } from '@/components/admin/AlertHistoryPanel';
 import { EmailSettings } from '@/components/admin/EmailSettings';
+import { SlackSettings } from '@/components/admin/SlackSettings';
 import { Bell } from 'lucide-react';
 import type { AlertRule } from '@/types/alert';
 
@@ -61,8 +62,11 @@ export default function AlertsPage() {
         <AlertHistoryPanel />
       </div>
 
-      {/* 이메일 알림 설정 */}
-      <EmailSettings />
+      {/* 알림 채널 설정 */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <EmailSettings />
+        <SlackSettings />
+      </div>
 
       {/* 규칙 추가/수정 폼 */}
       <AlertRuleForm
