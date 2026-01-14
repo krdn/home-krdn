@@ -84,6 +84,19 @@ export const EMAIL_CONFIG = {
   SUBJECT_PREFIX: '[Home-KRDN]',
 } as const;
 
+/**
+ * Slack 알림 설정
+ * Slack Webhook을 통한 알림 발송 관련 상수입니다.
+ */
+export const SLACK_CONFIG = {
+  /** 같은 규칙 Slack 메시지 쿨다운 시간 (분) - 기본: 30분 */
+  DEFAULT_COOLDOWN_MINUTES: 30,
+  /** 일일 발송 제한 (Slack은 이메일보다 관대) */
+  MAX_DAILY_MESSAGES: 100,
+  /** Webhook URL 형식 검증 패턴 */
+  WEBHOOK_URL_PATTERN: /^https:\/\/hooks\.slack\.com\/services\//,
+} as const;
+
 // 타입 추론을 위한 타입 정의
 export type PollingIntervalsType = typeof POLLING_INTERVALS;
 export type DockerConfigType = typeof DOCKER_CONFIG;
@@ -91,3 +104,4 @@ export type AuthConfigType = typeof AUTH_CONFIG;
 export type AlertConfigType = typeof ALERT_CONFIG;
 export type WebSocketConfigType = typeof WEBSOCKET_CONFIG;
 export type EmailConfigType = typeof EMAIL_CONFIG;
+export type SlackConfigType = typeof SLACK_CONFIG;
