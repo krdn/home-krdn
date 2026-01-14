@@ -123,6 +123,68 @@ export function parseProcMeminfo(content: string): MeminfoValues | null {
 }
 
 // ==========================================
+// 네트워크 메트릭 타입 및 함수
+// ==========================================
+
+/**
+ * 네트워크 인터페이스 정보 타입
+ */
+export interface NetworkInterface {
+  name: string;
+  rxBytes: number;     // 수신 바이트
+  txBytes: number;     // 송신 바이트
+  rxPackets: number;   // 수신 패킷 수
+  txPackets: number;   // 송신 패킷 수
+}
+
+/**
+ * /proc/net/dev 내용을 파싱합니다. (순수 함수)
+ * @param content /proc/net/dev 파일 내용
+ * @returns 파싱된 네트워크 인터페이스 목록
+ */
+export function parseNetDev(content: string): NetworkInterface[] {
+  if (!content || typeof content !== 'string') {
+    return [];
+  }
+
+  const lines = content.split('\n');
+  const interfaces: NetworkInterface[] = [];
+
+  // 처음 2줄은 헤더이므로 skip
+  for (let i = 2; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    // 형식: "interface: rx_bytes rx_packets ... tx_bytes tx_packets ..."
+    const match = line.match(/^([^:]+):\s*(\d+)\s+(\d+)\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+)\s+(\d+)/);
+    if (match) {
+      const [, name, rxBytes, rxPackets, txBytes, txPackets] = match;
+      interfaces.push({
+        name: name.trim(),
+        rxBytes: parseInt(rxBytes, 10),
+        rxPackets: parseInt(rxPackets, 10),
+        txBytes: parseInt(txBytes, 10),
+        txPackets: parseInt(txPackets, 10),
+      });
+    }
+  }
+
+  return interfaces;
+}
+
+/**
+ * 네트워크 인터페이스 정보를 가져옵니다.
+ */
+function getNetworkInfo(): NetworkInterface[] {
+  try {
+    const content = execSync('cat /proc/net/dev').toString();
+    return parseNetDev(content);
+  } catch {
+    return [];
+  }
+}
+
+// ==========================================
 // 타입 정의
 // ==========================================
 
