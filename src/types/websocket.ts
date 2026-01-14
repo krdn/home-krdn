@@ -88,15 +88,37 @@ export const WSConnectedMessageSchema = z.object({
   timestamp: z.number(),
 });
 
+/**
+ * 확장된 메트릭 데이터 스키마
+ * src/lib/system.ts의 SystemMetrics 구조와 일치
+ */
+export const WSMetricsDataSchema = z.object({
+  cpu: z.object({
+    usage: z.number(),       // 0-100
+    cores: z.number(),
+    loadAvg: z.array(z.number()),  // [1min, 5min, 15min]
+  }),
+  memory: z.object({
+    total: z.number(),       // bytes
+    used: z.number(),        // bytes
+    free: z.number(),        // bytes
+    usage: z.number(),       // 0-100
+  }),
+  disk: z.object({
+    total: z.number(),       // bytes
+    used: z.number(),        // bytes
+    free: z.number(),        // bytes
+    usage: z.number(),       // 0-100
+    path: z.string(),
+  }),
+  uptime: z.number(),        // seconds
+  hostname: z.string(),
+});
+
 /** 메트릭 데이터 메시지 */
 export const WSMetricsMessageSchema = z.object({
   type: z.literal('metrics'),
-  data: z.object({
-    cpu: z.number(),
-    memory: z.number(),
-    disk: z.number(),
-    uptime: z.number(),
-  }),
+  data: WSMetricsDataSchema,
   timestamp: z.number(),
 });
 
@@ -160,6 +182,7 @@ export type WSPingMessage = z.infer<typeof WSPingMessageSchema>;
 export type WSClientMessage = z.infer<typeof WSClientMessageSchema>;
 
 export type WSConnectedMessage = z.infer<typeof WSConnectedMessageSchema>;
+export type WSMetricsData = z.infer<typeof WSMetricsDataSchema>;
 export type WSMetricsMessage = z.infer<typeof WSMetricsMessageSchema>;
 export type WSContainersMessage = z.infer<typeof WSContainersMessageSchema>;
 export type WSContainerAckMessage = z.infer<typeof WSContainerAckMessageSchema>;

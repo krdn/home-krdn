@@ -10,7 +10,9 @@ import {
   type WSClientMessage,
   type WSClientState,
   type WSChannel,
+  type WSMetricsData,
 } from '@/types/websocket';
+import { getSystemMetrics } from '@/lib/system';
 
 // ============================================================
 // 클라이언트 관리
@@ -199,8 +201,13 @@ function handleSubscribe(
   state.subscriptions.add(channel);
   console.log(`[WS] Client ${state.id} subscribed to ${channel}`);
 
-  // 구독 확인 응답은 해당 채널의 첫 데이터 전송으로 대체
-  // interval은 향후 구현에서 사용 예정
+  // 구독 즉시 현재 데이터 전송 (클라이언트가 대기 없이 데이터를 받을 수 있도록)
+  if (channel === 'metrics') {
+    sendCurrentMetrics(ws).catch((err) => {
+      console.error('[WS] Failed to send initial metrics:', err);
+    });
+  }
+  // containers 채널은 Phase 11에서 구현 예정
 }
 
 /**
@@ -280,4 +287,105 @@ export function closeAllConnections(): void {
     ws.close();
   }
   connectedClients.clear();
+}
+
+// ============================================================
+// 메트릭 브로드캐스트
+// ============================================================
+
+/** 메트릭 브로드캐스트 인터벌 ID */
+let metricsBroadcastInterval: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * SystemMetrics를 WSMetricsData로 변환
+ * network, processes, model, platform 필드는 WebSocket에서 제외 (경량화)
+ */
+function transformToWSMetricsData(metrics: Awaited<ReturnType<typeof getSystemMetrics>>): WSMetricsData {
+  return {
+    cpu: {
+      usage: metrics.cpu.usage,
+      cores: metrics.cpu.cores,
+      loadAvg: metrics.cpu.loadAvg,
+    },
+    memory: {
+      total: metrics.memory.total,
+      used: metrics.memory.used,
+      free: metrics.memory.free,
+      usage: metrics.memory.usage,
+    },
+    disk: {
+      total: metrics.disk.total,
+      used: metrics.disk.used,
+      free: metrics.disk.free,
+      usage: metrics.disk.usage,
+      path: metrics.disk.path,
+    },
+    uptime: metrics.uptime,
+    hostname: metrics.hostname,
+  };
+}
+
+/**
+ * 현재 메트릭을 즉시 전송
+ * @param ws 특정 클라이언트에게만 전송 (없으면 전체 채널 브로드캐스트)
+ */
+export async function sendCurrentMetrics(ws?: WebSocket): Promise<void> {
+  try {
+    const metrics = await getSystemMetrics();
+    const wsMetrics = transformToWSMetricsData(metrics);
+    const message: WSServerMessage = {
+      type: 'metrics',
+      data: wsMetrics,
+      timestamp: Date.now(),
+    };
+
+    if (ws) {
+      sendToClient(ws, message);
+    } else {
+      broadcastToChannel('metrics', message);
+    }
+  } catch (error) {
+    console.error('[WS] Failed to send metrics:', error);
+  }
+}
+
+/**
+ * 메트릭 브로드캐스트 시작
+ * @param intervalMs 브로드캐스트 간격 (밀리초)
+ * @returns 정리용 cleanup 함수
+ */
+export function startMetricsBroadcast(intervalMs: number): () => void {
+  // 이미 실행 중이면 기존 인터벌 정리
+  if (metricsBroadcastInterval) {
+    clearInterval(metricsBroadcastInterval);
+  }
+
+  console.log(`[WS] Metrics broadcast started (interval: ${intervalMs}ms)`);
+
+  metricsBroadcastInterval = setInterval(async () => {
+    await sendCurrentMetrics();
+  }, intervalMs);
+
+  // cleanup 함수 반환
+  return () => {
+    stopMetricsBroadcast();
+  };
+}
+
+/**
+ * 메트릭 브로드캐스트 중지
+ */
+export function stopMetricsBroadcast(): void {
+  if (metricsBroadcastInterval) {
+    clearInterval(metricsBroadcastInterval);
+    metricsBroadcastInterval = null;
+    console.log('[WS] Metrics broadcast stopped');
+  }
+}
+
+/**
+ * 메트릭 브로드캐스트 실행 여부 확인
+ */
+export function isMetricsBroadcastRunning(): boolean {
+  return metricsBroadcastInterval !== null;
 }
