@@ -71,9 +71,23 @@ export const WEBSOCKET_CONFIG = {
   CONTAINERS_BROADCAST_INTERVAL: 10000,
 } as const;
 
+/**
+ * 이메일 알림 설정
+ * Resend API를 통한 이메일 발송 관련 상수입니다.
+ */
+export const EMAIL_CONFIG = {
+  /** 같은 규칙 이메일 쿨다운 시간 (분) - 기본: 30분 */
+  DEFAULT_COOLDOWN_MINUTES: 30,
+  /** 일일 발송 제한 (안전장치) */
+  MAX_DAILY_EMAILS: 50,
+  /** 이메일 제목 접두사 */
+  SUBJECT_PREFIX: '[Home-KRDN]',
+} as const;
+
 // 타입 추론을 위한 타입 정의
 export type PollingIntervalsType = typeof POLLING_INTERVALS;
 export type DockerConfigType = typeof DOCKER_CONFIG;
 export type AuthConfigType = typeof AUTH_CONFIG;
 export type AlertConfigType = typeof ALERT_CONFIG;
 export type WebSocketConfigType = typeof WEBSOCKET_CONFIG;
+export type EmailConfigType = typeof EMAIL_CONFIG;
