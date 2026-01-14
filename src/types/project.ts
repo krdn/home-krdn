@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 // 프로젝트 카테고리
 export type ProjectCategory = "web" | "automation" | "ai" | "infra" | "other";
 
@@ -88,3 +90,75 @@ export const STATUS_COLORS: Record<ProjectStatus, string> = {
   archived: "bg-gray-500",
   planned: "bg-yellow-500",
 };
+
+// ========== Zod 스키마 ==========
+
+// 기술 스택 스키마
+const techStackSchema = z.object({
+  name: z.string().min(1, "기술 이름은 필수입니다"),
+  icon: z.string().optional(),
+  url: z.string().url().optional().or(z.literal("")),
+});
+
+// 프로젝트 링크 스키마
+const projectLinkSchema = z.object({
+  type: z.enum(["github", "demo", "docs", "api", "other"]),
+  url: z.string().url("유효한 URL을 입력하세요"),
+  label: z.string().optional(),
+});
+
+// 프로젝트 이미지 스키마
+const projectImageSchema = z.object({
+  src: z.string().min(1, "이미지 경로는 필수입니다"),
+  alt: z.string().min(1, "이미지 설명은 필수입니다"),
+  width: z.number().positive().optional(),
+  height: z.number().positive().optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+// 프로젝트 생성 스키마 (id 제외)
+export const createProjectSchema = z.object({
+  slug: z
+    .string()
+    .min(1, "슬러그는 필수입니다")
+    .regex(/^[a-z0-9-]+$/, "슬러그는 소문자, 숫자, 하이픈만 허용됩니다"),
+  name: z.string().min(1, "프로젝트 이름은 필수입니다"),
+  description: z.string().min(1, "설명은 필수입니다"),
+  longDescription: z.string().optional(),
+  category: z.enum(["web", "automation", "ai", "infra", "other"]),
+  status: z.enum(["active", "completed", "archived", "planned"]),
+  techStack: z.array(techStackSchema).default([]),
+  links: z.array(projectLinkSchema).default([]),
+  images: z.array(projectImageSchema).default([]),
+  features: z.array(z.string()).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  featured: z.boolean().optional().default(false),
+  order: z.number().optional(),
+});
+
+// 프로젝트 수정 스키마 (모든 필드 optional)
+export const updateProjectSchema = z.object({
+  slug: z
+    .string()
+    .min(1, "슬러그는 필수입니다")
+    .regex(/^[a-z0-9-]+$/, "슬러그는 소문자, 숫자, 하이픈만 허용됩니다")
+    .optional(),
+  name: z.string().min(1, "프로젝트 이름은 필수입니다").optional(),
+  description: z.string().min(1, "설명은 필수입니다").optional(),
+  longDescription: z.string().optional(),
+  category: z.enum(["web", "automation", "ai", "infra", "other"]).optional(),
+  status: z.enum(["active", "completed", "archived", "planned"]).optional(),
+  techStack: z.array(techStackSchema).optional(),
+  links: z.array(projectLinkSchema).optional(),
+  images: z.array(projectImageSchema).optional(),
+  features: z.array(z.string()).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  featured: z.boolean().optional(),
+  order: z.number().optional(),
+});
+
+// 입력 타입 추론
+export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
