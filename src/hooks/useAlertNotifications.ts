@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useSystemMetrics } from './useSystemMetrics';
 import { useAlertStore } from '@/stores/alertStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { useToast } from '@/components/providers/ToastProvider';
 import { evaluateMetrics } from '@/lib/alertEngine';
 import type { NewAlert } from '@/types/alert';
@@ -53,11 +54,49 @@ function showBrowserNotification(alert: NewAlert): void {
 }
 
 /**
+ * 이메일 알림 발송
+ * @param alert 알림 데이터
+ * @param recipientEmail 수신자 이메일
+ */
+async function sendAlertEmail(
+  alert: NewAlert,
+  recipientEmail: string
+): Promise<void> {
+  try {
+    const response = await fetch('/api/notifications/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: recipientEmail,
+        subject: `${alert.severity.toUpperCase()}: ${alert.ruleName}`,
+        html: `
+          <h2>${alert.ruleName}</h2>
+          <p>${alert.message}</p>
+          <p><strong>심각도:</strong> ${alert.severity}</p>
+          <p><strong>현재 값:</strong> ${alert.value.toFixed(1)}%</p>
+          <p><strong>임계값:</strong> ${alert.threshold}%</p>
+          <p><small>발생 시각: ${new Date().toLocaleString('ko-KR')}</small></p>
+        `,
+        ruleId: alert.ruleId,
+      }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      console.warn('[Alert Email] Failed:', data.error);
+    }
+  } catch (error) {
+    console.error('[Alert Email] Error:', error);
+  }
+}
+
+/**
  * 알림 통합 훅
  *
  * 시스템 메트릭을 감지하고 알림 규칙에 따라 알림을 발생시킵니다.
  * - Toast 알림 표시
  * - Critical 알림 시 브라우저 알림 표시
+ * - 이메일 알림 발송 (설정 활성화 시)
  *
  * @example
  * ```tsx
@@ -70,6 +109,7 @@ function showBrowserNotification(alert: NewAlert): void {
 export function useAlertNotifications(): void {
   const { data: metrics } = useSystemMetrics();
   const { rules, addAlert } = useAlertStore();
+  const { emailConfig } = useNotificationStore();
   const { showToast } = useToast();
   const permissionRequested = useRef(false);
 
@@ -105,6 +145,16 @@ export function useAlertNotifications(): void {
       if (alertData.severity === 'critical') {
         showBrowserNotification(alertData);
       }
+
+      // 이메일 알림 발송 (설정 활성화 시)
+      if (
+        emailConfig.enabled &&
+        emailConfig.recipientEmail &&
+        (!emailConfig.sendOnCriticalOnly || alertData.severity === 'critical')
+      ) {
+        // 비동기로 처리 (UI 블로킹 방지)
+        sendAlertEmail(alertData, emailConfig.recipientEmail);
+      }
     }
-  }, [metrics, rules, addAlert, showToast]);
+  }, [metrics, rules, addAlert, showToast, emailConfig]);
 }
