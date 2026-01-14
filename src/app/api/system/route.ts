@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getSystemMetrics, formatBytes, formatUptime } from '@/lib/system';
+import { getSystemMetrics } from '@/lib/system';
+import { formatBytes, formatUptime } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
