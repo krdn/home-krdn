@@ -119,11 +119,13 @@ Plans:
 
 **Goal**: 권한 기반 접근 제어 미들웨어 및 라우트 보호 구현
 **Depends on**: Phase 18
-**Research**: Unlikely (내부 패턴 적용)
-**Plans**: TBD
+**Research**: Level 0 - Skip (기존 패턴 확장)
+**Status**: Planned
+**Plans**: 2/2 planned
 
 Plans:
-- [ ] 19-01: TBD
+- [ ] 19-01: RBAC 권한 매트릭스 및 미들웨어 통합
+- [ ] 19-02: API 라우트 보호 및 프론트엔드 역할 기반 UI
 
 #### Phase 20: User Dashboard Settings
 
@@ -203,7 +205,7 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 16. E2E Testing | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 17. Database Infrastructure | v2.0 | 2/2 | ✅ Complete | 2026-01-15 |
 | 18. Auth System Extension | v2.0 | 3/3 | ✅ Complete | 2026-01-15 |
-| 19. RBAC Access Control | v2.0 | 0/? | Not started | - |
+| 19. RBAC Access Control | v2.0 | 0/2 | Planned | - |
 | 20. User Dashboard Settings | v2.0 | 0/? | Not started | - |
 | 21. Team Features | v2.0 | 0/? | Not started | - |
 | 22. PWA Foundation | v2.0 | 0/? | Not started | - |
