@@ -3,6 +3,23 @@
 import { useState, useEffect, useCallback } from 'react';
 import { POLLING_INTERVALS } from '@/config/constants';
 
+export interface NetworkInterfaceData {
+  name: string;
+  rxBytes: number;
+  txBytes: number;
+  rxPackets: number;
+  txPackets: number;
+  rxFormatted: string;
+  txFormatted: string;
+}
+
+export interface ProcessData {
+  pid: number;
+  name: string;
+  cpu: number;
+  memory: number;
+}
+
 export interface SystemMetricsData {
   cpu: {
     usage: number;
@@ -25,6 +42,8 @@ export interface SystemMetricsData {
     usage: number;
     path: string;
   };
+  network: NetworkInterfaceData[];
+  processes: ProcessData[];
   uptime: string;
   uptimeSeconds: number;
   hostname: string;

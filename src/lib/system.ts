@@ -277,6 +277,8 @@ export interface SystemMetrics {
     usage: number;        // 0-100
     path: string;
   };
+  network: NetworkInterface[];  // 네트워크 인터페이스 목록
+  processes: ProcessInfo[];     // 상위 프로세스 목록
   uptime: number;         // seconds
   hostname: string;
   platform: string;
@@ -371,6 +373,8 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
     },
     memory: getMemoryInfo(),
     disk: getDiskInfo('/'),
+    network: getNetworkInfo(),
+    processes: getTopProcesses(5),
     uptime: os.uptime(),
     hostname: os.hostname(),
     platform: `${os.type()} ${os.release()}`,
