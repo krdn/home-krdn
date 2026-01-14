@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: 인증 인프라 설정 (jose, bcryptjs, JWT 유틸리티)
+- [x] 01-01: 인증 인프라 설정 (jose, bcryptjs, JWT 유틸리티) ✓
 - [ ] 01-02: 인증 API 엔드포인트 (login, session, logout)
 - [ ] 01-03: API 보호 미들웨어
 
@@ -126,7 +126,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Security Foundation | 0/3 | Not started | - |
+| 1. Security Foundation | 1/3 | In progress | - |
 | 2. Code Quality | 0/3 | Not started | - |
 | 3. Testing Infrastructure | 0/3 | Not started | - |
 | 4. UI/UX Enhancement | 0/3 | Not started | - |
