@@ -108,6 +108,7 @@ function ProjectImageComponent({
       <div
         className={cn(
           "relative overflow-hidden bg-muted",
+          fill && "absolute inset-0", // fill 모드일 때 부모 크기 채우기
           aspectRatio && `aspect-[${aspectRatio}]`,
           className
         )}
@@ -133,6 +134,7 @@ function ProjectImageComponent({
   const containerStyle = !fill && !aspectRatio ? { width, height } : undefined;
   const containerClasses = cn(
     "relative overflow-hidden",
+    fill && "absolute inset-0", // fill 모드일 때 부모 크기 채우기
     aspectRatio && `aspect-[${aspectRatio}]`,
     isLoading && showShimmer && "animate-pulse bg-muted",
     className

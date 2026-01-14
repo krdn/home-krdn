@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ExternalLink, Github, FileText, Globe } from "lucide-react";
 import { ProjectImage } from "./ProjectImage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -57,6 +57,8 @@ const techColors: Record<string, string> = {
 };
 
 function ProjectCardComponent({ project, showControls = true }: ProjectCardProps) {
+  const router = useRouter();
+
   // 프라이머리 이미지 찾기
   const primaryImage =
     project.images.find((img) => img.isPrimary) || project.images[0];
@@ -65,21 +67,26 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
   const githubLink = project.links.find((link) => link.type === "github");
   const demoLink = project.links.find((link) => link.type === "demo");
 
+  // 카드 클릭 시 상세 페이지로 이동
+  const handleCardClick = () => {
+    router.push(`/projects/${project.slug}`);
+  };
+
   // 외부 링크 클릭 시 이벤트 버블링 방지
   const handleExternalClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
 
   return (
-    <Link href={`/projects/${project.slug}`} className="block h-full">
-      <Card
-        hover
-        className={cn(
-          "flex flex-col h-full overflow-hidden cursor-pointer",
-          // featured 프로젝트 테두리 강조
-          project.featured && "ring-2 ring-primary/50"
-        )}
-      >
+    <Card
+      hover
+      onClick={handleCardClick}
+      className={cn(
+        "flex flex-col h-full overflow-hidden cursor-pointer",
+        // featured 프로젝트 테두리 강조
+        project.featured && "ring-2 ring-primary/50"
+      )}
+    >
       {/* 썸네일 이미지 */}
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         <ProjectImage
@@ -196,8 +203,7 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
           </div>
         )}
       </CardContent>
-      </Card>
-    </Link>
+    </Card>
   );
 }
 
