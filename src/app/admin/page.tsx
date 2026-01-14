@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/services/StatusBadge';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { ContainerStats } from '@/components/admin/ContainerStats';
+import { MetricsCharts } from '@/components/admin/MetricsCharts';
 import { getRunningServices } from '@/config/services';
 
 /**
@@ -91,7 +92,12 @@ export default function AdminDashboardPage() {
         <DashboardStats />
       </section>
 
-      {/* Section 2: Containers + Running Services - Secondary (2열) */}
+      {/* Section 2: System Metrics History Charts */}
+      <section aria-label="System Metrics Charts">
+        <MetricsCharts />
+      </section>
+
+      {/* Section 3: Containers + Running Services - Secondary (2열) */}
       <section
         aria-label="Containers and Services"
         className="grid gap-6 lg:grid-cols-2"
@@ -100,7 +106,7 @@ export default function AdminDashboardPage() {
         <RunningServicesCard />
       </section>
 
-      {/* Section 3: Quick Links - Tertiary (3열) */}
+      {/* Section 4: Quick Links - Tertiary (3열) */}
       <section aria-label="Quick Access">
         <h2 className="mb-4 text-lg font-semibold">Quick Access</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

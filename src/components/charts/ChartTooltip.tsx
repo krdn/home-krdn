@@ -1,12 +1,28 @@
 'use client';
 
-import { TooltipProps } from 'recharts';
-import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+/**
+ * Recharts 툴팁 Payload 타입
+ */
+interface TooltipPayload {
+  value?: number | string;
+  dataKey?: string | number;
+  color?: string;
+  payload?: {
+    timestamp?: number;
+    [key: string]: unknown;
+  };
+}
 
 /**
  * 차트 툴팁 Props
  */
-interface ChartTooltipProps extends TooltipProps<ValueType, NameType> {
+interface ChartTooltipProps {
+  /** 툴팁 활성화 여부 */
+  active?: boolean;
+  /** 페이로드 데이터 배열 */
+  payload?: TooltipPayload[];
+  /** X축 라벨 */
+  label?: string | number;
   /** 값 단위 (%, MB, etc.) */
   unit?: string;
   /** 네트워크 차트 모드 (RX/TX 표시) */
@@ -23,21 +39,6 @@ function formatTime(timestamp: number): string {
     hour: '2-digit',
     minute: '2-digit',
   });
-}
-
-/**
- * 바이트 단위 포맷팅 함수
- * @param bytes 바이트 값
- * @returns 포맷된 문자열 (KB, MB, GB)
- */
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
-
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }
 
 /**
@@ -71,7 +72,11 @@ export function ChartTooltip({
 
   // 타임스탬프 추출 (payload에서 가져오기)
   const timestamp = payload[0]?.payload?.timestamp;
-  const timeStr = timestamp ? formatTime(timestamp) : (typeof label === 'string' ? label : '');
+  const timeStr = timestamp
+    ? formatTime(timestamp)
+    : typeof label === 'string'
+      ? label
+      : '';
 
   return (
     <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-md">
@@ -85,13 +90,13 @@ export function ChartTooltip({
         let displayValue: string;
 
         if (isNetwork && typeof entry.value === 'number') {
-          // 네트워크: MB 값을 bytes로 변환하여 포맷
+          // 네트워크: MB 값을 표시
           displayValue = `${entry.value.toFixed(2)} MB`;
         } else if (typeof entry.value === 'number') {
           // 일반 값: 단위 추가
           displayValue = `${entry.value.toFixed(1)}${unit}`;
         } else {
-          displayValue = String(entry.value);
+          displayValue = String(entry.value ?? '');
         }
 
         return (
