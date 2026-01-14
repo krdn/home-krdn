@@ -65,6 +65,8 @@ export const WEBSOCKET_CONFIG = {
   HEARTBEAT_TIMEOUT: 5000,
   /** 최대 재연결 대기 시간 (ms) - 기본: 30초 */
   MAX_RECONNECT_DELAY: 30000,
+  /** 메트릭 브로드캐스트 간격 (ms) - POLLING_INTERVALS.SYSTEM_METRICS와 동일 */
+  METRICS_BROADCAST_INTERVAL: 5000,
 } as const;
 
 // 타입 추론을 위한 타입 정의
