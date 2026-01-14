@@ -2,8 +2,8 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ExternalLink, Github, FileText, Globe } from "lucide-react";
+import { ProjectImage } from "./ProjectImage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -65,33 +65,38 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
   const githubLink = project.links.find((link) => link.type === "github");
   const demoLink = project.links.find((link) => link.type === "demo");
 
+  // 외부 링크 클릭 시 이벤트 버블링 방지
+  const handleExternalClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <Card
-      hover
-      className={cn(
-        "flex flex-col h-full overflow-hidden",
-        // featured 프로젝트 테두리 강조
-        project.featured && "ring-2 ring-primary/50"
-      )}
-    >
+    <Link href={`/projects/${project.slug}`} className="block h-full">
+      <Card
+        hover
+        className={cn(
+          "flex flex-col h-full overflow-hidden cursor-pointer",
+          // featured 프로젝트 테두리 강조
+          project.featured && "ring-2 ring-primary/50"
+        )}
+      >
       {/* 썸네일 이미지 */}
-      {primaryImage && (
-        <div className="relative aspect-video w-full overflow-hidden bg-muted">
-          <Image
-            src={primaryImage.src}
-            alt={primaryImage.alt}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-          {/* Featured 배지 */}
-          {project.featured && (
-            <div className="absolute top-2 left-2 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
-              Featured
-            </div>
-          )}
-        </div>
-      )}
+      <div className="relative aspect-video w-full overflow-hidden bg-muted">
+        <ProjectImage
+          src={primaryImage?.src || ""}
+          alt={primaryImage?.alt || project.name}
+          fill
+          objectFit="cover"
+          fallbackCategory={project.category}
+          className="transition-transform duration-300 group-hover:scale-105"
+        />
+        {/* Featured 배지 */}
+        {project.featured && (
+          <div className="absolute top-2 left-2 z-10 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
+            Featured
+          </div>
+        )}
+      </div>
 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
@@ -159,10 +164,10 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
         {/* 컨트롤 버튼 */}
         {showControls && (
           <div className="mt-auto flex items-center gap-2 pt-4">
-            <Button asChild variant="outline" size="sm" className="flex-1">
-              <Link href={`/projects/${project.slug}`}>상세 보기</Link>
-            </Button>
-            <div className="flex gap-1">
+            <span className="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+              상세 보기
+            </span>
+            <div className="flex gap-1" onClick={handleExternalClick}>
               {githubLink && (
                 <Button asChild variant="ghost" size="sm">
                   <a
@@ -191,7 +196,8 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
           </div>
         )}
       </CardContent>
-    </Card>
+      </Card>
+    </Link>
   );
 }
 
