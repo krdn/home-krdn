@@ -7,6 +7,7 @@ import { useNotificationStore } from '@/stores/notificationStore';
 import { useToast } from '@/components/providers/ToastProvider';
 import { evaluateMetrics } from '@/lib/alertEngine';
 import type { NewAlert } from '@/types/alert';
+import type { SlackBlockKitMessage } from '@/types/notification';
 
 /**
  * 브라우저 알림 권한 요청
@@ -91,6 +92,81 @@ async function sendAlertEmail(
 }
 
 /**
+ * Slack Block Kit 메시지 생성
+ * @param alert 알림 데이터
+ * @returns Slack Block Kit 메시지
+ */
+function createSlackMessage(alert: NewAlert): SlackBlockKitMessage {
+  const severityEmoji =
+    alert.severity === 'critical' ? '🚨' :
+    alert.severity === 'warning' ? '⚠️' : 'ℹ️';
+
+  return {
+    text: `[${alert.severity.toUpperCase()}] ${alert.ruleName}`,
+    blocks: [
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: `${severityEmoji} ${alert.ruleName}`,
+          emoji: true,
+        },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: alert.message },
+      },
+      {
+        type: 'section',
+        fields: [
+          { type: 'mrkdwn', text: `*심각도:*\n${alert.severity}` },
+          { type: 'mrkdwn', text: `*현재 값:*\n${alert.value.toFixed(1)}%` },
+          { type: 'mrkdwn', text: `*임계값:*\n${alert.threshold}%` },
+          { type: 'mrkdwn', text: `*시각:*\n${new Date().toLocaleString('ko-KR')}` },
+        ],
+      },
+      { type: 'divider' },
+      {
+        type: 'context',
+        elements: [
+          { type: 'mrkdwn', text: '🏠 Home-KRDN 모니터링 시스템' },
+        ],
+      },
+    ],
+  };
+}
+
+/**
+ * Slack 알림 발송
+ * @param alert 알림 데이터
+ * @param webhookUrl Slack Webhook URL
+ */
+async function sendSlackAlert(
+  alert: NewAlert,
+  webhookUrl: string
+): Promise<void> {
+  try {
+    const message = createSlackMessage(alert);
+    const response = await fetch('/api/notifications/slack', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        webhookUrl,
+        message,
+        ruleId: alert.ruleId,
+      }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      console.warn('[Alert Slack] Failed:', data.error);
+    }
+  } catch (error) {
+    console.error('[Alert Slack] Error:', error);
+  }
+}
+
+/**
  * 알림 통합 훅
  *
  * 시스템 메트릭을 감지하고 알림 규칙에 따라 알림을 발생시킵니다.
@@ -109,7 +185,7 @@ async function sendAlertEmail(
 export function useAlertNotifications(): void {
   const { data: metrics } = useSystemMetrics();
   const { rules, addAlert } = useAlertStore();
-  const { emailConfig } = useNotificationStore();
+  const { emailConfig, slackConfig } = useNotificationStore();
   const { showToast } = useToast();
   const permissionRequested = useRef(false);
 
@@ -155,6 +231,16 @@ export function useAlertNotifications(): void {
         // 비동기로 처리 (UI 블로킹 방지)
         sendAlertEmail(alertData, emailConfig.recipientEmail);
       }
+
+      // Slack 알림 발송 (설정 활성화 시)
+      if (
+        slackConfig.enabled &&
+        slackConfig.webhookUrl &&
+        (!slackConfig.sendOnCriticalOnly || alertData.severity === 'critical')
+      ) {
+        // 비동기로 처리 (UI 블로킹 방지)
+        sendSlackAlert(alertData, slackConfig.webhookUrl);
+      }
     }
-  }, [metrics, rules, addAlert, showToast, emailConfig]);
+  }, [metrics, rules, addAlert, showToast, emailConfig, slackConfig]);
 }
