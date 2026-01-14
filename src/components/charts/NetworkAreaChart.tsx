@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo, useCallback } from 'react';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -40,17 +41,37 @@ interface NetworkAreaChartProps {
  * 네트워크 영역 차트 컴포넌트
  * RX/TX 트래픽을 그라디언트 영역 차트로 표시합니다.
  * 다크/라이트 테마와 호환되며 반응형으로 동작합니다.
+ *
+ * memo()와 커스텀 비교 함수로 불필요한 리렌더링을 방지합니다.
  */
-export function NetworkAreaChart({
+export const NetworkAreaChart = memo(function NetworkAreaChart({
   data,
   title = 'Network I/O',
 }: NetworkAreaChartProps) {
-  // 동적 Y축 도메인 계산
-  const maxValue = Math.max(
-    ...data.map((d) => Math.max(d.networkRxMB, d.networkTxMB)),
-    1 // 최소값 보장
+  // 동적 Y축 도메인 계산 (메모이제이션)
+  const yDomain = useMemo<[number, number]>(() => {
+    const maxValue = Math.max(
+      ...data.map((d) => Math.max(d.networkRxMB, d.networkTxMB)),
+      1 // 최소값 보장
+    );
+    return [0, Math.ceil(maxValue * 1.2)];
+  }, [data]);
+
+  // 차트 마진 메모이제이션
+  const chartMargin = useMemo(
+    () => ({ top: 5, right: 10, left: 0, bottom: 5 }),
+    []
   );
-  const yDomain: [number, number] = [0, Math.ceil(maxValue * 1.2)];
+
+  // 범례 포맷터 메모이제이션
+  const legendFormatter = useCallback(
+    (value: string) => (
+      <span className="text-xs text-muted-foreground">
+        {value === 'networkRxMB' ? 'RX (Received)' : 'TX (Sent)'}
+      </span>
+    ),
+    []
+  );
 
   return (
     <div className="h-64 w-full">
@@ -58,7 +79,7 @@ export function NetworkAreaChart({
       <ResponsiveContainer width="100%" height="90%">
         <AreaChart
           data={data}
-          margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+          margin={chartMargin}
         >
           {/* 그라디언트 정의 */}
           <defs>
@@ -113,11 +134,7 @@ export function NetworkAreaChart({
           <Legend
             verticalAlign="top"
             height={24}
-            formatter={(value) => (
-              <span className="text-xs text-muted-foreground">
-                {value === 'networkRxMB' ? 'RX (Received)' : 'TX (Sent)'}
-              </span>
-            )}
+            formatter={legendFormatter}
           />
 
           {/* RX 영역 */}
@@ -143,4 +160,17 @@ export function NetworkAreaChart({
       </ResponsiveContainer>
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // 커스텀 비교 함수: 데이터 길이와 마지막 값만 비교 (성능 최적화)
+  if (prevProps.title !== nextProps.title) return false;
+  if (prevProps.data.length !== nextProps.data.length) return false;
+
+  // 마지막 데이터 포인트 비교 (가장 자주 변경되는 부분)
+  const prevLast = prevProps.data[prevProps.data.length - 1];
+  const nextLast = nextProps.data[nextProps.data.length - 1];
+  if (prevLast?.networkRxMB !== nextLast?.networkRxMB) return false;
+  if (prevLast?.networkTxMB !== nextLast?.networkTxMB) return false;
+  if (prevLast?.timestamp !== nextLast?.timestamp) return false;
+
+  return true;
+});
