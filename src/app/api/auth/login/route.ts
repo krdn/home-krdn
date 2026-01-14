@@ -1,10 +1,13 @@
 /**
  * 로그인 API 엔드포인트
  * POST /api/auth/login
+ *
+ * Phase 18: DB 기반 인증으로 전환
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { authenticateUser, getAdminUser } from "@/lib/auth";
+import { authenticateUserFromDB } from "@/lib/auth";
+import { findUserByUsername, toUserDto } from "@/lib/user-service";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +25,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 사용자 인증
-    const result = await authenticateUser(username, password);
+    // 사용자 인증 (DB 기반)
+    const result = await authenticateUserFromDB(username, password);
 
     if (!result.success || !result.token) {
       return NextResponse.json(
@@ -32,15 +35,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 관리자 정보 가져오기
-    const adminUser = getAdminUser();
+    // DB에서 사용자 정보 조회
+    const user = await findUserByUsername(username);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "User not found" },
+        { status: 401 }
+      );
+    }
+
+    // 레거시 호환 DTO로 변환
+    const userDto = toUserDto(user);
 
     // 성공 응답 생성
     const response = NextResponse.json({
       success: true,
       user: {
-        username: adminUser.username,
-        role: adminUser.role,
+        username: userDto.username,
+        role: userDto.role,
       },
     });
 
