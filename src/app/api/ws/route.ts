@@ -15,6 +15,8 @@ import {
   getClientCount,
   startMetricsBroadcast,
   isMetricsBroadcastRunning,
+  startContainersBroadcast,
+  isContainersBroadcastRunning,
 } from '@/lib/websocket-server';
 import { WEBSOCKET_CONFIG } from '@/config/constants';
 
@@ -24,11 +26,15 @@ import { WEBSOCKET_CONFIG } from '@/config/constants';
 // ============================================================
 
 /**
- * 서버 시작 시 메트릭 브로드캐스트 시작
+ * 서버 시작 시 브로드캐스트 시작
  * 구독자 유무와 관계없이 주기적으로 브로드캐스트 (경쟁 조건 없이 단순한 구현)
  */
 if (!isMetricsBroadcastRunning()) {
   startMetricsBroadcast(WEBSOCKET_CONFIG.METRICS_BROADCAST_INTERVAL);
+}
+
+if (!isContainersBroadcastRunning()) {
+  startContainersBroadcast(WEBSOCKET_CONFIG.CONTAINERS_BROADCAST_INTERVAL);
 }
 
 /**
