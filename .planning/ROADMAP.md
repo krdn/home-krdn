@@ -11,7 +11,7 @@ None
 ## Milestones
 
 - ✅ **v1.0 MVP** - Phases 1-8 (shipped 2026-01-15)
-- 🚧 **v1.1 Enhancement** - Phases 9-16 (in progress)
+- ✅ **v1.1 Enhancement** - Phases 9-16 (shipped 2026-01-15)
 
 ## Completed Milestones
 
@@ -43,9 +43,9 @@ See: [v1.0-MVP.md](milestones/v1.0-MVP.md)
 
 </details>
 
-## 🚧 v1.1 Enhancement (In Progress)
+## ✅ v1.1 Enhancement (2026-01-15)
 
-**Milestone Goal:** 실시간 업데이트(WebSocket), 외부 알림 채널(이메일/Slack), 프로젝트 관리 Admin 기능 추가
+**Milestone Goal:** 실시간 업데이트(WebSocket), 외부 알림 채널(이메일/Slack), 프로젝트 관리 Admin 기능, E2E 테스트
 
 ### Phase 9: WebSocket Infrastructure ✅
 **Goal**: WebSocket 서버/클라이언트 기반 설정 및 연결 관리
@@ -108,15 +108,13 @@ Plans:
 Plans:
 - [x] 15-01: Admin Dashboard UI (Sidebar 확장, Quick Access, AdminOverview)
 
-### Phase 16: E2E Testing
+### Phase 16: E2E Testing ✅
 **Goal**: Playwright E2E 테스트 환경 구축 및 핵심 플로우 테스트
 **Depends on**: Phase 15
-**Research**: Likely (Playwright 설정 - Next.js 16 통합)
-**Research topics**: Playwright + Next.js, 테스트 전략, CI 통합
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
 
 Plans:
-- [ ] 16-01: TBD
+- [x] 16-01: E2E Testing (Playwright 설정, 네비게이션/인증/Dashboard 테스트)
 
 ## Progress
 
@@ -132,4 +130,4 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 13. Slack Integration | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 14. Project Admin CRUD | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 15. Admin Dashboard | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
-| 16. E2E Testing | v1.1 | 0/? | Not started | - |
+| 16. E2E Testing | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
