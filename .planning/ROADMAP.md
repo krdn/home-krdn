@@ -82,15 +82,13 @@ Plans:
 Plans:
 - [x] 12-01: 이메일 알림 채널 (Resend API, 설정 UI, 훅 통합)
 
-### Phase 13: Slack Integration
+### Phase 13: Slack Integration ✅
 **Goal**: Slack 웹훅을 통한 알림 전송 기능 구현
 **Depends on**: Phase 12
-**Research**: Likely (Slack API - Incoming Webhooks, Block Kit)
-**Research topics**: Slack Webhook 설정, 메시지 포맷팅, 채널 선택
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
 
 Plans:
-- [ ] 13-01: TBD
+- [x] 13-01: Slack 웹훅 알림 채널 (Block Kit 메시지, 설정 UI, 훅 통합)
 
 ### Phase 14: Project Admin CRUD
 **Goal**: 프로젝트 생성/수정/삭제 기능 (Admin 전용)
@@ -131,7 +129,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 10. Real-time Metrics | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 11. Real-time Containers | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 12. Email Notification | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
-| 13. Slack Integration | v1.1 | 0/? | Not started | - |
+| 13. Slack Integration | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 14. Project Admin CRUD | v1.1 | 0/? | Not started | - |
 | 15. Admin Dashboard | v1.1 | 0/? | Not started | - |
 | 16. E2E Testing | v1.1 | 0/? | Not started | - |
