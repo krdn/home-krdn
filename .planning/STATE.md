@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 ## Current Position
 
 Phase: 17 of 24 (Database Infrastructure)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-15 — Milestone v2.0 created
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-15 — Completed Phase 17 (17-01, 17-02)
 
-Progress: ░░░░░░░░░░ 0% (v2.0 시작)
+Progress: █░░░░░░░░░ 12.5% (v2.0 Phase 17 complete)
 
 ## Performance Metrics
 
@@ -35,12 +35,14 @@ Progress: ░░░░░░░░░░ 0% (v2.0 시작)
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Key technology decisions for v2.0 (planned):
+Key technology decisions for v2.0:
 
-- Prisma ORM for database (타입 안전성, 마이그레이션)
-- SQLite로 시작, PostgreSQL 옵션 지원
-- Workbox for PWA caching (오프라인 전략)
-- Web Push API for notifications (VAPID 키 기반)
+- Prisma 7 ORM with better-sqlite3 어댑터 (타입 안전성, 마이그레이션)
+- SQLite 파일 DB로 시작 (마이그레이션 용이)
+- Role enum으로 ADMIN/USER/VIEWER 구분
+- UserSettings 1:1 분리 (대시보드 커스터마이징 준비)
+- 싱글톤 PrismaClient 패턴 (Next.js hot reload 대응)
+- authenticateUser vs authenticateUserFromDB 병행 운영 (점진적 전환)
 
 ### Constraints (v2.0)
 
@@ -69,5 +71,6 @@ None — Starting fresh milestone v2.0.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Milestone v2.0 initialization
+Stopped at: Completed Phase 17 Database Infrastructure
 Resume file: None
+Next action: `/gsd:plan-phase 18` (Auth System Extension)

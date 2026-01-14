@@ -91,16 +91,16 @@ All planned phases (1-16) completed.
 
 **Milestone Goal:** 멀티 유저 인프라 구축 후 PWA 모바일 경험 강화
 
-#### Phase 17: Database Infrastructure
+#### Phase 17: Database Infrastructure ✅
 
 **Goal**: 사용자/팀 데이터 저장을 위한 Prisma + SQLite 기반 DB 인프라 구축
 **Depends on**: v1.1 milestone complete
-**Research**: Likely (Prisma 설정, 스키마 설계)
-**Research topics**: Prisma ORM 설정, Next.js 통합, 마이그레이션 전략
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 17-01: TBD (run /gsd:plan-phase 17 to break down)
+- [x] 17-01: Prisma 7 Setup & Schema (User/Team/TeamMember/UserSettings)
+- [x] 17-02: Migration & Integration (시드 데이터, user-service)
 
 #### Phase 18: Auth System Extension
 
@@ -199,7 +199,7 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 14. Project Admin CRUD | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 15. Admin Dashboard | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 16. E2E Testing | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
-| 17. Database Infrastructure | v2.0 | 0/? | Not started | - |
+| 17. Database Infrastructure | v2.0 | 2/2 | ✅ Complete | 2026-01-15 |
 | 18. Auth System Extension | v2.0 | 0/? | Not started | - |
 | 19. RBAC Access Control | v2.0 | 0/? | Not started | - |
 | 20. User Dashboard Settings | v2.0 | 0/? | Not started | - |
