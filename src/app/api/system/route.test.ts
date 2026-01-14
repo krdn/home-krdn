@@ -42,6 +42,14 @@ const mockSystemMetrics = {
     usage: 50,
     path: '/',
   },
+  network: [
+    { name: 'lo', rxBytes: 12345, txBytes: 12345, rxPackets: 100, txPackets: 100 },
+    { name: 'eth0', rxBytes: 987654321, txBytes: 123456789, rxPackets: 1000, txPackets: 500 },
+  ],
+  processes: [
+    { pid: 1, name: '/sbin/init', cpu: 0.1, memory: 0.5 },
+    { pid: 1234, name: 'node server.js', cpu: 5.2, memory: 3.1 },
+  ],
   uptime: 86400, // 1일
   hostname: 'test-server',
   platform: 'Linux 5.15.0',
