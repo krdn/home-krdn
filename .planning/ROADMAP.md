@@ -17,7 +17,7 @@ None
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Security Foundation** - API 인증 시스템 구현으로 보안 취약점 해결
-- [ ] **Phase 2: Code Quality** - 중복 제거, 타입 안전성 강화, 코드 정리
+- [x] **Phase 2: Code Quality** - 중복 제거, 타입 안전성 강화, 코드 정리
 - [ ] **Phase 3: Testing Infrastructure** - 테스트 프레임워크 설정 및 핵심 기능 테스트
 - [ ] **Phase 4: UI/UX Enhancement** - 모던하고 직관적인 인터페이스 개선
 - [ ] **Phase 5: Monitoring Upgrade** - 상세 메트릭, 히스토리, 시각화 강화
@@ -46,9 +46,9 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 02-01: 중복 유틸리티 함수 통합 (formatBytes, formatUptime)
-- [ ] 02-02: 타입 정의 강화 및 any 타입 제거
-- [ ] 02-03: 환경 설정 정리 (.env.example, 매직 넘버)
+- [x] 02-01: 중복 유틸리티 함수 통합 (formatBytes, formatUptime) ✓
+- [x] 02-02: Zod 런타임 타입 검증 추가 ✓
+- [x] 02-03: 설정 상수 중앙화 (폴링 간격) ✓
 
 ### Phase 3: Testing Infrastructure
 **Goal**: 테스트 프레임워크 구축 및 핵심 기능 테스트 커버리지 확보
@@ -127,7 +127,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Security Foundation | 3/3 | Complete | 2026-01-14 |
-| 2. Code Quality | 0/3 | Not started | - |
+| 2. Code Quality | 3/3 | Complete | 2026-01-14 |
 | 3. Testing Infrastructure | 0/3 | Not started | - |
 | 4. UI/UX Enhancement | 0/3 | Not started | - |
 | 5. Monitoring Upgrade | 0/3 | Not started | - |

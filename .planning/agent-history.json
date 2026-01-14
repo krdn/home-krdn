@@ -1,0 +1,54 @@
+{
+  "version": "1.2",
+  "max_entries": 50,
+  "entries": [
+    {
+      "agent_id": "aaffb0d",
+      "task_description": "Parallel: Execute 02-01-PLAN.md (중복 유틸리티 통합)",
+      "phase": "02",
+      "plan": "01",
+      "parallel_group": "pg-20260114-phase2",
+      "granularity": "plan",
+      "wave": 1,
+      "depends_on": [],
+      "timestamp": "2026-01-14T08:50:00Z",
+      "status": "completed",
+      "files_modified": ["src/lib/system.ts", "src/app/api/system/route.ts"],
+      "completion_timestamp": "2026-01-14T08:53:00Z",
+      "deviations": [],
+      "commits": ["92efc4b", "5377519"]
+    },
+    {
+      "agent_id": "a8c3480",
+      "task_description": "Parallel: Execute 02-02-PLAN.md (Zod 타입 검증)",
+      "phase": "02",
+      "plan": "02",
+      "parallel_group": "pg-20260114-phase2",
+      "granularity": "plan",
+      "wave": 1,
+      "depends_on": [],
+      "timestamp": "2026-01-14T08:50:00Z",
+      "status": "completed",
+      "files_modified": ["src/types/docker.ts", "src/lib/docker.ts"],
+      "completion_timestamp": "2026-01-14T08:53:00Z",
+      "deviations": [],
+      "commits": ["e1b7b3d", "d19ad3c"]
+    },
+    {
+      "agent_id": "adf68e0",
+      "task_description": "Parallel: Execute 02-03-PLAN.md (상수 파일 생성)",
+      "phase": "02",
+      "plan": "03",
+      "parallel_group": "pg-20260114-phase2",
+      "granularity": "plan",
+      "wave": 1,
+      "depends_on": [],
+      "timestamp": "2026-01-14T08:50:00Z",
+      "status": "completed",
+      "files_modified": ["src/config/constants.ts", "src/hooks/useSystemMetrics.ts", "src/hooks/useContainers.ts"],
+      "completion_timestamp": "2026-01-14T08:53:00Z",
+      "deviations": [],
+      "commits": ["8b38f90", "a7b5a61", "79997b7"]
+    }
+  ]
+}
