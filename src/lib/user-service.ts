@@ -8,7 +8,8 @@
 
 import prisma from '@/lib/prisma'
 import { z } from 'zod/v4'
-import type { User } from '@prisma/client'
+import crypto from 'crypto'
+import type { User, PasswordResetToken } from '@prisma/client'
 import type { UserRole } from '@/types/auth'
 import { PrismaRoleToLegacy } from '@/types/auth'
 import { hashPassword } from './auth'
@@ -195,4 +196,134 @@ export async function createUser(input: RegisterInput): Promise<CreateUserResult
   // passwordHash 제외하고 반환
   const { passwordHash: _, ...userWithoutPassword } = user
   return userWithoutPassword
+}
+
+// ============================================================
+// 비밀번호 재설정 관련 함수 (Phase 18)
+// ============================================================
+
+/**
+ * 토큰 만료 시간 (1시간)
+ */
+const PASSWORD_RESET_TOKEN_EXPIRY_HOURS = 1
+
+/**
+ * 비밀번호 재설정 토큰 생성 결과 타입
+ */
+export interface CreatePasswordResetTokenResult {
+  token: string
+  expiresAt: Date
+}
+
+/**
+ * 유효한 비밀번호 재설정 토큰 (사용자 정보 포함)
+ */
+export type PasswordResetTokenWithUser = PasswordResetToken & {
+  user: User
+}
+
+/**
+ * 비밀번호 재설정 토큰을 생성합니다.
+ * 기존 미사용 토큰은 삭제됩니다.
+ *
+ * @param userId 사용자 ID
+ * @returns 생성된 토큰 정보 { token, expiresAt }
+ */
+export async function createPasswordResetToken(
+  userId: string
+): Promise<CreatePasswordResetTokenResult> {
+  // 기존 미사용 토큰 삭제 (중복 방지)
+  await prisma.passwordResetToken.deleteMany({
+    where: {
+      userId,
+      usedAt: null,
+    },
+  })
+
+  // 안전한 토큰 생성 (32바이트 = 64자 hex)
+  const token = crypto.randomBytes(32).toString('hex')
+
+  // 만료 시간 계산 (1시간 후)
+  const expiresAt = new Date()
+  expiresAt.setHours(expiresAt.getHours() + PASSWORD_RESET_TOKEN_EXPIRY_HOURS)
+
+  // 토큰 저장
+  await prisma.passwordResetToken.create({
+    data: {
+      token,
+      userId,
+      expiresAt,
+    },
+  })
+
+  return { token, expiresAt }
+}
+
+/**
+ * 유효한 비밀번호 재설정 토큰을 조회합니다.
+ * 만료되지 않고 사용되지 않은 토큰만 반환합니다.
+ *
+ * @param token 토큰 문자열
+ * @returns 토큰 객체 (user 포함) 또는 null
+ */
+export async function findValidPasswordResetToken(
+  token: string
+): Promise<PasswordResetTokenWithUser | null> {
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: { token },
+    include: { user: true },
+  })
+
+  if (!resetToken) {
+    return null
+  }
+
+  // 만료 시간 검사
+  if (resetToken.expiresAt < new Date()) {
+    return null
+  }
+
+  // 사용 여부 검사
+  if (resetToken.usedAt !== null) {
+    return null
+  }
+
+  return resetToken
+}
+
+/**
+ * 토큰을 사용 처리합니다 (usedAt 업데이트).
+ *
+ * @param tokenId 토큰 ID
+ */
+export async function markTokenAsUsed(tokenId: string): Promise<void> {
+  await prisma.passwordResetToken.update({
+    where: { id: tokenId },
+    data: { usedAt: new Date() },
+  })
+}
+
+/**
+ * 만료된 토큰들을 삭제합니다.
+ * 배치 작업용 (cron job 등에서 호출)
+ *
+ * @returns 삭제된 토큰 개수
+ */
+export async function deleteExpiredTokens(): Promise<number> {
+  const result = await prisma.passwordResetToken.deleteMany({
+    where: {
+      OR: [
+        // 만료된 토큰
+        { expiresAt: { lt: new Date() } },
+        // 이미 사용된 토큰 (7일 이상 지난 것만)
+        {
+          usedAt: {
+            lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          },
+        },
+      ],
+    },
+  })
+
+  return result.count
 }
