@@ -8,6 +8,11 @@
 
 None
 
+## Milestones
+
+- ✅ **v1.0 MVP** - Phases 1-8 (shipped 2026-01-15)
+- 🚧 **v1.1 Enhancement** - Phases 9-16 (in progress)
+
 ## Completed Milestones
 
 ### v1.0 MVP ✅ (2026-01-15)
@@ -38,26 +43,98 @@ See: [v1.0-MVP.md](milestones/v1.0-MVP.md)
 
 </details>
 
-## Current Milestone
+## 🚧 v1.1 Enhancement (In Progress)
 
-*No active milestone. Use `/gsd:new-milestone` to plan the next version.*
+**Milestone Goal:** 실시간 업데이트(WebSocket), 외부 알림 채널(이메일/Slack), 프로젝트 관리 Admin 기능 추가
 
-## Phases
+### Phase 9: WebSocket Infrastructure
+**Goal**: WebSocket 서버/클라이언트 기반 설정 및 연결 관리
+**Depends on**: v1.0 complete
+**Research**: Likely (WebSocket 아키텍처 - Socket.io vs ws vs native)
+**Research topics**: Next.js 16 WebSocket 패턴, Edge Runtime 호환성, 재연결 전략
+**Plans**: TBD
 
-*No active phases. Create a new milestone to add phases.*
+Plans:
+- [ ] 09-01: TBD (run /gsd:plan-phase 9 to break down)
+
+### Phase 10: Real-time Metrics
+**Goal**: 시스템 메트릭(CPU, 메모리, 디스크)을 WebSocket으로 실시간 스트리밍
+**Depends on**: Phase 9
+**Research**: Unlikely (내부 패턴 - 기존 메트릭 수집 로직 활용)
+**Plans**: TBD
+
+Plans:
+- [ ] 10-01: TBD
+
+### Phase 11: Real-time Containers
+**Goal**: Docker 컨테이너 상태 변경을 실시간으로 클라이언트에 푸시
+**Depends on**: Phase 10
+**Research**: Unlikely (내부 패턴 - Docker Events API 활용)
+**Plans**: TBD
+
+Plans:
+- [ ] 11-01: TBD
+
+### Phase 12: Email Notification
+**Goal**: 이메일 알림 채널 구현 (임계값 초과 시 이메일 발송)
+**Depends on**: Phase 9
+**Research**: Likely (이메일 서비스 선택 - Resend vs Nodemailer vs SendGrid)
+**Research topics**: Resend API, 이메일 템플릿, 발송 제한/큐잉
+**Plans**: TBD
+
+Plans:
+- [ ] 12-01: TBD
+
+### Phase 13: Slack Integration
+**Goal**: Slack 웹훅을 통한 알림 전송 기능 구현
+**Depends on**: Phase 12
+**Research**: Likely (Slack API - Incoming Webhooks, Block Kit)
+**Research topics**: Slack Webhook 설정, 메시지 포맷팅, 채널 선택
+**Plans**: TBD
+
+Plans:
+- [ ] 13-01: TBD
+
+### Phase 14: Project Admin CRUD
+**Goal**: 프로젝트 생성/수정/삭제 기능 (Admin 전용)
+**Depends on**: Phase 9
+**Research**: Unlikely (CRUD 패턴 - 기존 API 패턴 활용)
+**Plans**: TBD
+
+Plans:
+- [ ] 14-01: TBD
+
+### Phase 15: Admin Dashboard
+**Goal**: 관리자 대시보드 UI (프로젝트 관리, 알림 설정 통합)
+**Depends on**: Phase 14
+**Research**: Unlikely (UI 패턴 - 기존 컴포넌트 활용)
+**Plans**: TBD
+
+Plans:
+- [ ] 15-01: TBD
+
+### Phase 16: E2E Testing
+**Goal**: Playwright E2E 테스트 환경 구축 및 핵심 플로우 테스트
+**Depends on**: Phase 15
+**Research**: Likely (Playwright 설정 - Next.js 16 통합)
+**Research topics**: Playwright + Next.js, 테스트 전략, CI 통합
+**Plans**: TBD
+
+Plans:
+- [ ] 16-01: TBD
 
 ## Progress
 
-| Milestone | Phases | Status | Completed |
-|-----------|--------|--------|-----------|
-| v1.0 MVP | 8/8 | ✅ Complete | 2026-01-15 |
+**Execution Order:**
+Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16
 
-## Next Steps
-
-잠재적인 v1.1 또는 v2.0 기능:
-- [ ] WebSocket 실시간 업데이트 (폴링 대체)
-- [ ] 이메일/Slack 알림 채널
-- [ ] 프로젝트 관리 CRUD (Admin)
-- [ ] 멀티 유저 지원
-- [ ] 모바일 앱 (React Native)
-- [ ] Kubernetes 지원
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 9. WebSocket Infrastructure | v1.1 | 0/? | Not started | - |
+| 10. Real-time Metrics | v1.1 | 0/? | Not started | - |
+| 11. Real-time Containers | v1.1 | 0/? | Not started | - |
+| 12. Email Notification | v1.1 | 0/? | Not started | - |
+| 13. Slack Integration | v1.1 | 0/? | Not started | - |
+| 14. Project Admin CRUD | v1.1 | 0/? | Not started | - |
+| 15. Admin Dashboard | v1.1 | 0/? | Not started | - |
+| 16. E2E Testing | v1.1 | 0/? | Not started | - |
