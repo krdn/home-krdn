@@ -2,38 +2,25 @@
  * Docker API Client
  * Docker socket을 통해 컨테이너 정보를 가져옵니다.
  */
+import { ZodError } from 'zod';
+import {
+  DockerContainerListSchema,
+  DockerContainerDetailSchema,
+  DockerInfoSchema,
+  type DockerContainer,
+  type ContainerInfo,
+} from '@/types/docker';
 
-export interface DockerContainer {
-  Id: string;
-  Names: string[];
-  Image: string;
-  State: string;
-  Status: string;
-  Created: number;
-  Ports: Array<{
-    IP?: string;
-    PrivatePort: number;
-    PublicPort?: number;
-    Type: string;
-  }>;
-}
-
-export interface ContainerInfo {
-  id: string;
-  name: string;
-  image: string;
-  state: 'running' | 'exited' | 'paused' | 'restarting' | 'dead';
-  status: string;
-  created: Date;
-  ports: string[];
-}
-
+// ContainerStats는 docker.ts 내부에서만 사용 (아직 API 검증 미적용)
 export interface ContainerStats {
   cpu_percent: number;
   memory_usage: number;
   memory_limit: number;
   memory_percent: number;
 }
+
+// Re-export types for external use
+export type { DockerContainer, ContainerInfo } from '@/types/docker';
 
 const DOCKER_SOCKET = process.env.DOCKER_HOST || '/var/run/docker.sock';
 
@@ -81,9 +68,12 @@ async function dockerRequest<T>(
  */
 export async function listContainers(all: boolean = true): Promise<ContainerInfo[]> {
   try {
-    const containers = await dockerRequest<DockerContainer[]>(
+    const rawData = await dockerRequest<unknown>(
       `/containers/json?all=${all}`
     );
+
+    // 런타임 검증: Docker API 응답 스키마 확인
+    const containers = DockerContainerListSchema.parse(rawData);
 
     return containers.map((c) => ({
       id: c.Id.substring(0, 12),
@@ -97,7 +87,11 @@ export async function listContainers(all: boolean = true): Promise<ContainerInfo
       ),
     }));
   } catch (error) {
-    console.error('Failed to list containers:', error);
+    if (error instanceof ZodError) {
+      console.error('Docker API 응답 검증 실패:', error.issues);
+    } else {
+      console.error('Failed to list containers:', error);
+    }
     return [];
   }
 }
@@ -107,23 +101,40 @@ export async function listContainers(all: boolean = true): Promise<ContainerInfo
  */
 export async function getContainer(id: string): Promise<ContainerInfo | null> {
   try {
-    const container = await dockerRequest<DockerContainer>(
+    const rawData = await dockerRequest<unknown>(
       `/containers/${id}/json`
     );
 
+    // 런타임 검증: Docker API 상세 응답 스키마 확인
+    const container = DockerContainerDetailSchema.parse(rawData);
+
+    // 포트 정보 추출 (상세 조회 응답 구조에 맞게)
+    const ports: string[] = [];
+    if (container.NetworkSettings?.Ports) {
+      for (const [containerPort, hostBindings] of Object.entries(container.NetworkSettings.Ports)) {
+        if (hostBindings) {
+          for (const binding of hostBindings) {
+            ports.push(`${binding.HostPort}:${containerPort}`);
+          }
+        }
+      }
+    }
+
     return {
       id: container.Id.substring(0, 12),
-      name: container.Names[0]?.replace(/^\//, '') || 'unknown',
+      name: container.Name.replace(/^\//, ''),
       image: container.Image,
-      state: container.State as ContainerInfo['state'],
-      status: container.Status,
-      created: new Date(container.Created * 1000),
-      ports: container.Ports?.filter((p) => p.PublicPort).map(
-        (p) => `${p.PublicPort}:${p.PrivatePort}/${p.Type}`
-      ) || [],
+      state: container.State.Status as ContainerInfo['state'],
+      status: container.State.Running ? 'running' : container.State.Status,
+      created: new Date(container.Created),
+      ports,
     };
   } catch (error) {
-    console.error(`Failed to get container ${id}:`, error);
+    if (error instanceof ZodError) {
+      console.error(`Docker API 응답 검증 실패 (container ${id}):`, error.issues);
+    } else {
+      console.error(`Failed to get container ${id}:`, error);
+    }
     return null;
   }
 }
@@ -257,14 +268,10 @@ export async function getDockerInfo(): Promise<{
   cpus: number;
 } | null> {
   try {
-    const info = await dockerRequest<{
-      Containers: number;
-      ContainersRunning: number;
-      ContainersStopped: number;
-      Images: number;
-      MemTotal: number;
-      NCPU: number;
-    }>('/info');
+    const rawData = await dockerRequest<unknown>('/info');
+
+    // 런타임 검증: Docker Info 응답 스키마 확인
+    const info = DockerInfoSchema.parse(rawData);
 
     return {
       containers: info.Containers,
@@ -275,7 +282,11 @@ export async function getDockerInfo(): Promise<{
       cpus: info.NCPU,
     };
   } catch (error) {
-    console.error('Failed to get Docker info:', error);
+    if (error instanceof ZodError) {
+      console.error('Docker Info API 응답 검증 실패:', error.issues);
+    } else {
+      console.error('Failed to get Docker info:', error);
+    }
     return null;
   }
 }
