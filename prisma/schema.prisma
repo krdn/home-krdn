@@ -1,0 +1,12 @@
+// Prisma Schema for Home-KRDN
+// Prisma 7 - datasource URL은 prisma.config.ts에서 관리
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// 스키마 모델은 Task 3에서 추가됨
