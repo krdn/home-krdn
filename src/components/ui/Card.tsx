@@ -10,8 +10,10 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
-      hover && "transition-all hover:shadow-lg hover:border-primary/50 hover:-translate-y-1",
+      // 기본 트랜지션 추가 및 그룹 호버 지원
+      "group rounded-xl border bg-card text-card-foreground shadow transition-all duration-200",
+      // hover prop 효과 강화 (shadow, translate, border)
+      hover && "cursor-pointer hover:shadow-lg hover:border-primary/20 hover:-translate-y-0.5",
       className
     )}
     {...props}
