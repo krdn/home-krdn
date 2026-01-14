@@ -5,6 +5,7 @@
 
 import { execSync } from 'child_process';
 import * as os from 'os';
+import { formatUptime } from './utils';
 
 export interface SystemMetrics {
   cpu: {
@@ -124,35 +125,6 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
     hostname: os.hostname(),
     platform: `${os.type()} ${os.release()}`,
   };
-}
-
-/**
- * 바이트를 사람이 읽기 쉬운 형태로 변환합니다.
- */
-export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
-
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const k = 1024;
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${(bytes / Math.pow(k, i)).toFixed(1)} ${units[i]}`;
-}
-
-/**
- * 초를 사람이 읽기 쉬운 형태로 변환합니다.
- */
-export function formatUptime(seconds: number): string {
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  const parts: string[] = [];
-  if (days > 0) parts.push(`${days}d`);
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
-
-  return parts.join(' ') || '0m';
 }
 
 /**
