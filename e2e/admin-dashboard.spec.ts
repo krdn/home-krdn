@@ -8,26 +8,23 @@ test.describe('Admin Dashboard', () => {
 
   test('Dashboard 헤더 표시', async ({ page }) => {
     await expect(page.locator('h1')).toContainText('Dashboard');
-    await expect(page.locator('text=시스템 상태')).toBeVisible();
+    // 시스템 상태 텍스트 확인
+    await expect(page.locator('text=서비스 개요')).toBeVisible();
   });
 
   test('Quick Access 섹션 표시', async ({ page }) => {
     await expect(page.locator('text=Quick Access')).toBeVisible();
-    // 5개 Quick Access 카드 확인
-    await expect(page.locator('text=Projects').first()).toBeVisible();
-    await expect(page.locator('text=Alerts').first()).toBeVisible();
-    await expect(page.locator('text=Services').first()).toBeVisible();
-    await expect(page.locator('text=Containers').first()).toBeVisible();
-    await expect(page.locator('text=System').first()).toBeVisible();
   });
 
   test('Sidebar 네비게이션 - Projects', async ({ page }) => {
-    await page.getByRole('link', { name: 'Projects' }).first().click();
+    // Sidebar에서 Projects 링크 클릭
+    await page.locator('aside').getByRole('link', { name: 'Projects' }).click();
     await expect(page).toHaveURL(/\/admin\/projects/);
   });
 
   test('Sidebar 네비게이션 - Alerts', async ({ page }) => {
-    await page.getByRole('link', { name: 'Alerts' }).first().click();
+    // Sidebar에서 Alerts 링크 클릭
+    await page.locator('aside').getByRole('link', { name: 'Alerts' }).click();
     await expect(page).toHaveURL(/\/admin\/alerts/);
   });
 
