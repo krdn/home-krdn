@@ -1,4 +1,4 @@
-import { Activity, Box, ExternalLink, Layers } from 'lucide-react';
+import { Activity, Bell, Box, ExternalLink, FolderKanban, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -110,6 +110,38 @@ export default function AdminDashboardPage() {
       <section aria-label="Quick Access">
         <h2 className="mb-4 text-lg font-semibold">Quick Access</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Link href="/admin/projects">
+            <Card hover className="h-full">
+              <CardContent className="flex items-center gap-4 p-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <FolderKanban className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Projects</p>
+                  <p className="text-sm text-muted-foreground">
+                    Manage projects
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/alerts">
+            <Card hover className="h-full">
+              <CardContent className="flex items-center gap-4 p-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <Bell className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Alerts</p>
+                  <p className="text-sm text-muted-foreground">
+                    Alert rules settings
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
           <Link href="/admin/services">
             <Card hover className="h-full">
               <CardContent className="flex items-center gap-4 p-6">
