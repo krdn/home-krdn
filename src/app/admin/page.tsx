@@ -6,6 +6,7 @@ import { StatusBadge } from '@/components/services/StatusBadge';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { ContainerStats } from '@/components/admin/ContainerStats';
 import { LazyMetricsCharts } from '@/components/admin/LazyMetricsCharts';
+import { AdminOverview } from '@/components/admin/AdminOverview';
 import { getRunningServices } from '@/config/services';
 
 /**
@@ -106,7 +107,12 @@ export default function AdminDashboardPage() {
         <RunningServicesCard />
       </section>
 
-      {/* Section 4: Quick Links - Tertiary (3열) */}
+      {/* Section 4: Admin Overview */}
+      <section aria-label="Admin Overview">
+        <AdminOverview />
+      </section>
+
+      {/* Section 5: Quick Links - Tertiary (3열) */}
       <section aria-label="Quick Access">
         <h2 className="mb-4 text-lg font-semibold">Quick Access</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
