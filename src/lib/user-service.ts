@@ -7,9 +7,11 @@
  */
 
 import prisma from '@/lib/prisma'
+import { z } from 'zod/v4'
 import type { User } from '@prisma/client'
 import type { UserRole } from '@/types/auth'
 import { PrismaRoleToLegacy } from '@/types/auth'
+import { hashPassword } from './auth'
 
 /**
  * 레거시 User DTO 타입
@@ -109,4 +111,88 @@ export async function updatePasswordHash(
     where: { id: userId },
     data: { passwordHash },
   })
+}
+
+// ============================================================
+// 회원가입 관련 함수 (Phase 18)
+// ============================================================
+
+/**
+ * 회원가입 입력 검증 스키마
+ */
+export const RegisterInputSchema = z.object({
+  email: z.email('유효한 이메일 주소를 입력해주세요'),
+  username: z
+    .string()
+    .min(3, '사용자명은 최소 3자 이상이어야 합니다')
+    .max(20, '사용자명은 최대 20자까지 가능합니다')
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      '사용자명은 영문, 숫자, 밑줄(_)만 사용할 수 있습니다'
+    ),
+  password: z
+    .string()
+    .min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  displayName: z
+    .string()
+    .max(50, '표시 이름은 최대 50자까지 가능합니다')
+    .optional(),
+})
+
+export type RegisterInput = z.infer<typeof RegisterInputSchema>
+
+/**
+ * 회원가입 결과 타입 (passwordHash 제외)
+ */
+export type CreateUserResult = Omit<User, 'passwordHash'>
+
+/**
+ * 이메일 중복 여부 확인
+ * @param email 이메일 주소
+ * @returns 이미 사용 중이면 true
+ */
+export async function isEmailTaken(email: string): Promise<boolean> {
+  const count = await prisma.user.count({
+    where: { email },
+  })
+  return count > 0
+}
+
+/**
+ * 사용자명 중복 여부 확인
+ * @param username 사용자명
+ * @returns 이미 사용 중이면 true
+ */
+export async function isUsernameTaken(username: string): Promise<boolean> {
+  const count = await prisma.user.count({
+    where: { username },
+  })
+  return count > 0
+}
+
+/**
+ * 새 사용자 생성
+ * 비밀번호는 자동으로 해싱됩니다.
+ *
+ * @param input 회원가입 입력 데이터
+ * @returns 생성된 사용자 (passwordHash 제외)
+ */
+export async function createUser(input: RegisterInput): Promise<CreateUserResult> {
+  // 비밀번호 해싱
+  const passwordHash = await hashPassword(input.password)
+
+  // 사용자 생성
+  const user = await prisma.user.create({
+    data: {
+      email: input.email,
+      username: input.username,
+      passwordHash,
+      displayName: input.displayName,
+      // role은 기본값 USER 사용 (schema.prisma에서 설정)
+    },
+  })
+
+  // passwordHash 제외하고 반환
+  const { passwordHash: _, ...userWithoutPassword } = user
+  return userWithoutPassword
 }
