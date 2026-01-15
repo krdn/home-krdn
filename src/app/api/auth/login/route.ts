@@ -3,11 +3,15 @@
  * POST /api/auth/login
  *
  * Phase 18: DB 기반 인증으로 전환
+ * Phase 27: 표준화된 에러 핸들링 적용
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateUserFromDB } from "@/lib/auth";
 import { findUserByUsername, toUserDto } from "@/lib/user-service";
+import { ValidationError, AuthError } from "@/lib/errors";
+import { createErrorResponse } from "@/lib/api-error-handler";
+import { logError, extractRequestContext } from "@/lib/error-logger";
 
 export const dynamic = "force-dynamic";
 
@@ -19,29 +23,20 @@ export async function POST(request: NextRequest) {
 
     // 필수 필드 검증
     if (!username || !password) {
-      return NextResponse.json(
-        { success: false, error: "Username and password required" },
-        { status: 400 }
-      );
+      throw new ValidationError("사용자명과 비밀번호를 입력해주세요");
     }
 
     // 사용자 인증 (DB 기반)
     const result = await authenticateUserFromDB(username, password);
 
     if (!result.success || !result.token) {
-      return NextResponse.json(
-        { success: false, error: "Invalid credentials" },
-        { status: 401 }
-      );
+      throw new AuthError("잘못된 인증 정보입니다", "INVALID_CREDENTIALS");
     }
 
     // DB에서 사용자 정보 조회
     const user = await findUserByUsername(username);
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: "User not found" },
-        { status: 401 }
-      );
+      throw new AuthError("사용자를 찾을 수 없습니다", "INVALID_CREDENTIALS");
     }
 
     // 레거시 호환 DTO로 변환
@@ -67,19 +62,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Login error:", error);
-
-    // JSON 파싱 오류 처리
-    if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { success: false, error: "Invalid request body" },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "Internal server error" },
-      { status: 500 }
-    );
+    logError(error, extractRequestContext(request));
+    return createErrorResponse(error);
   }
 }
