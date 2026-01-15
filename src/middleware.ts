@@ -4,10 +4,14 @@
  *
  * Edge Runtime 호환을 위해 jose 라이브러리를 직접 사용합니다.
  * bcryptjs는 Node.js 전용이므로 미들웨어에서 사용하지 않습니다.
+ *
+ * Phase 19: RBAC 기반 권한 검사 적용
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import type { UserRole } from "@/types/auth";
+import { canAccessRoute } from "@/lib/rbac";
 
 // JWT 설정
 const JWT_ALGORITHM = "HS256";
@@ -29,7 +33,7 @@ function getJwtSecret(): Uint8Array {
  */
 interface TokenVerifyResult {
   valid: boolean;
-  role?: string;
+  role?: UserRole;
 }
 
 /**
@@ -53,7 +57,7 @@ async function verifyTokenEdge(token: string): Promise<TokenVerifyResult> {
     if (isValid) {
       return {
         valid: true,
-        role: payload.role as string,
+        role: payload.role as UserRole,
       };
     }
 
@@ -92,16 +96,30 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 관리자 전용 라우트 역할 검사
-  // JWT의 role은 lowercase (admin, user, viewer)
-  if (pathname.startsWith("/api/admin/") && result.role !== "admin") {
+  // RBAC 기반 권한 검사
+  // Phase 19: 경로 + HTTP 메서드별 세분화된 권한 검사
+  const role = result.role!;
+  const method = request.method;
+  const accessResult = canAccessRoute(role, pathname, method);
+
+  if (!accessResult.allowed) {
+    // 권한 부족: 403 Forbidden
+    const requiredRole = accessResult.requiredRole ?? "admin";
+    const resourceInfo = accessResult.resource ? ` (리소스: ${accessResult.resource}, 액션: ${accessResult.action})` : "";
+
     return NextResponse.json(
-      { error: "관리자 권한이 필요합니다", code: "FORBIDDEN" },
+      {
+        error: `권한이 부족합니다. ${requiredRole} 이상의 역할이 필요합니다${resourceInfo}`,
+        code: "FORBIDDEN",
+        requiredRole,
+        resource: accessResult.resource,
+        action: accessResult.action,
+      },
       { status: 403 }
     );
   }
 
-  // 인증 성공: 요청 통과
+  // 인증 및 권한 검사 성공: 요청 통과
   return NextResponse.next();
 }
 
