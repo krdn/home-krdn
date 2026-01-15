@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - DOCKER_GID=988
     image: home-krdn:latest
     container_name: home-krdn
     restart: unless-stopped

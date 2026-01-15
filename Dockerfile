@@ -24,9 +24,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3005
 ENV HOSTNAME=0.0.0.0
 
+# Docker 그룹 GID는 빌드 시 ARG로 주입 (기본값: 988 - 대부분의 Linux 시스템)
+ARG DOCKER_GID=988
+
 RUN addgroup --system --gid 1001 nodejs && \
+    addgroup --system --gid ${DOCKER_GID} docker && \
     adduser --system --uid 1001 nextjs && \
-    addgroup nextjs docker 2>/dev/null || true
+    addgroup nextjs nodejs && \
+    addgroup nextjs docker
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
