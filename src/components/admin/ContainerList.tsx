@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useContainers, ContainerData } from '@/hooks/useContainers';
+import { useAuth } from '@/hooks/useAuth';
 
 /**
  * 컨테이너 행 Props
@@ -21,6 +22,8 @@ interface ContainerRowProps {
   container: ContainerData;
   onAction: (id: string, action: 'start' | 'stop' | 'restart') => void;
   isLoading: boolean;
+  /** 컨테이너 제어 권한 여부 (user 이상) */
+  canControl: boolean;
 }
 
 /**
@@ -31,6 +34,7 @@ const ContainerRow = memo(function ContainerRow({
   container,
   onAction,
   isLoading,
+  canControl,
 }: ContainerRowProps) {
   const isRunning = container.state === 'running';
 
@@ -71,57 +75,65 @@ const ContainerRow = memo(function ContainerRow({
           </div>
         </div>
       </div>
-      <div className="flex gap-2">
-        {isRunning ? (
-          <>
+      {/* RBAC: user 이상 역할만 컨테이너 제어 버튼 표시 */}
+      {canControl && (
+        <div className="flex gap-2">
+          {isRunning ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRestart}
+                disabled={isLoading}
+              >
+                <RotateCw className="mr-1 h-3 w-3" />
+                Restart
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleStop}
+                disabled={isLoading}
+              >
+                <Square className="mr-1 h-3 w-3" />
+                Stop
+              </Button>
+            </>
+          ) : (
             <Button
-              variant="outline"
+              variant="default"
               size="sm"
-              onClick={handleRestart}
+              onClick={handleStart}
               disabled={isLoading}
             >
-              <RotateCw className="mr-1 h-3 w-3" />
-              Restart
+              <Play className="mr-1 h-3 w-3" />
+              Start
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleStop}
-              disabled={isLoading}
-            >
-              <Square className="mr-1 h-3 w-3" />
-              Stop
-            </Button>
-          </>
-        ) : (
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleStart}
-            disabled={isLoading}
-          >
-            <Play className="mr-1 h-3 w-3" />
-            Start
-          </Button>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }, (prevProps, nextProps) => {
-  // 커스텀 비교 함수: 컨테이너 ID와 상태, 로딩 상태만 비교
+  // 커스텀 비교 함수: 컨테이너 ID와 상태, 로딩 상태, 권한 비교
   return (
     prevProps.container.id === nextProps.container.id &&
     prevProps.container.state === nextProps.container.state &&
     prevProps.container.name === nextProps.container.name &&
-    prevProps.isLoading === nextProps.isLoading
+    prevProps.isLoading === nextProps.isLoading &&
+    prevProps.canControl === nextProps.canControl
   );
 });
 
 export function ContainerList() {
   const { containers, summary, loading, error, refetch, performAction } =
     useContainers(10000);
+  const { hasPermission } = useAuth();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'running' | 'stopped'>('all');
+
+  // RBAC: user 이상 역할만 컨테이너 제어 가능
+  const canControlContainers = hasPermission('docker', 'write');
 
   // 액션 핸들러 메모이제이션 - ContainerRow에 안정적인 참조 전달
   const handleAction = useCallback(
@@ -239,6 +251,7 @@ export function ContainerList() {
                   container={container}
                   onAction={handleAction}
                   isLoading={actionLoading === container.name}
+                  canControl={canControlContainers}
                 />
               ))}
             </div>

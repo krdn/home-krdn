@@ -7,6 +7,7 @@ import { DashboardStats } from '@/components/admin/DashboardStats';
 import { ContainerStats } from '@/components/admin/ContainerStats';
 import { LazyMetricsCharts } from '@/components/admin/LazyMetricsCharts';
 import { AdminOverview } from '@/components/admin/AdminOverview';
+import { RoleBanner } from '@/components/admin/RoleBanner';
 import { getRunningServices } from '@/config/services';
 
 /**
@@ -81,11 +82,15 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          시스템 상태 및 서비스 개요
-        </p>
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            시스템 상태 및 서비스 개요
+          </p>
+        </div>
+        {/* RBAC: 현재 역할 표시 */}
+        <RoleBanner />
       </header>
 
       {/* Section 1: System Metrics - Primary (4열 그리드) */}
