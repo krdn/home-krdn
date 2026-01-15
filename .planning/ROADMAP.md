@@ -13,6 +13,7 @@ None
 - ✅ **v1.0 MVP** — Phases 1-8 (shipped 2026-01-15) — [Archive](milestones/v1.0-MVP.md)
 - ✅ **v1.1 Enhancement** — Phases 9-16 (shipped 2026-01-15) — [Archive](milestones/v1.1-Enhancement.md)
 - ✅ **v2.0 Multi-User Foundation** — Phases 17-24 (shipped 2026-01-15) — [Archive](milestones/v2.0-Multi-User-Foundation.md)
+- 🚧 **v2.1 Polish** — Phases 25-32 (in progress)
 
 ## Completed Milestones
 
@@ -187,6 +188,99 @@ Plans:
 Plans:
 - [x] 24-01: SW 캐싱 전략 개선, 오프라인 폴백 페이지, 오프라인 상태 UI
 
+### 🚧 v2.1 Polish (In Progress)
+
+**Milestone Goal:** 기존 기능 다듬기 — 테스트 커버리지 확대, 접근성 개선, 에러 처리 표준화, 문서화 강화
+
+#### Phase 25: Test Coverage Expansion
+
+**Goal**: 단위/통합 테스트 커버리지 60% 달성 (현재 ~2%)
+**Depends on**: v2.0 milestone complete
+**Research**: Unlikely (기존 Vitest 인프라 활용)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 25-01: TBD (run /gsd:plan-phase 25 to break down)
+
+#### Phase 26: E2E Test Activation
+
+**Goal**: Playwright E2E 테스트 활성화 — 인증 플로우 포함, 다중 브라우저 지원
+**Depends on**: Phase 25
+**Research**: Unlikely (기존 Playwright 설정 확장)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 26-01: TBD
+
+#### Phase 27: Error Handling Standardization
+
+**Goal**: 중앙집중식 에러 핸들링 시스템 — 에러 분류, 사용자 피드백, 로깅 표준화
+**Depends on**: Phase 26
+**Research**: Unlikely (내부 패턴 적용)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 27-01: TBD
+
+#### Phase 28: Accessibility Enhancement
+
+**Goal**: 접근성 개선 — ARIA 속성, alt 텍스트, 키보드 네비게이션, 포커스 관리
+**Depends on**: Phase 27
+**Research**: Unlikely (WCAG 가이드라인 적용)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 28-01: TBD
+
+#### Phase 29: Performance Optimization
+
+**Goal**: 렌더링 최적화 — memo/useMemo 확대, 가상화, 지연 로딩 개선
+**Depends on**: Phase 28
+**Research**: Unlikely (React 최적화 패턴 적용)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 29-01: TBD
+
+#### Phase 30: Documentation Overhaul
+
+**Goal**: 문서화 강화 — README 개선, API 문서, 개발자 가이드, 아키텍처 다이어그램
+**Depends on**: Phase 29
+**Research**: Unlikely (내부 문서 작성)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 30-01: TBD
+
+#### Phase 31: Logging Infrastructure
+
+**Goal**: 프로덕션 로깅 시스템 — 구조화된 로그, 컨텍스트 추적, 로그 레벨 관리
+**Depends on**: Phase 30
+**Research**: Likely (로깅 라이브러리 선택: pino vs winston)
+**Research topics**: Next.js 16 Edge Runtime 호환 로깅 솔루션
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 31-01: TBD
+
+#### Phase 32: Bundle Analysis & Optimization
+
+**Goal**: 번들 최적화 — 번들 크기 분석, 코드 스플리팅, tree-shaking 개선
+**Depends on**: Phase 31
+**Research**: Unlikely (기존 analyze 스크립트 활용)
+**Status**: Not started
+**Plans**: TBD
+
+Plans:
+- [ ] 32-01: TBD
+
 ## Progress
 
 **Execution Order:**
@@ -218,6 +312,14 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 22. PWA Foundation | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
 | 23. Push Notification | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
 | 24. Offline Caching | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
+| 25. Test Coverage Expansion | v2.1 | 0/? | Not started | - |
+| 26. E2E Test Activation | v2.1 | 0/? | Not started | - |
+| 27. Error Handling Standardization | v2.1 | 0/? | Not started | - |
+| 28. Accessibility Enhancement | v2.1 | 0/? | Not started | - |
+| 29. Performance Optimization | v2.1 | 0/? | Not started | - |
+| 30. Documentation Overhaul | v2.1 | 0/? | Not started | - |
+| 31. Logging Infrastructure | v2.1 | 0/? | Not started | - |
+| 32. Bundle Analysis & Optimization | v2.1 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-15 after v2.0 Milestone completion*
+*Last updated: 2026-01-15 after v2.1 Polish milestone creation*

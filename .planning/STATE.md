@@ -5,22 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-15)
 
 **Core value:** 통합 모니터링 허브 — 모든 서비스와 컨테이너를 한눈에 파악하고 관리하는 중앙 대시보드
-**Current focus:** v2.0 Multi-User Foundation — 멀티 유저 인프라 + PWA 모바일 경험
+**Current focus:** v2.1 Polish — 기존 기능 다듬기, 테스트/접근성/문서화 강화
 
 ## Current Position
 
-Phase: 24 of 24 (Offline Caching)
-Plan: 1 of 1 complete
-Status: Milestone complete 🎉
-Last activity: 2026-01-15 — Completed Phase 24-01 (Offline Caching 전략)
+Phase: 25 of 32 (Test Coverage Expansion)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-15 — Milestone v2.1 Polish created
 
-Progress: ██████████ 100% (v2.0 Milestone complete!)
+Progress: ░░░░░░░░░░ 0% (v2.1 Milestone started)
 
 ## Performance Metrics
 
 **Velocity:**
 - Milestone v1.0: 24 plans completed in ~60min (parallelized)
 - Milestone v1.1: 9 plans completed in ~7hrs
+- Milestone v2.0: 17 plans completed
 
 **By Milestone:**
 
@@ -29,48 +30,26 @@ Progress: ██████████ 100% (v2.0 Milestone complete!)
 | v1.0 MVP | 1-8 | 24 | ✅ Shipped | 2026-01-15 |
 | v1.1 Enhancement | 9-16 | 9 | ✅ Shipped | 2026-01-15 |
 | v2.0 Multi-User Foundation | 17-24 | 17 | ✅ Shipped | 2026-01-15 |
+| v2.1 Polish | 25-32 | TBD | 🚧 In Progress | - |
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Key technology decisions for v2.0:
+Key technology decisions for v2.1:
 
-- Prisma 7 ORM with better-sqlite3 어댑터 (타입 안전성, 마이그레이션)
-- SQLite 파일 DB로 시작 (마이그레이션 용이)
-- Role enum으로 ADMIN/USER/VIEWER 구분
-- UserSettings 1:1 분리 (대시보드 커스터마이징 준비)
-- 싱글톤 PrismaClient 패턴 (Next.js hot reload 대응)
-- authenticateUser vs authenticateUserFromDB 병행 운영 (점진적 전환)
-- 이중 역할 검사: 미들웨어(빠른 거부) + API(상세 에러)
-- JWT role lowercase 형식 유지 (Prisma enum과 서비스 레이어에서 변환)
-- RBAC 권한 매트릭스: Resource(system/docker/projects/users/admin) × Action(read/write/delete/manage)
-- Edge Runtime 호환 RBAC 헬퍼: hasPermission, canAccessRoute (순수 TS)
-- 프론트엔드 역할 기반 UI: useAuth 훅 + RoleGuard 컴포넌트
-- UserSettings 서비스: settings-service.ts + /api/settings API
-- 테마 서버 동기화: 로그인 시 서버, 비로그인 시 localStorage
-- 대시보드 위젯 커스터마이징: Zustand 스토어 + dashboardLayout JSON 서버 저장
-- Team 모델: slug 유니크, owner/members 분리, TeamMember 역할 기반
-- TeamInvite: 7일 만료 토큰, 이메일 기반 초대, 중복 초대 시 이전 삭제
-- TeamSettings: 팀별 알림 채널 설정 (이메일/Slack), upsert 패턴으로 기본값 자동 생성
-- 팀 알림 발송: Promise.allSettled 병렬 처리, 알림 타입별 토글 (alert/member_join/member_leave)
-- PWA: Next.js 16 내장 manifest.ts 사용, next-pwa 미사용 (deprecated)
-- Service Worker: Network-first (API), Cache-first (정적 자산) 캐싱 전략
-- PWA 설치: beforeinstallprompt 이벤트 기반 커스텀 InstallPrompt UI
-- Web Push: web-push 라이브러리 + VAPID 인증, endpoint 기반 upsert 패턴
-- 푸시 구독: PushSubscription 모델, 410 응답 시 자동 정리
-- alertEngine 푸시 통합: sendTeamNotification에 푸시 채널 추가 (병렬 발송)
-- 오프라인 캐싱: 캐시 버전 관리 (v2), 캐시 버킷 분리 (static/dynamic/images)
-- SW 캐싱 전략: StaleWhileRevalidate(JS/CSS), CacheFirst(이미지), NetworkFirst(API/네비게이션)
-- 오프라인 폴백: /offline 정적 페이지, NetworkFirst 실패 시 캐시된 페이지 제공
-- 캐시 관리: FIFO 방식 항목 제한 (dynamic 50개, images 30개)
+- 테스트 커버리지 60% 목표 (현재 ~2%)
+- E2E 테스트 인증 플로우 포함 활성화
+- 중앙집중식 에러 핸들링 시스템
+- WCAG 기반 접근성 개선
+- 프로덕션 로깅 라이브러리 선택 필요 (pino vs winston)
 
-### Constraints (v2.0)
+### Constraints (v2.1)
 
-- 기존 JWT 인증 시스템과 호환 유지
-- v1.1의 WebSocket 인프라 활용
-- 단계적 마이그레이션 (기존 단일 유저 → 멀티 유저)
+- 기존 기능 유지 (breaking change 최소화)
+- 테스트 추가가 기존 코드에 영향 주지 않도록
+- 점진적 개선 (한 번에 전체 리팩토링 X)
 
 ### Deferred Issues
 
@@ -82,17 +61,18 @@ None.
 
 ### Blockers/Concerns Carried Forward
 
-None — Starting fresh milestone v2.0.
+None — Starting fresh milestone v2.1.
 
 ### Roadmap Evolution
 
 - v1.0 MVP completed: 8 phases (1-8), shipped 2026-01-15
 - v1.1 Enhancement completed: 8 phases (9-16), shipped 2026-01-15
-- v2.0 Multi-User Foundation created: 8 phases (17-24), in progress
+- v2.0 Multi-User Foundation completed: 8 phases (17-24), shipped 2026-01-15
+- v2.1 Polish created: 8 phases (25-32), in progress
 
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: v2.0 Multi-User Foundation 마일스톤 완료 🎉
+Stopped at: v2.1 Polish 마일스톤 생성 완료
 Resume file: None
-Next action: `/gsd:new-milestone` (다음 마일스톤 계획) 또는 `/gsd:complete-milestone` (v2.0 아카이브)
+Next action: `/gsd:plan-phase 25` (첫 번째 Phase 계획)
