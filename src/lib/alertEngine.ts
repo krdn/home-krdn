@@ -7,7 +7,8 @@
 import type { SystemMetricsData } from '@/hooks/useSystemMetrics';
 import type { AlertRule, AlertCategory, NewAlert, AlertOperator } from '@/types/alert';
 import { ALERT_CONFIG } from '@/config/constants';
-import { getTeamSettings, getTeamMemberEmails, getTeamById } from '@/lib/team-service';
+import { getTeamSettings, getTeamMemberEmails, getTeamById, getTeamMemberIds } from '@/lib/team-service';
+import { sendPushToUsers, createAlertPayload } from '@/lib/push-service';
 
 // 마지막 알림 시간 추적 (쿨다운용)
 const lastAlertTime: Map<string, number> = new Map();
@@ -189,8 +190,8 @@ export interface TeamNotificationMessage {
 export async function sendTeamNotification(
   teamId: string,
   message: TeamNotificationMessage
-): Promise<{ email: boolean; slack: boolean }> {
-  const result = { email: false, slack: false };
+): Promise<{ email: boolean; slack: boolean; push: boolean }> {
+  const result = { email: false, slack: false, push: false };
 
   try {
     // 팀 설정 조회
@@ -234,6 +235,17 @@ export async function sendTeamNotification(
           })
       );
     }
+
+    // 푸시 알림 (Phase 23)
+    promises.push(
+      sendTeamPushNotification(teamId, teamName, message)
+        .then(() => {
+          result.push = true;
+        })
+        .catch((error) => {
+          console.error('[TeamNotification] 푸시 발송 실패:', error);
+        })
+    );
 
     await Promise.allSettled(promises);
   } catch (error) {
@@ -363,4 +375,34 @@ function getNotificationEmoji(type: TeamNotificationType): string {
     default:
       return '📢';
   }
+}
+
+/**
+ * 팀 멤버들에게 푸시 알림을 발송합니다. (Phase 23)
+ */
+async function sendTeamPushNotification(
+  teamId: string,
+  teamName: string,
+  message: TeamNotificationMessage
+): Promise<void> {
+  // 팀 멤버 ID 목록 조회
+  const memberIds = await getTeamMemberIds(teamId);
+  if (memberIds.length === 0) {
+    return;
+  }
+
+  // 알림 타입에 따른 심각도 결정
+  const level = message.type === 'alert' ? 'warning' : 'info';
+
+  // 푸시 페이로드 생성
+  const payload = createAlertPayload(
+    level,
+    `[${teamName}] ${message.body}`,
+    '/teams/' + teamId
+  );
+  payload.title = `${getNotificationEmoji(message.type)} ${message.title}`;
+
+  // 푸시 발송
+  const result = await sendPushToUsers(memberIds, payload);
+  console.log('[TeamNotification] 푸시 발송:', { teamId, ...result });
 }

@@ -1077,3 +1077,17 @@ export async function getTeamMemberEmails(teamId: string): Promise<string[]> {
 
   return members.map((m) => m.user.email)
 }
+
+/**
+ * 팀 멤버들의 사용자 ID 목록을 조회합니다.
+ * @param teamId 팀 ID
+ * @returns 멤버 사용자 ID 배열
+ */
+export async function getTeamMemberIds(teamId: string): Promise<string[]> {
+  const members = await prisma.teamMember.findMany({
+    where: { teamId },
+    select: { userId: true },
+  })
+
+  return members.map((m) => m.userId)
+}
