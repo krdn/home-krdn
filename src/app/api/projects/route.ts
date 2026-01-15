@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { verifyToken } from "@/lib/auth";
+import { hasPermission } from "@/lib/rbac";
 import {
   getSortedProjects,
   getAllCategories,
@@ -19,6 +20,7 @@ import {
   type ProjectCategory,
   type ProjectStatus,
 } from "@/types/project";
+import type { UserRole } from "@/types/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +43,9 @@ const querySchema = z.object({
 });
 
 /**
- * 인증 확인 헬퍼 함수
+ * 인증 및 권한 확인 헬퍼 함수
  * @throws 인증 실패 시 에러
+ * @returns JWT 페이로드 (역할 정보 포함)
  */
 async function requireAuth() {
   const cookieStore = await cookies();
@@ -58,6 +61,19 @@ async function requireAuth() {
   }
 
   return result.payload;
+}
+
+/**
+ * 리소스에 대한 쓰기 권한 확인
+ * @throws 권한 없는 경우 에러
+ */
+function requireWritePermission(role: UserRole): void {
+  if (!hasPermission(role, "projects", "write")) {
+    const error = new Error("FORBIDDEN");
+    (error as Error & { requiredPermission: string }).requiredPermission =
+      "프로젝트 쓰기 권한이 필요합니다. 필요 역할: user 이상";
+    throw error;
+  }
 }
 
 /**
@@ -138,12 +154,13 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/projects
- * 새 프로젝트 생성 (auth required)
+ * 새 프로젝트 생성 (user 이상 권한 필요)
  */
 export async function POST(request: NextRequest) {
   try {
-    // 인증 확인
-    await requireAuth();
+    // 인증 및 권한 확인
+    const payload = await requireAuth();
+    requireWritePermission(payload.role as UserRole);
 
     // 요청 본문 파싱
     const body = await request.json();
@@ -177,6 +194,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: "인증이 필요합니다" },
         { status: 401 }
+      );
+    }
+
+    // 권한 오류
+    if (error instanceof Error && error.message === "FORBIDDEN") {
+      const errorWithPermission = error as Error & {
+        requiredPermission?: string;
+      };
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            errorWithPermission.requiredPermission ??
+            "해당 작업에 대한 권한이 없습니다",
+        },
+        { status: 403 }
       );
     }
 
