@@ -57,6 +57,9 @@ model User {
 
   // 관계: 푸시 구독 (Phase 23)
   pushSubscriptions PushSubscription[]
+
+  // 관계: 포트 레지스트리 (Phase 33)
+  portRegistries PortRegistry[]
 }
 
 // 팀 모델
@@ -213,4 +216,47 @@ model PushSubscription {
 
   // 인덱스: 사용자별 구독 조회
   @@index([userId])
+}
+
+// ============================================================
+// Port Registry 모델 (Phase 33)
+// ============================================================
+
+// 포트 레지스트리 모델
+model PortRegistry {
+  id String @id @default(cuid())
+
+  // 포트 정보
+  port     Int    @unique
+  protocol String @default("tcp") // tcp, udp
+
+  // 프로젝트 정보
+  projectId   String? // 연결된 프로젝트 ID (nullable - 수동 등록 시)
+  projectName String // 프로젝트/서비스 이름
+  description String? // 포트 용도 설명
+
+  // 환경 및 상태
+  environment String @default("development") // development, staging, production
+  status      String @default("active") // active, reserved, deprecated
+
+  // URL 정보
+  internalUrl String? // 내부 접근 URL (예: http://localhost:3000)
+  externalUrl String? // 외부 접근 URL (예: https://app.example.com)
+
+  // 메타데이터
+  category String? // ai, web, n8n, system 등
+  tags     String? // JSON 배열 문자열로 저장
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 등록자 (선택)
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  // 인덱스
+  @@index([projectId])
+  @@index([category])
+  @@index([status])
 }
