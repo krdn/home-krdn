@@ -2,12 +2,14 @@
  * 에러 로깅 유틸리티
  *
  * Phase 27: Error Handling Standardization
+ * Phase 31: pino 기반 구조화된 로깅으로 마이그레이션
  *
- * 구조화된 에러 로깅을 제공합니다.
- * JSON 형식으로 로깅하여 향후 로그 집계 도구와 호환됩니다.
+ * 에러 전용 로깅 헬퍼를 제공합니다.
+ * 내부적으로 중앙 Logger 서비스를 사용합니다.
  */
 
 import { AppError } from './errors';
+import { logger, Logger, LogContext } from './logger';
 
 /**
  * 에러 로그 컨텍스트
@@ -18,20 +20,6 @@ export interface ErrorLogContext {
   userId?: string;
   requestId?: string;
   [key: string]: unknown;
-}
-
-/**
- * 에러 로그 엔트리
- */
-interface ErrorLogEntry {
-  timestamp: string;
-  level: 'error' | 'warn';
-  name: string;
-  message: string;
-  code?: string;
-  statusCode?: number;
-  stack?: string;
-  context?: ErrorLogContext;
 }
 
 /**
@@ -54,42 +42,26 @@ export function logError(
   error: unknown,
   context?: ErrorLogContext
 ): void {
-  const entry: ErrorLogEntry = {
-    timestamp: new Date().toISOString(),
-    level: 'error',
-    name: 'UnknownError',
-    message: 'Unknown error occurred',
-  };
+  const logContext: LogContext = { ...context };
 
   if (error instanceof AppError) {
-    entry.name = error.name;
-    entry.message = error.message;
-    entry.code = error.code;
-    entry.statusCode = error.statusCode;
-    entry.stack = error.stack;
+    logContext.code = error.code;
+    logContext.statusCode = error.statusCode;
+    logContext.stack = error.stack;
+
     // 4xx 에러는 클라이언트 오류이므로 warn 레벨
     if (error.statusCode >= 400 && error.statusCode < 500) {
-      entry.level = 'warn';
+      logger.warn(`[${error.name}] ${error.message}`, logContext);
+    } else {
+      logger.error(`[${error.name}] ${error.message}`, logContext);
     }
   } else if (error instanceof Error) {
-    entry.name = error.name;
-    entry.message = error.message;
-    entry.stack = error.stack;
+    logContext.stack = error.stack;
+    logger.error(`[${error.name}] ${error.message}`, logContext);
   } else if (typeof error === 'string') {
-    entry.message = error;
-  }
-
-  if (context) {
-    entry.context = context;
-  }
-
-  // JSON 형식으로 로깅 (향후 로그 집계 도구와 호환)
-  const logString = JSON.stringify(entry);
-
-  if (entry.level === 'error') {
-    console.error(logString);
+    logger.error(error, logContext);
   } else {
-    console.warn(logString);
+    logger.error('Unknown error occurred', logContext);
   }
 }
 
@@ -129,13 +101,29 @@ export function logWarning(
   message: string,
   context?: ErrorLogContext
 ): void {
-  const entry: ErrorLogEntry = {
-    timestamp: new Date().toISOString(),
-    level: 'warn',
-    name: 'Warning',
-    message,
-    context,
-  };
+  logger.warn(message, context);
+}
 
-  console.warn(JSON.stringify(entry));
+/**
+ * 정보 레벨 로깅
+ *
+ * 일반적인 운영 정보 로깅
+ */
+export function logInfo(
+  message: string,
+  context?: ErrorLogContext
+): void {
+  logger.info(message, context);
+}
+
+/**
+ * 디버그 레벨 로깅
+ *
+ * 개발 시 유용한 정보
+ */
+export function logDebug(
+  message: string,
+  context?: ErrorLogContext
+): void {
+  logger.debug(message, context);
 }
