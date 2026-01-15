@@ -10,11 +10,23 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3002',
     trace: 'on-first-retry',
+    // 실패 시 스크린샷 캡처 (디버깅용)
+    screenshot: 'only-on-failure',
+    // 실패 시 비디오 보존 (디버깅용)
+    video: 'retain-on-failure',
   },
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
     },
   ],
   webServer: {
