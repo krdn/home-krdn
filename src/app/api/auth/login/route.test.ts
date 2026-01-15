@@ -3,10 +3,26 @@
  * POST /api/auth/login - 로그인 인증
  *
  * Phase 25: Test Coverage Expansion
+ * Phase 33: pino logger mock 및 한국어 에러 메시지 적용
  */
 
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { NextRequest } from 'next/server';
+
+// vi.hoisted로 logger mock 객체 선언
+const mockLogger = vi.hoisted(() => ({
+  trace: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  fatal: vi.fn(),
+  child: vi.fn().mockReturnThis(),
+}));
+
+vi.mock('@/lib/logger', () => ({
+  logger: mockLogger,
+}));
 
 // 모듈 mocking
 vi.mock('@/lib/auth', () => ({
@@ -193,7 +209,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Invalid credentials');
+      expect(data.error).toBe('잘못된 인증 정보입니다');
     });
 
     it('존재하지 않는 사용자로 로그인 시 401을 반환해야 한다', async () => {
@@ -215,7 +231,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Invalid credentials');
+      expect(data.error).toBe('잘못된 인증 정보입니다');
     });
 
     it('인증 성공 후 사용자 조회 실패 시 401을 반환해야 한다', async () => {
@@ -238,7 +254,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('User not found');
+      expect(data.error).toBe('사용자를 찾을 수 없습니다');
     });
   });
 
@@ -256,7 +272,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Username and password required');
+      expect(data.error).toBe('사용자명과 비밀번호를 입력해주세요');
     });
 
     it('password가 없으면 400을 반환해야 한다', async () => {
@@ -272,7 +288,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Username and password required');
+      expect(data.error).toBe('사용자명과 비밀번호를 입력해주세요');
     });
 
     it('빈 문자열 username과 password는 400을 반환해야 한다', async () => {
@@ -289,7 +305,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Username and password required');
+      expect(data.error).toBe('사용자명과 비밀번호를 입력해주세요');
     });
   });
 
@@ -305,7 +321,7 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Invalid request body');
+      expect(data.error).toBe('잘못된 요청 본문입니다');
     });
 
     it('인증 함수에서 예외 발생 시 500을 반환해야 한다', async () => {
@@ -324,7 +340,8 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Internal server error');
+      // 일반 Error는 메시지가 그대로 노출됨
+      expect(data.error).toBe('Database error');
     });
 
     it('예상치 못한 에러도 500으로 처리해야 한다', async () => {
@@ -343,7 +360,8 @@ describe('POST /api/auth/login', () => {
       // Assert
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Internal server error');
+      // 문자열 에러도 일반 서버 오류로 처리
+      expect(data.error).toBe('서버 오류가 발생했습니다');
     });
   });
 });

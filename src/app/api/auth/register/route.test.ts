@@ -3,10 +3,27 @@
  * POST /api/auth/register - 회원가입
  *
  * Phase 25: Test Coverage Expansion
+ * Phase 33: parse mock으로 변경 (실제 코드와 일치)
  */
 
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { NextRequest } from 'next/server';
+import { ZodError, ZodIssue } from 'zod';
+
+// vi.hoisted로 logger mock 객체 선언
+const mockLogger = vi.hoisted(() => ({
+  trace: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  fatal: vi.fn(),
+  child: vi.fn().mockReturnThis(),
+}));
+
+vi.mock('@/lib/logger', () => ({
+  logger: mockLogger,
+}));
 
 // 모듈 mocking
 vi.mock('@/lib/auth', () => ({
@@ -20,7 +37,7 @@ vi.mock('@/lib/user-service', () => ({
   findUserByUsername: vi.fn(),
   toUserDto: vi.fn(),
   RegisterInputSchema: {
-    safeParse: vi.fn(),
+    parse: vi.fn(),
   },
 }));
 
@@ -28,6 +45,13 @@ vi.mock('@/lib/user-service', () => ({
 import { POST } from './route';
 import * as authModule from '@/lib/auth';
 import * as userServiceModule from '@/lib/user-service';
+
+/**
+ * ZodError를 생성하는 헬퍼 함수
+ */
+function createZodError(issues: ZodIssue[]): ZodError {
+  return new ZodError(issues);
+}
 
 /**
  * POST 요청을 생성하는 헬퍼 함수
@@ -63,7 +87,7 @@ describe('POST /api/auth/register', () => {
   const mockFindUserByUsername = userServiceModule.findUserByUsername as Mock;
   const mockToUserDto = userServiceModule.toUserDto as Mock;
   const mockRegisterInputSchema = userServiceModule.RegisterInputSchema as {
-    safeParse: Mock;
+    parse: Mock;
   };
 
   beforeEach(() => {
@@ -80,10 +104,7 @@ describe('POST /api/auth/register', () => {
         displayName: 'New User',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(false);
       mockCreateUser.mockResolvedValue({
@@ -128,10 +149,7 @@ describe('POST /api/auth/register', () => {
         password: 'securepass123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(false);
       mockCreateUser.mockResolvedValue({
@@ -172,10 +190,7 @@ describe('POST /api/auth/register', () => {
         password: 'securepass123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(false);
       mockCreateUser.mockResolvedValue({
@@ -215,10 +230,7 @@ describe('POST /api/auth/register', () => {
         password: 'password123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(false);
       mockCreateUser.mockResolvedValue({
@@ -265,10 +277,7 @@ describe('POST /api/auth/register', () => {
         password: 'securepass123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(true);
 
       const request = createRegisterRequest(input);
@@ -291,10 +300,7 @@ describe('POST /api/auth/register', () => {
         password: 'securepass123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(true);
 
@@ -313,14 +319,11 @@ describe('POST /api/auth/register', () => {
 
   describe('입력 검증', () => {
     it('유효하지 않은 이메일 형식은 400을 반환해야 한다', async () => {
-      // Arrange
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: false,
-        error: {
-          issues: [
-            { path: ['email'], message: '유효한 이메일 주소를 입력해주세요' },
-          ],
-        },
+      // Arrange - parse는 ZodError를 throw
+      mockRegisterInputSchema.parse.mockImplementation(() => {
+        throw createZodError([
+          { path: ['email'], message: '유효한 이메일 주소를 입력해주세요', code: 'invalid_string' } as ZodIssue,
+        ]);
       });
 
       const request = createRegisterRequest({
@@ -336,18 +339,15 @@ describe('POST /api/auth/register', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.field).toBe('email');
+      expect(data.details.field).toBe('email');
     });
 
     it('너무 짧은 비밀번호는 400을 반환해야 한다', async () => {
-      // Arrange
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: false,
-        error: {
-          issues: [
-            { path: ['password'], message: '비밀번호는 최소 8자 이상이어야 합니다' },
-          ],
-        },
+      // Arrange - parse는 ZodError를 throw
+      mockRegisterInputSchema.parse.mockImplementation(() => {
+        throw createZodError([
+          { path: ['password'], message: '비밀번호는 최소 8자 이상이어야 합니다', code: 'too_small' } as ZodIssue,
+        ]);
       });
 
       const request = createRegisterRequest({
@@ -367,14 +367,11 @@ describe('POST /api/auth/register', () => {
     });
 
     it('너무 짧은 사용자명은 400을 반환해야 한다', async () => {
-      // Arrange
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: false,
-        error: {
-          issues: [
-            { path: ['username'], message: '사용자명은 최소 3자 이상이어야 합니다' },
-          ],
-        },
+      // Arrange - parse는 ZodError를 throw
+      mockRegisterInputSchema.parse.mockImplementation(() => {
+        throw createZodError([
+          { path: ['username'], message: '사용자명은 최소 3자 이상이어야 합니다', code: 'too_small' } as ZodIssue,
+        ]);
       });
 
       const request = createRegisterRequest({
@@ -390,21 +387,19 @@ describe('POST /api/auth/register', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.field).toBe('username');
+      expect(data.details.field).toBe('username');
     });
 
     it('특수문자가 포함된 사용자명은 400을 반환해야 한다', async () => {
-      // Arrange
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: false,
-        error: {
-          issues: [
-            {
-              path: ['username'],
-              message: '사용자명은 영문, 숫자, 밑줄(_)만 사용할 수 있습니다',
-            },
-          ],
-        },
+      // Arrange - parse는 ZodError를 throw
+      mockRegisterInputSchema.parse.mockImplementation(() => {
+        throw createZodError([
+          {
+            path: ['username'],
+            message: '사용자명은 영문, 숫자, 밑줄(_)만 사용할 수 있습니다',
+            code: 'invalid_string',
+          } as ZodIssue,
+        ]);
       });
 
       const request = createRegisterRequest({
@@ -435,7 +430,7 @@ describe('POST /api/auth/register', () => {
       // Assert
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Invalid request body');
+      expect(data.error).toBe('잘못된 요청 본문입니다');
     });
 
     it('사용자 생성 중 에러 발생 시 500을 반환해야 한다', async () => {
@@ -446,10 +441,7 @@ describe('POST /api/auth/register', () => {
         password: 'password123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(false);
       mockCreateUser.mockRejectedValue(new Error('Database error'));
@@ -463,7 +455,8 @@ describe('POST /api/auth/register', () => {
       // Assert
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Internal server error');
+      // 일반 Error는 메시지가 그대로 노출됨
+      expect(data.error).toBe('Database error');
     });
 
     it('생성 후 사용자 조회 실패 시 500을 반환해야 한다', async () => {
@@ -474,10 +467,7 @@ describe('POST /api/auth/register', () => {
         password: 'password123',
       };
 
-      mockRegisterInputSchema.safeParse.mockReturnValue({
-        success: true,
-        data: input,
-      });
+      mockRegisterInputSchema.parse.mockReturnValue(input);
       mockIsEmailTaken.mockResolvedValue(false);
       mockIsUsernameTaken.mockResolvedValue(false);
       mockCreateUser.mockResolvedValue({
@@ -496,7 +486,8 @@ describe('POST /api/auth/register', () => {
       // Assert
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Internal server error');
+      // DatabaseError 메시지가 그대로 반환됨
+      expect(data.error).toBe('사용자 생성 후 조회 실패');
     });
   });
 });

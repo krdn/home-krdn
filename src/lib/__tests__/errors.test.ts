@@ -2,9 +2,10 @@
  * 에러 시스템 단위 테스트
  *
  * Phase 27: Error Handling Standardization
+ * Phase 33: pino logger mock 적용
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { z, ZodError } from 'zod';
 import {
   AppError,
@@ -21,8 +22,33 @@ import {
   createSuccessResponse,
   withErrorHandler,
 } from '../api-error-handler';
-import { logError, extractRequestContext, logWarning } from '../error-logger';
 import { ERROR_MESSAGES, getDefaultErrorMessage } from '../error-codes';
+
+// vi.hoisted로 mock 객체 선언 (hoisting 문제 해결)
+const mockLogger = vi.hoisted(() => ({
+  trace: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  fatal: vi.fn(),
+  child: vi.fn().mockReturnThis(),
+}));
+
+vi.mock('../logger', () => ({
+  logger: mockLogger,
+  Logger: class {
+    warn = mockLogger.warn;
+    error = mockLogger.error;
+    info = mockLogger.info;
+    debug = mockLogger.debug;
+  },
+  createRequestLogger: vi.fn(() => mockLogger),
+  createModuleLogger: vi.fn(() => mockLogger),
+}));
+
+// logger mock 후 import
+import { logError, extractRequestContext, logWarning } from '../error-logger';
 
 // ============================================================
 // 커스텀 에러 클래스 테스트
@@ -290,8 +316,7 @@ describe('API Error Handler', () => {
 
   describe('withErrorHandler', () => {
     beforeEach(() => {
-      vi.spyOn(console, 'error').mockImplementation(() => {});
-      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      vi.clearAllMocks();
     });
 
     it('should pass through successful responses', async () => {
@@ -325,7 +350,8 @@ describe('API Error Handler', () => {
 
       await withErrorHandler(handler, { path: '/api/test', method: 'POST' });
 
-      expect(console.error).toHaveBeenCalled();
+      // pino logger mock으로 로깅 확인
+      expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 });
@@ -336,13 +362,7 @@ describe('API Error Handler', () => {
 
 describe('Error Logger', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('logError', () => {
@@ -350,47 +370,39 @@ describe('Error Logger', () => {
       const error = new AppError('Server error', 'INTERNAL_ERROR', 500);
       logError(error);
 
-      expect(console.error).toHaveBeenCalled();
-      const logCall = (console.error as any).mock.calls[0][0];
-      const parsed = JSON.parse(logCall);
-
-      expect(parsed.level).toBe('error');
-      expect(parsed.name).toBe('AppError');
-      expect(parsed.code).toBe('INTERNAL_ERROR');
+      // 500 에러는 error 레벨로 로깅
+      expect(mockLogger.error).toHaveBeenCalled();
+      const [message, context] = mockLogger.error.mock.calls[0];
+      expect(message).toContain('Server error');
+      expect(context.code).toBe('INTERNAL_ERROR');
     });
 
     it('should log 4xx errors as warnings', () => {
       const error = new ValidationError('Bad input');
       logError(error);
 
-      expect(console.warn).toHaveBeenCalled();
-      const logCall = (console.warn as any).mock.calls[0][0];
-      const parsed = JSON.parse(logCall);
-
-      expect(parsed.level).toBe('warn');
+      // 4xx 에러는 warn 레벨로 로깅
+      expect(mockLogger.warn).toHaveBeenCalled();
     });
 
     it('should include context in log', () => {
       const error = new Error('Test');
       logError(error, { path: '/api/users', method: 'POST', userId: '123' });
 
-      const logCall = (console.error as any).mock.calls[0][0];
-      const parsed = JSON.parse(logCall);
-
-      expect(parsed.context).toEqual({
-        path: '/api/users',
-        method: 'POST',
-        userId: '123',
-      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      const [, context] = mockLogger.error.mock.calls[0];
+      expect(context.path).toBe('/api/users');
+      expect(context.method).toBe('POST');
+      expect(context.userId).toBe('123');
     });
 
     it('should handle string errors', () => {
       logError('String error message');
 
-      const logCall = (console.error as any).mock.calls[0][0];
-      const parsed = JSON.parse(logCall);
-
-      expect(parsed.message).toBe('String error message');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'String error message',
+        expect.any(Object)
+      );
     });
   });
 
@@ -411,12 +423,10 @@ describe('Error Logger', () => {
     it('should log with warn level', () => {
       logWarning('This is a warning');
 
-      expect(console.warn).toHaveBeenCalled();
-      const logCall = (console.warn as any).mock.calls[0][0];
-      const parsed = JSON.parse(logCall);
-
-      expect(parsed.level).toBe('warn');
-      expect(parsed.message).toBe('This is a warning');
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'This is a warning',
+        undefined
+      );
     });
   });
 });
