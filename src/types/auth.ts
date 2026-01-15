@@ -141,3 +141,31 @@ export interface UserWithTeams {
     role: UserRole;
   }[];
 }
+
+// ============================================================
+// RBAC 타입 (Phase 19)
+// ============================================================
+
+/**
+ * RBAC 리소스 종류
+ * 시스템에서 관리하는 주요 리소스 목록
+ */
+export type Resource = "system" | "docker" | "projects" | "users" | "admin";
+
+/**
+ * 리소스에 대한 액션 종류
+ */
+export type Action = "read" | "write" | "delete" | "manage";
+
+/**
+ * 권한 정의 (리소스 + 액션)
+ */
+export interface Permission {
+  resource: Resource;
+  actions: Action[];
+}
+
+/**
+ * 역할별 권한 매핑 타입
+ */
+export type RolePermissions = Record<UserRole, Permission[]>;
