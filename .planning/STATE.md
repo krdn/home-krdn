@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 20 of 24 (User Dashboard Settings)
-Plan: 3 of 3 complete
+Phase: 21 of 24 (Team Features)
+Plan: 4 of 4 complete
 Status: Phase complete
-Last activity: 2026-01-15 — Completed Phase 20 (20-01, 20-02, 20-03)
+Last activity: 2026-01-15 — Completed Phase 21 (21-01, 21-02, 21-03, 21-04)
 
-Progress: ████░░░░░░ 50% (v2.0 Phase 20 complete)
+Progress: █████░░░░░ 62.5% (v2.0 Phase 21 complete)
 
 ## Performance Metrics
 
@@ -51,6 +51,10 @@ Key technology decisions for v2.0:
 - UserSettings 서비스: settings-service.ts + /api/settings API
 - 테마 서버 동기화: 로그인 시 서버, 비로그인 시 localStorage
 - 대시보드 위젯 커스터마이징: Zustand 스토어 + dashboardLayout JSON 서버 저장
+- Team 모델: slug 유니크, owner/members 분리, TeamMember 역할 기반
+- TeamInvite: 7일 만료 토큰, 이메일 기반 초대, 중복 초대 시 이전 삭제
+- TeamSettings: 팀별 알림 채널 설정 (이메일/Slack), upsert 패턴으로 기본값 자동 생성
+- 팀 알림 발송: Promise.allSettled 병렬 처리, 알림 타입별 토글 (alert/member_join/member_leave)
 
 ### Constraints (v2.0)
 
@@ -79,6 +83,6 @@ None — Starting fresh milestone v2.0.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 20 User Dashboard Settings
+Stopped at: Completed Phase 21 Team Features
 Resume file: None
-Next action: `/gsd:plan-phase 21` (Team Features)
+Next action: `/gsd:plan-phase 22` (PWA Foundation)
