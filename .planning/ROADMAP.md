@@ -298,17 +298,22 @@ Results:
 - docs/API.md 생성 (30개 엔드포인트 문서화)
 - Wiki Home.md, 기술-스택.md v2.1 기준 업데이트
 
-#### Phase 31: Logging Infrastructure
+#### Phase 31: Logging Infrastructure ✅
 
 **Goal**: 프로덕션 로깅 시스템 — 구조화된 로그, 컨텍스트 추적, 로그 레벨 관리
 **Depends on**: Phase 30
-**Research**: Likely (로깅 라이브러리 선택: pino vs winston)
-**Research topics**: Next.js 16 Edge Runtime 호환 로깅 솔루션
-**Status**: Not started
-**Plans**: TBD
+**Research**: Complete (pino 선택 - 성능, JSON 기본, 작은 번들)
+**Status**: ✅ Complete (2026-01-15)
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 31-01: TBD
+- [x] 31-01: pino 기반 Logger 서비스 구현
+
+Results:
+- pino + pino-pretty 설치
+- src/lib/logger.ts 중앙집중식 로거 생성
+- error-logger.ts pino 마이그레이션
+- 환경별 설정 (개발: pretty-print, 프로덕션: JSON)
 
 #### Phase 32: Bundle Analysis & Optimization
 
