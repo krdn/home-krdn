@@ -245,9 +245,11 @@ export function parseProcessList(output: string): ProcessInfo[] {
  */
 function getTopProcesses(limit: number = 5): ProcessInfo[] {
   try {
-    // CPU 사용률 기준으로 정렬된 프로세스 목록 가져오기
-    const output = execSync(`ps aux --sort=-%cpu | head -${limit + 1}`).toString();
-    return parseProcessList(output).slice(0, limit);
+    // BusyBox 호환: --sort 옵션 대신 JavaScript에서 정렬
+    const output = execSync('ps aux 2>/dev/null || ps -ef 2>/dev/null || ps').toString();
+    return parseProcessList(output)
+      .sort((a, b) => b.cpu - a.cpu)
+      .slice(0, limit);
   } catch {
     return [];
   }

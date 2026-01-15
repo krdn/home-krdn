@@ -12,6 +12,8 @@ services:
     cpus: 0.5
     environment:
       - NODE_ENV=production
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - home-krdn-network
     healthcheck:

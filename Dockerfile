@@ -22,9 +22,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3005
+ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+    adduser --system --uid 1001 nextjs && \
+    addgroup nextjs docker 2>/dev/null || true
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
