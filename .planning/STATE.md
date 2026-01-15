@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 19 of 24 (RBAC Access Control)
-Plan: 2 of 2 complete
+Phase: 20 of 24 (User Dashboard Settings)
+Plan: 3 of 3 complete
 Status: Phase complete
-Last activity: 2026-01-15 — Completed Phase 19 (19-01, 19-02)
+Last activity: 2026-01-15 — Completed Phase 20 (20-01, 20-02, 20-03)
 
-Progress: ███░░░░░░░ 37% (v2.0 Phase 19 complete)
+Progress: ████░░░░░░ 50% (v2.0 Phase 20 complete)
 
 ## Performance Metrics
 
@@ -48,6 +48,9 @@ Key technology decisions for v2.0:
 - RBAC 권한 매트릭스: Resource(system/docker/projects/users/admin) × Action(read/write/delete/manage)
 - Edge Runtime 호환 RBAC 헬퍼: hasPermission, canAccessRoute (순수 TS)
 - 프론트엔드 역할 기반 UI: useAuth 훅 + RoleGuard 컴포넌트
+- UserSettings 서비스: settings-service.ts + /api/settings API
+- 테마 서버 동기화: 로그인 시 서버, 비로그인 시 localStorage
+- 대시보드 위젯 커스터마이징: Zustand 스토어 + dashboardLayout JSON 서버 저장
 
 ### Constraints (v2.0)
 
@@ -76,6 +79,6 @@ None — Starting fresh milestone v2.0.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 19 RBAC Access Control
+Stopped at: Completed Phase 20 User Dashboard Settings
 Resume file: None
-Next action: `/gsd:plan-phase 20` (User Dashboard Settings)
+Next action: `/gsd:plan-phase 21` (Team Features)

@@ -127,15 +127,18 @@ Plans:
 - [x] 19-01: RBAC 권한 매트릭스 및 미들웨어 통합
 - [x] 19-02: API 라우트 보호 및 프론트엔드 역할 기반 UI
 
-#### Phase 20: User Dashboard Settings
+#### Phase 20: User Dashboard Settings ✅
 
 **Goal**: 개인 위젯 설정, 테마 저장 등 사용자별 대시보드 커스터마이징
 **Depends on**: Phase 19
 **Research**: Unlikely (내부 패턴 적용)
-**Plans**: TBD
+**Status**: Complete (2026-01-15)
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 20-01: TBD
+- [x] 20-01: UserSettings 백엔드 서비스 및 API 라우트
+- [x] 20-02: 사용자 설정 UI 페이지 및 테마 서버 동기화
+- [x] 20-03: 대시보드 위젯 커스터마이징
 
 #### Phase 21: Team Features
 
@@ -206,7 +209,7 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 17. Database Infrastructure | v2.0 | 2/2 | ✅ Complete | 2026-01-15 |
 | 18. Auth System Extension | v2.0 | 3/3 | ✅ Complete | 2026-01-15 |
 | 19. RBAC Access Control | v2.0 | 2/2 | ✅ Complete | 2026-01-15 |
-| 20. User Dashboard Settings | v2.0 | 0/? | Not started | - |
+| 20. User Dashboard Settings | v2.0 | 3/3 | ✅ Complete | 2026-01-15 |
 | 21. Team Features | v2.0 | 0/? | Not started | - |
 | 22. PWA Foundation | v2.0 | 0/? | Not started | - |
 | 23. Push Notification | v2.0 | 0/? | Not started | - |
