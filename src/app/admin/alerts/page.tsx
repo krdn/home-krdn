@@ -1,12 +1,28 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { AlertRulesPanel } from '@/components/admin/AlertRulesPanel';
-import { AlertRuleForm } from '@/components/admin/AlertRuleForm';
 import { AlertHistoryPanel } from '@/components/admin/AlertHistoryPanel';
 import { EmailSettings } from '@/components/admin/EmailSettings';
 import { SlackSettings } from '@/components/admin/SlackSettings';
-import { Bell } from 'lucide-react';
+import { Bell, Loader2 } from 'lucide-react';
+
+// Dynamic Import: AlertRuleForm은 402줄의 복잡한 폼이므로 지연 로딩
+const AlertRuleForm = dynamic(
+  () => import('@/components/admin/AlertRuleForm').then((mod) => mod.AlertRuleForm),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <div className="flex items-center gap-2 rounded-lg bg-card p-4 shadow-lg">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>폼 로딩 중...</span>
+        </div>
+      </div>
+    ),
+    ssr: false, // 모달은 클라이언트에서만 필요
+  }
+);
 import type { AlertRule } from '@/types/alert';
 
 /**

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, memo, useCallback, useMemo } from 'react';
+import { useState, memo, useCallback, useMemo, useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   Play,
   Square,
@@ -125,12 +126,20 @@ const ContainerRow = memo(function ContainerRow({
   );
 });
 
+// 가상화 리스트 상수
+const ITEM_HEIGHT = 120; // 컨테이너 행 높이 (px)
+const LIST_MAX_HEIGHT = 600; // 최대 리스트 높이 (px)
+const VIRTUALIZATION_THRESHOLD = 20; // 이 개수 이상일 때 가상화 적용
+
 export function ContainerList() {
   const { containers, summary, loading, error, refetch, performAction } =
     useContainers(10000);
   const { hasPermission } = useAuth();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'running' | 'stopped'>('all');
+
+  // 가상화를 위한 스크롤 컨테이너 ref
+  const parentRef = useRef<HTMLDivElement>(null);
 
   // RBAC: user 이상 역할만 컨테이너 제어 가능
   const canControlContainers = hasPermission('docker', 'write');
@@ -153,6 +162,16 @@ export function ContainerList() {
       return true;
     });
   }, [containers, filter]);
+
+  // 가상화 설정 (20개 이상일 때만 활성화)
+  const shouldVirtualize = filteredContainers.length >= VIRTUALIZATION_THRESHOLD;
+  const virtualizer = useVirtualizer({
+    count: filteredContainers.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ITEM_HEIGHT,
+    overscan: 3,
+    enabled: shouldVirtualize,
+  });
 
   if (loading) {
     return (
@@ -243,7 +262,53 @@ export function ContainerList() {
             <p className="py-8 text-center text-muted-foreground">
               No containers found
             </p>
+          ) : shouldVirtualize ? (
+            // 가상화 리스트: 20개 이상일 때 사용
+            <div
+              ref={parentRef}
+              className="overflow-auto scrollbar-thin"
+              style={{
+                height: Math.min(
+                  filteredContainers.length * ITEM_HEIGHT,
+                  LIST_MAX_HEIGHT
+                ),
+              }}
+            >
+              <div
+                style={{
+                  height: virtualizer.getTotalSize(),
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                {virtualizer.getVirtualItems().map((virtualRow) => {
+                  const container = filteredContainers[virtualRow.index];
+                  return (
+                    <div
+                      key={container.id}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: virtualRow.size,
+                        transform: `translateY(${virtualRow.start}px)`,
+                      }}
+                      className="pb-3"
+                    >
+                      <ContainerRow
+                        container={container}
+                        onAction={handleAction}
+                        isLoading={actionLoading === container.name}
+                        canControl={canControlContainers}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           ) : (
+            // 일반 리스트: 20개 미만일 때 사용 (가상화 오버헤드 방지)
             <div className="space-y-3">
               {filteredContainers.map((container) => (
                 <ContainerRow

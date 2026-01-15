@@ -1,6 +1,7 @@
 'use client';
 
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAlertStore } from '@/stores/alertStore';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -137,12 +138,20 @@ const AlertItem = memo(function AlertItem({
   );
 });
 
+// 가상화 상수
+const ALERT_ITEM_HEIGHT = 100; // 알림 아이템 높이 (px)
+const ALERT_LIST_MAX_HEIGHT = 400; // 최대 리스트 높이 (px)
+const ALERT_VIRTUALIZATION_THRESHOLD = 15; // 이 개수 이상일 때 가상화 적용
+
 /**
  * 알림 히스토리 패널
  */
 export const AlertHistoryPanel = memo(function AlertHistoryPanel() {
   const { alerts, acknowledgeAlert, resolveAlert, clearResolvedAlerts } =
     useAlertStore();
+
+  // 가상화를 위한 스크롤 컨테이너 ref
+  const parentRef = useRef<HTMLDivElement>(null);
 
   // 정렬: 최신순, 활성 > 확인됨 > 해결됨 - useMemo로 캐싱
   const sortedAlerts = useMemo(() => {
@@ -168,6 +177,16 @@ export const AlertHistoryPanel = memo(function AlertHistoryPanel() {
       clearResolvedAlerts();
     }
   }, [resolvedCount, clearResolvedAlerts]);
+
+  // 가상화 설정 (15개 이상일 때만 활성화)
+  const shouldVirtualize = sortedAlerts.length >= ALERT_VIRTUALIZATION_THRESHOLD;
+  const virtualizer = useVirtualizer({
+    count: sortedAlerts.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ALERT_ITEM_HEIGHT,
+    overscan: 3,
+    enabled: shouldVirtualize,
+  });
 
   return (
     <Card>
@@ -201,7 +220,52 @@ export const AlertHistoryPanel = memo(function AlertHistoryPanel() {
               알림이 없습니다. 모든 시스템이 정상입니다.
             </p>
           </div>
+        ) : shouldVirtualize ? (
+          // 가상화 리스트: 15개 이상일 때 사용
+          <div
+            ref={parentRef}
+            className="overflow-auto scrollbar-thin"
+            style={{
+              height: Math.min(
+                sortedAlerts.length * ALERT_ITEM_HEIGHT,
+                ALERT_LIST_MAX_HEIGHT
+              ),
+            }}
+          >
+            <div
+              style={{
+                height: virtualizer.getTotalSize(),
+                width: '100%',
+                position: 'relative',
+              }}
+            >
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const alert = sortedAlerts[virtualRow.index];
+                return (
+                  <div
+                    key={alert.id}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: virtualRow.size,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    className="pb-3 pr-1"
+                  >
+                    <AlertItem
+                      alert={alert}
+                      onAcknowledge={() => acknowledgeAlert(alert.id)}
+                      onResolve={() => resolveAlert(alert.id)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         ) : (
+          // 일반 리스트: 15개 미만일 때 사용
           <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
             {sortedAlerts.map((alert) => (
               <AlertItem

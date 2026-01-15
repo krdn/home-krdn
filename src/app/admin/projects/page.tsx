@@ -1,11 +1,27 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, Star, ExternalLink } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Plus, Pencil, Trash2, Star, ExternalLink, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { ProjectForm } from "@/components/admin/ProjectForm";
+
+// Dynamic Import: ProjectForm은 802줄의 큰 컴포넌트이므로 지연 로딩
+const ProjectForm = dynamic(
+  () => import("@/components/admin/ProjectForm").then((mod) => mod.ProjectForm),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <div className="flex items-center gap-2 rounded-lg bg-card p-4 shadow-lg">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>폼 로딩 중...</span>
+        </div>
+      </div>
+    ),
+    ssr: false, // 모달은 클라이언트에서만 필요
+  }
+);
 import {
   CATEGORY_LABELS,
   STATUS_LABELS,
