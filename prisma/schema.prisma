@@ -51,6 +51,9 @@ model User {
 
   // 관계: 비밀번호 재설정 토큰
   passwordResetTokens PasswordResetToken[]
+
+  // 관계: 팀 초대 (초대한 사람)
+  teamInvites TeamInvite[] @relation("TeamInviter")
 }
 
 // 팀 모델
@@ -70,6 +73,9 @@ model Team {
 
   // 관계: 팀 멤버
   members TeamMember[]
+
+  // 관계: 팀 초대
+  invites TeamInvite[]
 }
 
 // 팀 멤버십 (다대다 조인 테이블)
@@ -130,4 +136,30 @@ model PasswordResetToken {
   @@index([token])
   // 인덱스: 사용자별 토큰 조회
   @@index([userId])
+}
+
+// 팀 초대 토큰
+model TeamInvite {
+  id    String @id @default(cuid())
+  token String @unique
+  email String // 초대받는 이메일 주소
+  role  Role   @default(USER) // 초대 시 부여될 역할
+
+  // 팀 외래키
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // 초대한 사용자
+  invitedById String
+  invitedBy   User   @relation("TeamInviter", fields: [invitedById], references: [id])
+
+  // 타임스탬프
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  // 인덱스
+  @@index([token])
+  @@index([teamId])
+  @@index([email])
 }
