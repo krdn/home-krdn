@@ -19,7 +19,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { TeamDto, TeamMemberDto, TeamInviteDto } from '@/lib/team-service';
+import type { TeamDto, TeamMemberDto, TeamInviteDto, TeamSettingsDto } from '@/lib/team-service';
 
 // ============================================================
 // API 응답 타입
@@ -463,4 +463,76 @@ export function useInviteInfo(token: string | null) {
     isLoading,
     error: error as Error | null,
   };
+}
+
+// ============================================================
+// 팀 설정 훅 (Phase 21-04)
+// ============================================================
+
+interface UpdateTeamSettingsInput {
+  emailNotifications?: boolean;
+  slackWebhookUrl?: string | null;
+  notifyOnAlert?: boolean;
+  notifyOnMemberJoin?: boolean;
+  notifyOnMemberLeave?: boolean;
+}
+
+/**
+ * 팀 설정을 조회합니다.
+ * @param teamId 팀 ID
+ */
+export function useTeamSettings(teamId: string | null) {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['team-settings', teamId],
+    queryFn: async (): Promise<ApiResponse<TeamSettingsDto>> => {
+      const response = await fetch(`/api/teams/${teamId}/settings`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || '팀 설정을 가져오는데 실패했습니다');
+      }
+
+      return response.json();
+    },
+    enabled: !!teamId,
+    staleTime: 2 * 60 * 1000,
+  });
+
+  return {
+    settings: data?.success ? data.data : null,
+    isLoading,
+    error: error as Error | null,
+    refetch,
+  };
+}
+
+/**
+ * 팀 설정 업데이트 mutation
+ */
+export function useUpdateTeamSettings(teamId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: UpdateTeamSettingsInput): Promise<ApiResponse<TeamSettingsDto>> => {
+      const response = await fetch(`/api/teams/${teamId}/settings`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || '팀 설정 업데이트에 실패했습니다');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-settings', teamId] });
+    },
+  });
 }

@@ -21,11 +21,13 @@ import {
   Calendar,
   Loader2,
   Edit2,
+  Bell,
 } from 'lucide-react';
 import { useTeam, useTeamMembers, useDeleteTeam, useUpdateTeam } from '@/hooks/useTeams';
 import { useAuth } from '@/hooks/useAuth';
 import { TeamMemberList } from '@/components/teams/TeamMemberList';
 import { InviteModal } from '@/components/teams/InviteModal';
+import { TeamSettingsPanel } from '@/components/teams/TeamSettingsPanel';
 
 /**
  * 날짜 포맷 함수
@@ -50,6 +52,7 @@ export default function TeamDetailPage() {
   const updateTeam = useUpdateTeam(teamId);
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -217,6 +220,14 @@ export default function TeamDetailPage() {
             {isAdmin && (
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => setSettingsModalOpen(true)}
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                  title="팀 알림 설정"
+                >
+                  <Bell className="w-5 h-5" />
+                </button>
+
+                <button
                   onClick={() => setInviteModalOpen(true)}
                   className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
@@ -268,6 +279,14 @@ export default function TeamDetailPage() {
         teamName={team.name}
         isOpen={inviteModalOpen}
         onClose={() => setInviteModalOpen(false)}
+      />
+
+      {/* 팀 설정 모달 */}
+      <TeamSettingsPanel
+        teamId={teamId}
+        teamName={team.name}
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
       />
     </div>
   );
