@@ -281,16 +281,22 @@ Results:
 - @tanstack/react-virtual로 ContainerList/AlertHistoryPanel 가상화
 - ProjectForm/AlertRuleForm Dynamic Import
 
-#### Phase 30: Documentation Overhaul
+#### Phase 30: Documentation Overhaul ✅
 
 **Goal**: 문서화 강화 — README 개선, API 문서, 개발자 가이드, 아키텍처 다이어그램
 **Depends on**: Phase 29
 **Research**: Unlikely (내부 문서 작성)
-**Status**: Not started
-**Plans**: TBD
+**Status**: ✅ Complete (2026-01-15)
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 30-01: TBD
+- [x] 30-01: README.md 재작성 + API 문서화
+- [x] 30-02: Wiki 문서 v2.1 업데이트
+
+Results:
+- README.md 재작성 (36줄 → 157줄)
+- docs/API.md 생성 (30개 엔드포인트 문서화)
+- Wiki Home.md, 기술-스택.md v2.1 기준 업데이트
 
 #### Phase 31: Logging Infrastructure
 
