@@ -76,6 +76,29 @@ model Team {
 
   // 관계: 팀 초대
   invites TeamInvite[]
+
+  // 관계: 팀 설정 (1:1)
+  settings TeamSettings?
+}
+
+// 팀 알림 설정 모델 (Phase 21)
+model TeamSettings {
+  id String @id @default(cuid())
+
+  // 팀 연결 (1:1)
+  teamId String @unique
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  // 알림 채널 설정
+  emailNotifications Boolean @default(true)
+  slackWebhookUrl    String? // 팀 전용 Slack 웹훅
+
+  // 알림 대상 설정
+  notifyOnAlert       Boolean @default(true)  // 시스템 경고 알림
+  notifyOnMemberJoin  Boolean @default(true)  // 멤버 가입 알림
+  notifyOnMemberLeave Boolean @default(false) // 멤버 탈퇴 알림
+
+  updatedAt DateTime @updatedAt
 }
 
 // 팀 멤버십 (다대다 조인 테이블)

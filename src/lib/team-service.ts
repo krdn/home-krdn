@@ -12,7 +12,7 @@
 import prisma from '@/lib/prisma'
 import { z } from 'zod/v4'
 import crypto from 'crypto'
-import type { Team, TeamMember, TeamInvite, User, Role } from '@prisma/client'
+import type { Team, TeamMember, TeamInvite, TeamSettings, User, Role } from '@prisma/client'
 
 // ============================================================
 // 타입 정의
@@ -57,6 +57,20 @@ export interface TeamInviteDto {
   invitedByUsername: string
   expiresAt: Date
   createdAt: Date
+}
+
+/**
+ * 클라이언트 반환용 TeamSettings DTO
+ */
+export interface TeamSettingsDto {
+  id: string
+  teamId: string
+  emailNotifications: boolean
+  slackWebhookUrl: string | null
+  notifyOnAlert: boolean
+  notifyOnMemberJoin: boolean
+  notifyOnMemberLeave: boolean
+  updatedAt: Date
 }
 
 /**
@@ -127,6 +141,23 @@ export const CreateInviteInputSchema = z.object({
 })
 
 export type CreateInviteInput = z.infer<typeof CreateInviteInputSchema>
+
+/**
+ * 팀 설정 업데이트 입력 검증 스키마
+ */
+export const UpdateTeamSettingsInputSchema = z.object({
+  emailNotifications: z.boolean().optional(),
+  slackWebhookUrl: z
+    .string()
+    .url('유효한 URL을 입력해주세요')
+    .optional()
+    .nullable(),
+  notifyOnAlert: z.boolean().optional(),
+  notifyOnMemberJoin: z.boolean().optional(),
+  notifyOnMemberLeave: z.boolean().optional(),
+})
+
+export type UpdateTeamSettingsInput = z.infer<typeof UpdateTeamSettingsInputSchema>
 
 // ============================================================
 // 헬퍼 함수
@@ -199,6 +230,24 @@ export function toTeamInviteDto(invite: TeamInviteWithRelations): TeamInviteDto 
     invitedByUsername: invite.invitedBy.username,
     expiresAt: invite.expiresAt,
     createdAt: invite.createdAt,
+  }
+}
+
+/**
+ * Prisma TeamSettings를 TeamSettingsDto로 변환
+ * @param settings Prisma TeamSettings 엔티티
+ * @returns TeamSettingsDto
+ */
+export function toTeamSettingsDto(settings: TeamSettings): TeamSettingsDto {
+  return {
+    id: settings.id,
+    teamId: settings.teamId,
+    emailNotifications: settings.emailNotifications,
+    slackWebhookUrl: settings.slackWebhookUrl,
+    notifyOnAlert: settings.notifyOnAlert,
+    notifyOnMemberJoin: settings.notifyOnMemberJoin,
+    notifyOnMemberLeave: settings.notifyOnMemberLeave,
+    updatedAt: settings.updatedAt,
   }
 }
 
@@ -935,4 +984,96 @@ export async function deleteExpiredInvites(): Promise<number> {
   })
 
   return result.count
+}
+
+// ============================================================
+// 팀 설정 관리 함수
+// ============================================================
+
+/**
+ * 팀 설정을 조회합니다.
+ * 설정이 없으면 기본값으로 생성합니다 (upsert 패턴).
+ *
+ * @param teamId 팀 ID
+ * @returns 팀 설정 DTO
+ */
+export async function getTeamSettings(teamId: string): Promise<TeamSettingsDto> {
+  // upsert: 없으면 기본값으로 생성
+  const settings = await prisma.teamSettings.upsert({
+    where: { teamId },
+    create: {
+      teamId,
+      emailNotifications: true,
+      notifyOnAlert: true,
+      notifyOnMemberJoin: true,
+      notifyOnMemberLeave: false,
+    },
+    update: {}, // 이미 있으면 변경 없음
+  })
+
+  return toTeamSettingsDto(settings)
+}
+
+/**
+ * 팀 설정을 업데이트합니다.
+ *
+ * @param teamId 팀 ID
+ * @param input 업데이트할 설정 데이터
+ * @returns 업데이트된 팀 설정 DTO
+ */
+export async function updateTeamSettings(
+  teamId: string,
+  input: UpdateTeamSettingsInput
+): Promise<TeamSettingsDto> {
+  // upsert: 없으면 생성, 있으면 업데이트
+  const settings = await prisma.teamSettings.upsert({
+    where: { teamId },
+    create: {
+      teamId,
+      emailNotifications: input.emailNotifications ?? true,
+      slackWebhookUrl: input.slackWebhookUrl ?? null,
+      notifyOnAlert: input.notifyOnAlert ?? true,
+      notifyOnMemberJoin: input.notifyOnMemberJoin ?? true,
+      notifyOnMemberLeave: input.notifyOnMemberLeave ?? false,
+    },
+    update: {
+      ...(input.emailNotifications !== undefined && {
+        emailNotifications: input.emailNotifications,
+      }),
+      ...(input.slackWebhookUrl !== undefined && {
+        slackWebhookUrl: input.slackWebhookUrl,
+      }),
+      ...(input.notifyOnAlert !== undefined && {
+        notifyOnAlert: input.notifyOnAlert,
+      }),
+      ...(input.notifyOnMemberJoin !== undefined && {
+        notifyOnMemberJoin: input.notifyOnMemberJoin,
+      }),
+      ...(input.notifyOnMemberLeave !== undefined && {
+        notifyOnMemberLeave: input.notifyOnMemberLeave,
+      }),
+    },
+  })
+
+  return toTeamSettingsDto(settings)
+}
+
+/**
+ * 팀의 모든 멤버 이메일을 조회합니다.
+ * 팀 알림 발송 시 사용됩니다.
+ *
+ * @param teamId 팀 ID
+ * @returns 멤버 이메일 배열
+ */
+export async function getTeamMemberEmails(teamId: string): Promise<string[]> {
+  const members = await prisma.teamMember.findMany({
+    where: { teamId },
+    include: {
+      user: {
+        select: { email: true },
+      },
+    },
+  })
+
+  return members.map((m) => m.user.email)
 }
