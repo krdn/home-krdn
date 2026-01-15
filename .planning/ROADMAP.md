@@ -188,7 +188,7 @@ Plans:
 Plans:
 - [x] 24-01: SW 캐싱 전략 개선, 오프라인 폴백 페이지, 오프라인 상태 UI
 
-### 🚧 v2.1 Polish (In Progress)
+### ✅ v2.1 Polish (Complete)
 
 **Milestone Goal:** 기존 기능 다듬기 — 테스트 커버리지 확대, 접근성 개선, 에러 처리 표준화, 문서화 강화
 
@@ -315,16 +315,21 @@ Results:
 - error-logger.ts pino 마이그레이션
 - 환경별 설정 (개발: pretty-print, 프로덕션: JSON)
 
-#### Phase 32: Bundle Analysis & Optimization
+#### Phase 32: Bundle Analysis & Optimization ✅
 
 **Goal**: 번들 최적화 — 번들 크기 분석, 코드 스플리팅, tree-shaking 개선
 **Depends on**: Phase 31
 **Research**: Unlikely (기존 analyze 스크립트 활용)
-**Status**: Not started
-**Plans**: TBD
+**Status**: ✅ Complete (2026-01-15)
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 32-01: TBD
+- [x] 32-01: 번들 분석 및 최적화 상태 문서화
+
+Results:
+- @next/bundle-analyzer 설정 확인
+- 번들 크기 기록 (.next/ 501MB, 주요 청크 348KB~220KB)
+- Phase 29 최적화 확인 (Dynamic Import, 가상화, 메모이제이션)
 
 ## Progress
 
