@@ -232,7 +232,7 @@ Plans:
 **Goal**: 중앙집중식 에러 핸들링 시스템 — 에러 분류, 사용자 피드백, 로깅 표준화
 **Depends on**: Phase 26
 **Research**: Unlikely (내부 패턴 적용)
-**Status**: ✅ Complete
+**Status**: ✅ Complete (2026-01-15)
 **Plans**: 2/2 complete
 
 Plans:
@@ -245,23 +245,31 @@ Results:
 - 60개 테스트 (38 서버 + 22 클라이언트)
 - Auth/Admin 라우트 마이그레이션 완료
 
-#### Phase 28: Accessibility Enhancement
+#### Phase 28: Accessibility Enhancement ✅
 
 **Goal**: 접근성 개선 — ARIA 속성, alt 텍스트, 키보드 네비게이션, 포커스 관리
 **Depends on**: Phase 27
 **Research**: Unlikely (WCAG 가이드라인 적용)
-**Status**: Not started
-**Plans**: TBD
+**Status**: ✅ Complete (2026-01-15)
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 28-01: TBD
+- [x] 28-01: ARIA Enhancement & Focus Management
+- [x] 28-02: Semantic HTML & Motion Accessibility
+
+Results:
+- ARIA 속성 50+ 추가 (aria-label, aria-hidden, aria-current, etc.)
+- 포커스 트랩 훅 (useFocusTrap)
+- 스킵 링크 컴포넌트
+- prefers-reduced-motion 지원
+- ESLint jsx-a11y 17개 규칙 추가
 
 #### Phase 29: Performance Optimization
 
 **Goal**: 렌더링 최적화 — memo/useMemo 확대, 가상화, 지연 로딩 개선
 **Depends on**: Phase 28
 **Research**: Unlikely (React 최적화 패턴 적용)
-**Status**: Not started
+**Status**: 🚧 In Progress
 **Plans**: TBD
 
 Plans:

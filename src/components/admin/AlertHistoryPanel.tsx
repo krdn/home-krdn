@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useAlertStore } from '@/stores/alertStore';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -144,19 +144,23 @@ export const AlertHistoryPanel = memo(function AlertHistoryPanel() {
   const { alerts, acknowledgeAlert, resolveAlert, clearResolvedAlerts } =
     useAlertStore();
 
-  // 정렬: 최신순, 활성 > 확인됨 > 해결됨
-  const sortedAlerts = [...alerts].sort((a, b) => {
-    // 상태 우선순위
+  // 정렬: 최신순, 활성 > 확인됨 > 해결됨 - useMemo로 캐싱
+  const sortedAlerts = useMemo(() => {
     const statusOrder = { active: 0, acknowledged: 1, resolved: 2 };
-    const statusDiff = statusOrder[a.status] - statusOrder[b.status];
-    if (statusDiff !== 0) return statusDiff;
-    // 같은 상태면 시간순
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+    return [...alerts].sort((a, b) => {
+      // 상태 우선순위
+      const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+      if (statusDiff !== 0) return statusDiff;
+      // 같은 상태면 시간순
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [alerts]);
 
-  // 알림 통계
-  const activeCount = alerts.filter((a) => a.status === 'active').length;
-  const resolvedCount = alerts.filter((a) => a.status === 'resolved').length;
+  // 알림 통계 - useMemo로 캐싱
+  const { activeCount, resolvedCount } = useMemo(() => ({
+    activeCount: alerts.filter((a) => a.status === 'active').length,
+    resolvedCount: alerts.filter((a) => a.status === 'resolved').length,
+  }), [alerts]);
 
   // 해결된 알림 삭제
   const handleClearResolved = useCallback(() => {

@@ -9,7 +9,7 @@
  * WidgetCustomizer와 연동하여 위젯 순서와 가시성을 조절합니다.
  */
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useMemo, memo, type ReactNode } from 'react';
 import {
   Activity,
   Bell,
@@ -35,8 +35,9 @@ import type { WidgetId } from '@/types/dashboard';
 
 /**
  * Running Services 카드 컴포넌트
+ * memo: 서비스 데이터가 변경되지 않으면 리렌더링 방지
  */
-function RunningServicesCard() {
+const RunningServicesCard = memo(function RunningServicesCard() {
   const runningServices = getRunningServices();
 
   return (
@@ -96,12 +97,15 @@ function RunningServicesCard() {
       </CardContent>
     </Card>
   );
-}
+});
+
+RunningServicesCard.displayName = 'RunningServicesCard';
 
 /**
  * Quick Links 섹션 컴포넌트
+ * memo: 정적 컨텐츠이므로 한 번만 렌더링
  */
-function QuickLinksSection() {
+const QuickLinksSection = memo(function QuickLinksSection() {
   return (
     <section aria-label="Quick Access">
       <h2 className="mb-4 text-lg font-semibold">Quick Access</h2>
@@ -186,10 +190,13 @@ function QuickLinksSection() {
       </nav>
     </section>
   );
-}
+});
+
+QuickLinksSection.displayName = 'QuickLinksSection';
 
 /**
  * 위젯 컴포넌트 매핑
+ * ReactNode 대신 컴포넌트를 저장하여 불필요한 재생성 방지
  */
 const WIDGET_COMPONENTS: Record<WidgetId, () => ReactNode> = {
   'system-stats': () => (
@@ -295,9 +302,17 @@ export function AdminDashboard() {
     }
   }, [isSettingsLoading, settings, isInitialized, setLayout]);
 
-  // 표시할 위젯 목록
-  const visibleWidgets = getVisibleWidgets();
-  const visibleWidgetIds = visibleWidgets.map((w) => w.id);
+  // 표시할 위젯 목록 - useMemo로 캐싱하여 불필요한 재계산 방지
+  const visibleWidgetIds = useMemo(() => {
+    const visibleWidgets = getVisibleWidgets();
+    return visibleWidgets.map((w) => w.id);
+  }, [getVisibleWidgets]);
+
+  // 렌더링할 위젯 목록 - useMemo로 캐싱
+  const renderedWidgets = useMemo(
+    () => renderWidgets(visibleWidgetIds),
+    [visibleWidgetIds]
+  );
 
   // 로딩 상태
   if (isSettingsLoading && !isInitialized) {
@@ -332,7 +347,7 @@ export function AdminDashboard() {
       </header>
 
       {/* 동적 위젯 렌더링 */}
-      {renderWidgets(visibleWidgetIds)}
+      {renderedWidgets}
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useMemo,
 } from 'react';
 import type { AlertSeverity } from '@/types/alert';
 import { AlertToast } from '@/components/admin/AlertToast';
@@ -61,8 +62,11 @@ export function ToastProvider({ children }: ToastProviderProps) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  // Context value 메모이제이션 - 불필요한 consumer 리렌더링 방지
+  const contextValue = useMemo(() => ({ showToast }), [showToast]);
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={contextValue}>
       <Toast.Provider swipeDirection="right">
         {children}
         {toasts.map((toast) => (

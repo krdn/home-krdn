@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { useMetricsHistory, ChartDataPoint } from '@/hooks/useMetricsHistory';
 import { MetricsLineChart, MetricDataPoint } from '@/components/charts/MetricsLineChart';
 import { NetworkAreaChart } from '@/components/charts/NetworkAreaChart';
@@ -86,10 +86,10 @@ export function MetricsCharts() {
   const [minutes, setMinutes] = useState(30);
   const { chartData, loading, error, refetch } = useMetricsHistory(minutes);
 
-  // 데이터 변환
-  const cpuData = toMetricData(chartData, 'cpu');
-  const memoryData = toMetricData(chartData, 'memory');
-  const diskData = toMetricData(chartData, 'disk');
+  // 데이터 변환 - useMemo로 캐싱하여 차트 리렌더링 최소화
+  const cpuData = useMemo(() => toMetricData(chartData, 'cpu'), [chartData]);
+  const memoryData = useMemo(() => toMetricData(chartData, 'memory'), [chartData]);
+  const diskData = useMemo(() => toMetricData(chartData, 'disk'), [chartData]);
 
   return (
     <Card>
