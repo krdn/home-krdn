@@ -227,17 +227,23 @@ Plans:
 - 다중 브라우저 지원: Chromium, Firefox, Webkit
 - Auth fixture로 인증 상태 재사용 가능
 
-#### Phase 27: Error Handling Standardization
+#### Phase 27: Error Handling Standardization ✅
 
 **Goal**: 중앙집중식 에러 핸들링 시스템 — 에러 분류, 사용자 피드백, 로깅 표준화
 **Depends on**: Phase 26
 **Research**: Unlikely (내부 패턴 적용)
-**Status**: In Progress
-**Plans**: 2/2 ready
+**Status**: ✅ Complete
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 27-01: Error Classes & Central Handler (커스텀 에러 클래스, 중앙 핸들러, 로깅)
-- [ ] 27-02: API Route Migration & Client Integration (라우트 적용, 클라이언트 유틸)
+- [x] 27-01: Error Classes & Central Handler (커스텀 에러 클래스, 중앙 핸들러, 로깅)
+- [x] 27-02: API Route Migration & Client Integration (라우트 적용, 클라이언트 유틸)
+
+Results:
+- 7개 커스텀 에러 클래스 (AppError, AuthError, ValidationError, NotFoundError, ConflictError, RateLimitError, ExternalServiceError)
+- 17개 타입-세이프 에러 코드
+- 60개 테스트 (38 서버 + 22 클라이언트)
+- Auth/Admin 라우트 마이그레이션 완료
 
 #### Phase 28: Accessibility Enhancement
 
