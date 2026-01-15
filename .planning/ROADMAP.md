@@ -144,11 +144,14 @@ Plans:
 
 **Goal**: 팀 생성/초대, 프로젝트 공유, 팀 알림 기능 구현
 **Depends on**: Phase 20
-**Research**: Unlikely (내부 패턴 적용)
-**Plans**: TBD
+**Research**: Level 0 - Skip (내부 패턴 적용)
+**Plans**: 4
 
 Plans:
-- [ ] 21-01: TBD
+- [ ] 21-01: Team Service Layer 및 REST API 구현
+- [ ] 21-02: Team Invite System (초대 토큰, 이메일 발송)
+- [ ] 21-03: Team Management UI (목록, 상세, 생성, 멤버 관리)
+- [ ] 21-04: Team Notification Channel (팀 알림 설정)
 
 #### Phase 22: PWA Foundation
 
