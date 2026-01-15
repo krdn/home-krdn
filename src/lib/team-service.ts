@@ -1,0 +1,597 @@
+/**
+ * Team Service
+ * 팀 및 팀 멤버 관리 서비스 레이어
+ *
+ * Phase 21: Team Features
+ * - 팀 CRUD
+ * - 멤버 관리
+ * - 권한 검사 헬퍼
+ */
+
+import prisma from '@/lib/prisma'
+import { z } from 'zod/v4'
+import type { Team, TeamMember, User, Role } from '@prisma/client'
+
+// ============================================================
+// 타입 정의
+// ============================================================
+
+/**
+ * 클라이언트 반환용 Team DTO
+ */
+export interface TeamDto {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  ownerId: string
+  ownerUsername: string
+  memberCount: number
+  createdAt: Date
+}
+
+/**
+ * 클라이언트 반환용 TeamMember DTO
+ */
+export interface TeamMemberDto {
+  id: string
+  userId: string
+  username: string
+  displayName: string | null
+  role: Role
+  joinedAt: Date
+}
+
+/**
+ * 팀 생성 입력 검증 스키마
+ */
+export const CreateTeamInputSchema = z.object({
+  name: z
+    .string()
+    .min(2, '팀 이름은 최소 2자 이상이어야 합니다')
+    .max(50, '팀 이름은 최대 50자까지 가능합니다'),
+  description: z
+    .string()
+    .max(200, '팀 설명은 최대 200자까지 가능합니다')
+    .optional(),
+})
+
+export type CreateTeamInput = z.infer<typeof CreateTeamInputSchema>
+
+/**
+ * 팀 업데이트 입력 검증 스키마
+ */
+export const UpdateTeamInputSchema = z.object({
+  name: z
+    .string()
+    .min(2, '팀 이름은 최소 2자 이상이어야 합니다')
+    .max(50, '팀 이름은 최대 50자까지 가능합니다')
+    .optional(),
+  description: z
+    .string()
+    .max(200, '팀 설명은 최대 200자까지 가능합니다')
+    .optional()
+    .nullable(),
+})
+
+export type UpdateTeamInput = z.infer<typeof UpdateTeamInputSchema>
+
+/**
+ * 멤버 추가 입력 검증 스키마
+ */
+export const AddMemberInputSchema = z.object({
+  userId: z.string().min(1, '사용자 ID가 필요합니다'),
+  role: z.enum(['ADMIN', 'USER', 'VIEWER'], {
+    error: '유효한 역할(ADMIN, USER, VIEWER)을 입력해주세요',
+  }).optional().default('USER'),
+})
+
+export type AddMemberInput = z.infer<typeof AddMemberInputSchema>
+
+/**
+ * 멤버 역할 변경 입력 검증 스키마
+ */
+export const UpdateMemberRoleInputSchema = z.object({
+  role: z.enum(['ADMIN', 'USER', 'VIEWER'], {
+    error: '유효한 역할(ADMIN, USER, VIEWER)을 입력해주세요',
+  }),
+})
+
+export type UpdateMemberRoleInput = z.infer<typeof UpdateMemberRoleInputSchema>
+
+// ============================================================
+// 헬퍼 함수
+// ============================================================
+
+// Team with owner and member count type
+type TeamWithOwnerAndCount = Team & {
+  owner: Pick<User, 'username'>
+  _count: { members: number }
+}
+
+// TeamMember with user type
+type TeamMemberWithUser = TeamMember & {
+  user: Pick<User, 'username' | 'displayName'>
+}
+
+/**
+ * Prisma Team을 TeamDto로 변환
+ * @param team Prisma Team 엔티티 (owner, _count 포함)
+ * @returns TeamDto
+ */
+export function toTeamDto(team: TeamWithOwnerAndCount): TeamDto {
+  return {
+    id: team.id,
+    name: team.name,
+    slug: team.slug,
+    description: team.description,
+    ownerId: team.ownerId,
+    ownerUsername: team.owner.username,
+    memberCount: team._count.members,
+    createdAt: team.createdAt,
+  }
+}
+
+/**
+ * Prisma TeamMember를 TeamMemberDto로 변환
+ * @param member Prisma TeamMember 엔티티 (user 포함)
+ * @returns TeamMemberDto
+ */
+export function toTeamMemberDto(member: TeamMemberWithUser): TeamMemberDto {
+  return {
+    id: member.id,
+    userId: member.userId,
+    username: member.user.username,
+    displayName: member.user.displayName,
+    role: member.role,
+    joinedAt: member.joinedAt,
+  }
+}
+
+/**
+ * 팀 이름에서 slug를 생성합니다.
+ * kebab-case로 변환하고 중복 시 숫자 suffix를 추가합니다.
+ *
+ * @param name 팀 이름
+ * @returns 고유한 slug
+ */
+export async function generateTeamSlug(name: string): Promise<string> {
+  // 한글 등 비-ASCII 문자 처리를 위해 정규화
+  const baseSlug = name
+    .toLowerCase()
+    .trim()
+    // 공백을 하이픈으로 변환
+    .replace(/\s+/g, '-')
+    // 알파벳, 숫자, 하이픈, 한글만 허용
+    .replace(/[^a-z0-9\-\uac00-\ud7af]/g, '')
+    // 연속된 하이픈 제거
+    .replace(/-+/g, '-')
+    // 앞뒤 하이픈 제거
+    .replace(/^-|-$/g, '')
+
+  // 빈 문자열이면 기본값 사용
+  const slug = baseSlug || 'team'
+
+  // 중복 확인
+  const existing = await prisma.team.findUnique({
+    where: { slug },
+  })
+
+  if (!existing) {
+    return slug
+  }
+
+  // 중복 시 숫자 suffix 추가
+  let suffix = 2
+  while (true) {
+    const slugWithSuffix = `${slug}-${suffix}`
+    const existingWithSuffix = await prisma.team.findUnique({
+      where: { slug: slugWithSuffix },
+    })
+
+    if (!existingWithSuffix) {
+      return slugWithSuffix
+    }
+
+    suffix++
+
+    // 무한 루프 방지 (최대 1000번)
+    if (suffix > 1000) {
+      throw new Error('팀 slug 생성 실패: 너무 많은 중복')
+    }
+  }
+}
+
+// ============================================================
+// 팀 CRUD 함수
+// ============================================================
+
+/**
+ * 새 팀을 생성합니다.
+ * 소유자는 자동으로 ADMIN 멤버로 추가됩니다.
+ *
+ * @param ownerId 팀 소유자 ID
+ * @param input 팀 생성 입력 데이터
+ * @returns 생성된 팀 DTO
+ */
+export async function createTeam(
+  ownerId: string,
+  input: CreateTeamInput
+): Promise<TeamDto> {
+  // slug 생성
+  const slug = await generateTeamSlug(input.name)
+
+  // 팀 생성 + 소유자를 ADMIN 멤버로 추가 (트랜잭션)
+  const team = await prisma.team.create({
+    data: {
+      name: input.name,
+      slug,
+      description: input.description ?? null,
+      ownerId,
+      members: {
+        create: {
+          userId: ownerId,
+          role: 'ADMIN',
+        },
+      },
+    },
+    include: {
+      owner: {
+        select: { username: true },
+      },
+      _count: {
+        select: { members: true },
+      },
+    },
+  })
+
+  return toTeamDto(team)
+}
+
+/**
+ * 팀 ID로 팀을 조회합니다.
+ *
+ * @param teamId 팀 ID
+ * @returns 팀 DTO 또는 null
+ */
+export async function getTeamById(teamId: string): Promise<TeamDto | null> {
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    include: {
+      owner: {
+        select: { username: true },
+      },
+      _count: {
+        select: { members: true },
+      },
+    },
+  })
+
+  if (!team) {
+    return null
+  }
+
+  return toTeamDto(team)
+}
+
+/**
+ * slug로 팀을 조회합니다.
+ *
+ * @param slug 팀 slug
+ * @returns 팀 DTO 또는 null
+ */
+export async function getTeamBySlug(slug: string): Promise<TeamDto | null> {
+  const team = await prisma.team.findUnique({
+    where: { slug },
+    include: {
+      owner: {
+        select: { username: true },
+      },
+      _count: {
+        select: { members: true },
+      },
+    },
+  })
+
+  if (!team) {
+    return null
+  }
+
+  return toTeamDto(team)
+}
+
+/**
+ * 팀 정보를 업데이트합니다.
+ *
+ * @param teamId 팀 ID
+ * @param input 업데이트할 데이터
+ * @returns 업데이트된 팀 DTO
+ * @throws 팀이 없으면 Prisma 에러 발생
+ */
+export async function updateTeam(
+  teamId: string,
+  input: UpdateTeamInput
+): Promise<TeamDto> {
+  // 이름이 변경되면 slug도 업데이트
+  let newSlug: string | undefined
+  if (input.name) {
+    newSlug = await generateTeamSlug(input.name)
+  }
+
+  const team = await prisma.team.update({
+    where: { id: teamId },
+    data: {
+      ...(input.name && { name: input.name, slug: newSlug }),
+      ...(input.description !== undefined && { description: input.description }),
+    },
+    include: {
+      owner: {
+        select: { username: true },
+      },
+      _count: {
+        select: { members: true },
+      },
+    },
+  })
+
+  return toTeamDto(team)
+}
+
+/**
+ * 팀을 삭제합니다.
+ * Cascade로 팀 멤버도 함께 삭제됩니다.
+ *
+ * @param teamId 팀 ID
+ * @throws 팀이 없으면 Prisma 에러 발생
+ */
+export async function deleteTeam(teamId: string): Promise<void> {
+  await prisma.team.delete({
+    where: { id: teamId },
+  })
+}
+
+/**
+ * 사용자가 속한 모든 팀 목록을 조회합니다.
+ *
+ * @param userId 사용자 ID
+ * @returns 팀 DTO 배열
+ */
+export async function getUserTeams(userId: string): Promise<TeamDto[]> {
+  // 사용자가 멤버인 팀 조회
+  const memberships = await prisma.teamMember.findMany({
+    where: { userId },
+    include: {
+      team: {
+        include: {
+          owner: {
+            select: { username: true },
+          },
+          _count: {
+            select: { members: true },
+          },
+        },
+      },
+    },
+    orderBy: {
+      joinedAt: 'desc',
+    },
+  })
+
+  return memberships.map((m) => toTeamDto(m.team))
+}
+
+// ============================================================
+// 멤버 관리 함수
+// ============================================================
+
+/**
+ * 팀에 멤버를 추가합니다.
+ *
+ * @param teamId 팀 ID
+ * @param userId 추가할 사용자 ID
+ * @param role 멤버 역할 (기본: USER)
+ * @returns 추가된 멤버 DTO
+ * @throws 이미 멤버인 경우 에러 발생
+ */
+export async function addTeamMember(
+  teamId: string,
+  userId: string,
+  role: Role = 'USER'
+): Promise<TeamMemberDto> {
+  // 이미 멤버인지 확인
+  const existingMember = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: { userId, teamId },
+    },
+  })
+
+  if (existingMember) {
+    throw new Error('이미 팀 멤버입니다')
+  }
+
+  const member = await prisma.teamMember.create({
+    data: {
+      teamId,
+      userId,
+      role,
+    },
+    include: {
+      user: {
+        select: { username: true, displayName: true },
+      },
+    },
+  })
+
+  return toTeamMemberDto(member)
+}
+
+/**
+ * 팀에서 멤버를 제거합니다.
+ *
+ * @param teamId 팀 ID
+ * @param userId 제거할 사용자 ID
+ * @throws 멤버가 아닌 경우 에러 발생
+ */
+export async function removeTeamMember(
+  teamId: string,
+  userId: string
+): Promise<void> {
+  // 소유자는 제거할 수 없음
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+  })
+
+  if (team && team.ownerId === userId) {
+    throw new Error('팀 소유자는 제거할 수 없습니다')
+  }
+
+  await prisma.teamMember.delete({
+    where: {
+      userId_teamId: { userId, teamId },
+    },
+  })
+}
+
+/**
+ * 멤버의 역할을 변경합니다.
+ *
+ * @param teamId 팀 ID
+ * @param userId 대상 사용자 ID
+ * @param role 새 역할
+ * @returns 업데이트된 멤버 DTO
+ */
+export async function updateMemberRole(
+  teamId: string,
+  userId: string,
+  role: Role
+): Promise<TeamMemberDto> {
+  const member = await prisma.teamMember.update({
+    where: {
+      userId_teamId: { userId, teamId },
+    },
+    data: { role },
+    include: {
+      user: {
+        select: { username: true, displayName: true },
+      },
+    },
+  })
+
+  return toTeamMemberDto(member)
+}
+
+/**
+ * 팀의 모든 멤버를 조회합니다.
+ *
+ * @param teamId 팀 ID
+ * @returns 멤버 DTO 배열
+ */
+export async function getTeamMembers(teamId: string): Promise<TeamMemberDto[]> {
+  const members = await prisma.teamMember.findMany({
+    where: { teamId },
+    include: {
+      user: {
+        select: { username: true, displayName: true },
+      },
+    },
+    orderBy: [
+      { role: 'asc' }, // ADMIN이 먼저
+      { joinedAt: 'asc' },
+    ],
+  })
+
+  return members.map(toTeamMemberDto)
+}
+
+/**
+ * 사용자가 팀의 멤버인지 확인합니다.
+ *
+ * @param teamId 팀 ID
+ * @param userId 사용자 ID
+ * @returns 멤버 여부
+ */
+export async function isTeamMember(
+  teamId: string,
+  userId: string
+): Promise<boolean> {
+  const member = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: { userId, teamId },
+    },
+  })
+
+  return member !== null
+}
+
+/**
+ * 사용자가 팀의 소유자인지 확인합니다.
+ *
+ * @param teamId 팀 ID
+ * @param userId 사용자 ID
+ * @returns 소유자 여부
+ */
+export async function isTeamOwner(
+  teamId: string,
+  userId: string
+): Promise<boolean> {
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+  })
+
+  return team !== null && team.ownerId === userId
+}
+
+/**
+ * 사용자의 팀 내 역할을 조회합니다.
+ *
+ * @param teamId 팀 ID
+ * @param userId 사용자 ID
+ * @returns 역할 또는 null (멤버가 아닌 경우)
+ */
+export async function getMemberRole(
+  teamId: string,
+  userId: string
+): Promise<Role | null> {
+  const member = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: { userId, teamId },
+    },
+  })
+
+  return member?.role ?? null
+}
+
+/**
+ * 사용자가 팀 관리 권한이 있는지 확인합니다.
+ * (소유자이거나 ADMIN 역할)
+ *
+ * @param teamId 팀 ID
+ * @param userId 사용자 ID
+ * @returns 관리 권한 여부
+ */
+export async function hasTeamAdminAccess(
+  teamId: string,
+  userId: string
+): Promise<boolean> {
+  // 소유자인지 확인
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+  })
+
+  if (!team) {
+    return false
+  }
+
+  if (team.ownerId === userId) {
+    return true
+  }
+
+  // ADMIN 멤버인지 확인
+  const member = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: { userId, teamId },
+    },
+  })
+
+  return member !== null && member.role === 'ADMIN'
+}
