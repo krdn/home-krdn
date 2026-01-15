@@ -232,11 +232,12 @@ Plans:
 **Goal**: 중앙집중식 에러 핸들링 시스템 — 에러 분류, 사용자 피드백, 로깅 표준화
 **Depends on**: Phase 26
 **Research**: Unlikely (내부 패턴 적용)
-**Status**: Not started
-**Plans**: TBD
+**Status**: In Progress
+**Plans**: 2/2 ready
 
 Plans:
-- [ ] 27-01: TBD
+- [ ] 27-01: Error Classes & Central Handler (커스텀 에러 클래스, 중앙 핸들러, 로깅)
+- [ ] 27-02: API Route Migration & Client Integration (라우트 적용, 클라이언트 유틸)
 
 #### Phase 28: Accessibility Enhancement
 
