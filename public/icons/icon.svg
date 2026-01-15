@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 배경 -->
+  <rect width="512" height="512" rx="96" fill="#0a0a0a"/>
+
+  <!-- 대시보드 그리드 -->
+  <rect x="64" y="64" width="176" height="176" rx="24" fill="#1e293b"/>
+  <rect x="272" y="64" width="176" height="176" rx="24" fill="#1e293b"/>
+  <rect x="64" y="272" width="384" height="176" rx="24" fill="#1e293b"/>
+
+  <!-- 메트릭 차트 - 왼쪽 위 -->
+  <circle cx="152" cy="152" r="48" fill="none" stroke="#3b82f6" stroke-width="12"/>
+  <path d="M152 112 L152 152 L184 152" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 상태 표시 - 오른쪽 위 -->
+  <circle cx="360" cy="120" r="16" fill="#22c55e"/>
+  <rect x="310" y="160" width="100" height="8" rx="4" fill="#3b82f6"/>
+  <rect x="310" y="180" width="70" height="8" rx="4" fill="#3b82f6" opacity="0.6"/>
+
+  <!-- 그래프 - 아래 -->
+  <polyline
+    points="96,400 160,360 224,380 288,320 352,340 416,280"
+    fill="none"
+    stroke="#3b82f6"
+    stroke-width="8"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+  <circle cx="416" cy="280" r="8" fill="#3b82f6"/>
+</svg>
