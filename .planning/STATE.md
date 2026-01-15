@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 21 of 24 (Team Features)
-Plan: 4 of 4 complete
+Phase: 22 of 24 (PWA Foundation)
+Plan: 1 of 1 complete
 Status: Phase complete
-Last activity: 2026-01-15 — Completed Phase 21 (21-01, 21-02, 21-03, 21-04)
+Last activity: 2026-01-15 — Completed Phase 22-01 (PWA 기본 인프라)
 
-Progress: █████░░░░░ 62.5% (v2.0 Phase 21 complete)
+Progress: ██████░░░░ 75% (v2.0 Phase 22 complete)
 
 ## Performance Metrics
 
@@ -55,6 +55,9 @@ Key technology decisions for v2.0:
 - TeamInvite: 7일 만료 토큰, 이메일 기반 초대, 중복 초대 시 이전 삭제
 - TeamSettings: 팀별 알림 채널 설정 (이메일/Slack), upsert 패턴으로 기본값 자동 생성
 - 팀 알림 발송: Promise.allSettled 병렬 처리, 알림 타입별 토글 (alert/member_join/member_leave)
+- PWA: Next.js 16 내장 manifest.ts 사용, next-pwa 미사용 (deprecated)
+- Service Worker: Network-first (API), Cache-first (정적 자산) 캐싱 전략
+- PWA 설치: beforeinstallprompt 이벤트 기반 커스텀 InstallPrompt UI
 
 ### Constraints (v2.0)
 
@@ -83,6 +86,6 @@ None — Starting fresh milestone v2.0.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 21 Team Features
+Stopped at: Completed Phase 22 PWA Foundation
 Resume file: None
-Next action: `/gsd:plan-phase 22` (PWA Foundation)
+Next action: `/gsd:plan-phase 23` (Push Notification)

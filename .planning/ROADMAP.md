@@ -154,16 +154,16 @@ Plans:
 - [x] 21-03: Team Management UI (목록, 상세, 생성, 멤버 관리)
 - [x] 21-04: Team Notification Channel (팀 알림 설정)
 
-#### Phase 22: PWA Foundation
+#### Phase 22: PWA Foundation ✅
 
 **Goal**: 매니페스트, 서비스워커, 설치 프롬프트로 PWA 기본 인프라 구축
 **Depends on**: Phase 21
-**Research**: Likely (PWA 설정, Next.js PWA 플러그인)
-**Research topics**: next-pwa 또는 Workbox 직접 설정, 매니페스트 구성
-**Plans**: TBD
+**Research**: Complete (Next.js 16 내장 PWA, direct sw.js 권장)
+**Status**: Complete (2026-01-15)
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 22-01: TBD
+- [x] 22-01: PWA Manifest, Service Worker, Install Prompt UI
 
 #### Phase 23: Push Notification
 
@@ -215,9 +215,9 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 19. RBAC Access Control | v2.0 | 2/2 | ✅ Complete | 2026-01-15 |
 | 20. User Dashboard Settings | v2.0 | 3/3 | ✅ Complete | 2026-01-15 |
 | 21. Team Features | v2.0 | 4/4 | ✅ Complete | 2026-01-15 |
-| 22. PWA Foundation | v2.0 | 0/? | Not started | - |
+| 22. PWA Foundation | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
 | 23. Push Notification | v2.0 | 0/? | Not started | - |
 | 24. Offline Caching | v2.0 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-15 after Phase 21 completion*
+*Last updated: 2026-01-15 after Phase 22 completion*
