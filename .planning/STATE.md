@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 18 of 24 (Auth System Extension)
-Plan: 3 of 3 complete
+Phase: 19 of 24 (RBAC Access Control)
+Plan: 2 of 2 complete
 Status: Phase complete
-Last activity: 2026-01-15 — Completed Phase 18 (18-01, 18-02, 18-03)
+Last activity: 2026-01-15 — Completed Phase 19 (19-01, 19-02)
 
-Progress: ██░░░░░░░░ 25% (v2.0 Phase 18 complete)
+Progress: ███░░░░░░░ 37% (v2.0 Phase 19 complete)
 
 ## Performance Metrics
 
@@ -45,6 +45,9 @@ Key technology decisions for v2.0:
 - authenticateUser vs authenticateUserFromDB 병행 운영 (점진적 전환)
 - 이중 역할 검사: 미들웨어(빠른 거부) + API(상세 에러)
 - JWT role lowercase 형식 유지 (Prisma enum과 서비스 레이어에서 변환)
+- RBAC 권한 매트릭스: Resource(system/docker/projects/users/admin) × Action(read/write/delete/manage)
+- Edge Runtime 호환 RBAC 헬퍼: hasPermission, canAccessRoute (순수 TS)
+- 프론트엔드 역할 기반 UI: useAuth 훅 + RoleGuard 컴포넌트
 
 ### Constraints (v2.0)
 
@@ -73,6 +76,6 @@ None — Starting fresh milestone v2.0.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 18 Auth System Extension
+Stopped at: Completed Phase 19 RBAC Access Control
 Resume file: None
-Next action: `/gsd:plan-phase 19` (RBAC Access Control)
+Next action: `/gsd:plan-phase 20` (User Dashboard Settings)
