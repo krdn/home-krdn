@@ -12,7 +12,7 @@ None
 
 - ✅ **v1.0 MVP** — Phases 1-8 (shipped 2026-01-15) — [Archive](milestones/v1.0-MVP.md)
 - ✅ **v1.1 Enhancement** — Phases 9-16 (shipped 2026-01-15) — [Archive](milestones/v1.1-Enhancement.md)
-- 🚧 **v2.0 Multi-User Foundation** — Phases 17-24 (in progress)
+- ✅ **v2.0 Multi-User Foundation** — Phases 17-24 (shipped 2026-01-15) — [Archive](milestones/v2.0-Multi-User-Foundation.md)
 
 ## Completed Milestones
 
@@ -87,7 +87,7 @@ All planned phases (1-16) completed.
 | 15. Admin Dashboard | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 16. E2E Testing | v1.1 | 1/1 | ✅ Complete | 2026-01-15 |
 
-### 🚧 v2.0 Multi-User Foundation (In Progress)
+### ✅ v2.0 Multi-User Foundation (SHIPPED 2026-01-15)
 
 **Milestone Goal:** 멀티 유저 인프라 구축 후 PWA 모바일 경험 강화
 
@@ -176,16 +176,16 @@ Plans:
 Plans:
 - [x] 23-01: VAPID 설정, PushSubscription 모델, 구독 API, 전송 서비스, 클라이언트 UI
 
-#### Phase 24: Offline Caching
+#### Phase 24: Offline Caching ✅
 
-**Goal**: Workbox 기반 오프라인 캐싱 전략 및 데이터 동기화 구현
+**Goal**: 오프라인 캐싱 전략 및 폴백 페이지 구현 (Workbox 미사용, 네이티브 SW)
 **Depends on**: Phase 23
-**Research**: Likely (Workbox 설정)
-**Research topics**: Workbox 캐싱 전략, 백그라운드 동기화, 충돌 해결
-**Plans**: TBD
+**Research**: Complete (네이티브 Service Worker 캐싱 전략 채택)
+**Status**: Complete (2026-01-15)
+**Plans**: 1/1 complete
 
 Plans:
-- [ ] 24-01: TBD
+- [x] 24-01: SW 캐싱 전략 개선, 오프라인 폴백 페이지, 오프라인 상태 UI
 
 ## Progress
 
@@ -217,7 +217,7 @@ All planned phases (1-16) completed. v2.0 phases 17-24 in progress.
 | 21. Team Features | v2.0 | 4/4 | ✅ Complete | 2026-01-15 |
 | 22. PWA Foundation | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
 | 23. Push Notification | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
-| 24. Offline Caching | v2.0 | 0/? | Not started | - |
+| 24. Offline Caching | v2.0 | 1/1 | ✅ Complete | 2026-01-15 |
 
 ---
-*Last updated: 2026-01-15 after Phase 23 completion*
+*Last updated: 2026-01-15 after v2.0 Milestone completion*
