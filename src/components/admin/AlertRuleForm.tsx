@@ -181,12 +181,12 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
           {/* 헤더 */}
           <div className="mb-6 flex items-center justify-between">
             <Dialog.Title className="flex items-center gap-2 text-lg font-semibold">
-              <Bell className="h-5 w-5 text-primary" />
+              <Bell className="h-5 w-5 text-primary" aria-hidden="true" />
               {isEditing ? '규칙 수정' : '새 알림 규칙'}
             </Dialog.Title>
             <Dialog.Close asChild>
-              <button className="rounded-full p-1 hover:bg-muted">
-                <X className="h-5 w-5" />
+              <button className="rounded-full p-1 hover:bg-muted" aria-label="닫기">
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </Dialog.Close>
           </div>
@@ -205,10 +205,14 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                   setFormData((prev) => ({ ...prev, name: e.target.value }))
                 }
                 placeholder="예: CPU 위험 알림"
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'rule-name-error' : undefined}
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
               {errors.name && (
-                <p className="text-xs text-destructive">{errors.name}</p>
+                <p id="rule-name-error" role="alert" className="text-xs text-destructive">
+                  {errors.name}
+                </p>
               )}
             </div>
 
@@ -233,7 +237,7 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                 </div>
               </div>
 
@@ -256,7 +260,7 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -285,7 +289,7 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                 </div>
               </div>
 
@@ -305,22 +309,28 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                       threshold: Number(e.target.value),
                     }))
                   }
+                  aria-invalid={!!errors.threshold}
+                  aria-describedby={errors.threshold ? 'threshold-error' : undefined}
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 {errors.threshold && (
-                  <p className="text-xs text-destructive">{errors.threshold}</p>
+                  <p id="threshold-error" role="alert" className="text-xs text-destructive">
+                    {errors.threshold}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* 심각도 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">심각도</label>
-              <div className="flex gap-2">
+            <fieldset className="space-y-2">
+              <legend className="text-sm font-medium">심각도</legend>
+              <div className="flex gap-2" role="radiogroup" aria-label="심각도 선택">
                 {severities.map((sev) => (
                   <button
                     key={sev.value}
                     type="button"
+                    role="radio"
+                    aria-checked={formData.severity === sev.value}
                     onClick={() =>
                       setFormData((prev) => ({ ...prev, severity: sev.value }))
                     }
@@ -332,23 +342,24 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                   >
                     <span
                       className={`h-2 w-2 rounded-full ${sev.color}`}
+                      aria-hidden="true"
                     />
                     {sev.label}
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             {/* 쿨다운 시간 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="cooldown">
-                쿨다운 시간
-              </label>
-              <div className="flex flex-wrap gap-2">
+            <fieldset className="space-y-2">
+              <legend className="text-sm font-medium">쿨다운 시간</legend>
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="쿨다운 시간 선택">
                 {cooldownPresets.map((preset) => (
                   <button
                     key={preset.value}
                     type="button"
+                    role="radio"
+                    aria-checked={formData.cooldown === preset.value}
                     onClick={() =>
                       setFormData((prev) => ({ ...prev, cooldown: preset.value }))
                     }
@@ -362,13 +373,15 @@ export function AlertRuleForm({ rule, open, onOpenChange }: AlertRuleFormProps) 
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p id="cooldown-description" className="text-xs text-muted-foreground">
                 동일 규칙의 알림이 다시 발생하기까지 대기하는 시간입니다.
               </p>
               {errors.cooldown && (
-                <p className="text-xs text-destructive">{errors.cooldown}</p>
+                <p id="cooldown-error" role="alert" className="text-xs text-destructive">
+                  {errors.cooldown}
+                </p>
               )}
-            </div>
+            </fieldset>
 
             {/* 액션 버튼 */}
             <div className="flex justify-end gap-3 pt-4">

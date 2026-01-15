@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SkipLink } from "@/components/ui/SkipLink";
 import { Providers } from "./providers";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
@@ -60,9 +61,12 @@ export default function RootLayout({
       >
         <Providers>
           <ServiceWorkerRegister />
+          <SkipLink />
           <OfflineIndicator />
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+            {children}
+          </main>
           <Footer />
           <InstallPrompt />
         </Providers>

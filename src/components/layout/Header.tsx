@@ -38,7 +38,7 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-1">
+        <nav className="hidden md:flex md:items-center md:gap-1" aria-label="메인 네비게이션">
           {navigation.map((item) => {
             const isActive =
               item.href === "/"
@@ -48,6 +48,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive
@@ -55,12 +56,12 @@ export function Header() {
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-4 w-4" aria-hidden="true" />
                 {item.name}
               </Link>
             );
           })}
-        </div>
+        </nav>
 
         {/* Right side */}
         <div className="flex items-center gap-2">
@@ -72,11 +73,14 @@ export function Header() {
             size="icon"
             className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5" aria-hidden="true" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" aria-hidden="true" />
             )}
           </Button>
         </div>
@@ -84,7 +88,11 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="border-t md:hidden">
+        <nav
+          id="mobile-navigation"
+          className="border-t md:hidden"
+          aria-label="모바일 네비게이션"
+        >
           <div className="space-y-1 px-4 py-3">
             {navigation.map((item) => {
               const isActive =
@@ -96,6 +104,7 @@ export function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     isActive
@@ -103,13 +112,13 @@ export function Header() {
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-4 w-4" aria-hidden="true" />
                   {item.name}
                 </Link>
               );
             })}
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

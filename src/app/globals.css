@@ -229,3 +229,46 @@ body {
 .animate-slide-down {
   animation: slide-down var(--duration-normal) var(--ease-out);
 }
+
+/* ============================================
+ * Accessibility: Reduced Motion
+ * 사용자가 시스템에서 모션 감소를 선호하면
+ * 모든 애니메이션과 트랜지션을 비활성화합니다.
+ * Phase 28: Accessibility Enhancement
+ * ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* 특정 애니메이션 클래스 비활성화 */
+  .animate-pulse,
+  .animate-pulse-dot,
+  .animate-spin,
+  .animate-bounce,
+  .animate-shimmer,
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+ * Focus Visible: 키보드 포커스 스타일
+ * 마우스 클릭과 키보드 포커스를 구분합니다.
+ * ============================================ */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* 마우스 포커스는 outline 숨김 */
+:focus:not(:focus-visible) {
+  outline: none;
+}

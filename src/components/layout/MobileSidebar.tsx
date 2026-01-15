@@ -23,7 +23,10 @@ export function MobileSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto border-b bg-card px-4 py-2 lg:hidden">
+    <nav
+      className="flex items-center gap-1 overflow-x-auto border-b bg-card px-4 py-2 lg:hidden"
+      aria-label="관리자 모바일 네비게이션"
+    >
       {navigation.map((item) => {
         const isActive =
           item.href === "/admin"
@@ -34,6 +37,8 @@ export function MobileSidebar() {
           <Link
             key={item.name}
             href={item.href}
+            aria-current={isActive ? "page" : undefined}
+            aria-label={item.name}
             className={cn(
               "flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
               isActive
@@ -41,11 +46,11 @@ export function MobileSidebar() {
                 : "text-muted-foreground hover:bg-secondary"
             )}
           >
-            <item.icon className="h-4 w-4" />
+            <item.icon className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">{item.name}</span>
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }

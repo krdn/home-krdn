@@ -43,7 +43,7 @@ function RunningServicesCard() {
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5" />
+          <Activity className="h-5 w-5" aria-hidden="true" />
           Running Services
         </CardTitle>
         <Button asChild variant="outline" size="sm">
@@ -77,9 +77,9 @@ function RunningServicesCard() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1"
+                        aria-label={`${service.name} 열기 (새 탭)`}
                       >
-                        <ExternalLink className="h-4 w-4" />
-                        <span className="sr-only">Open {service.name}</span>
+                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
                       </a>
                     </Button>
                   )}
@@ -105,11 +105,11 @@ function QuickLinksSection() {
   return (
     <section aria-label="Quick Access">
       <h2 className="mb-4 text-lg font-semibold">Quick Access</h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <nav className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="빠른 링크">
         <Link href="/admin/projects">
           <Card hover className="h-full">
             <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
                 <FolderKanban className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -123,7 +123,7 @@ function QuickLinksSection() {
         <Link href="/admin/alerts">
           <Card hover className="h-full">
             <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
                 <Bell className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -139,7 +139,7 @@ function QuickLinksSection() {
         <Link href="/admin/services">
           <Card hover className="h-full">
             <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
                 <Layers className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -155,7 +155,7 @@ function QuickLinksSection() {
         <Link href="/admin/containers">
           <Card hover className="h-full">
             <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
                 <Box className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -171,7 +171,7 @@ function QuickLinksSection() {
         <Link href="/admin/system" className="sm:col-span-2 lg:col-span-1">
           <Card hover className="h-full">
             <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
                 <Activity className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -183,7 +183,7 @@ function QuickLinksSection() {
             </CardContent>
           </Card>
         </Link>
-      </div>
+      </nav>
     </section>
   );
 }
@@ -302,15 +302,16 @@ export function AdminDashboard() {
   // 로딩 상태
   if (isSettingsLoading && !isInitialized) {
     return (
-      <div className="space-y-8">
+      <div className="space-y-8" aria-live="polite" aria-busy="true">
         <header className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">시스템 상태 및 서비스 개요</p>
           </div>
         </header>
-        <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="flex items-center justify-center py-12" role="status">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" aria-hidden="true" />
+          <span className="sr-only">대시보드 로딩 중...</span>
         </div>
       </div>
     );

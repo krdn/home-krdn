@@ -7,12 +7,14 @@
  * 이메일 입력, 역할 선택, 대기 중인 초대 목록 표시
  *
  * Phase 21: Team Features
+ * Phase 28: Accessibility Enhancement - 포커스 트랩 및 ARIA 추가
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Send, Trash2, Clock, Copy, Check } from 'lucide-react';
 import { useTeamInvites, useInviteMember, useCancelInvite } from '@/hooks/useTeams';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import type { TeamInviteDto } from '@/lib/team-service';
 
 interface InviteModalProps {
@@ -51,6 +53,24 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
   const { invites, isLoading: invitesLoading } = useTeamInvites(teamId);
   const inviteMember = useInviteMember(teamId);
   const cancelInvite = useCancelInvite(teamId);
+
+  // 포커스 트랩 적용
+  const modalRef = useFocusTrap<HTMLDivElement>(isOpen);
+
+  // ESC 키로 모달 닫기
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    },
+    [isOpen, onClose]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,17 +125,22 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="invite-modal-title"
               className="w-full max-w-md bg-background border border-border rounded-xl shadow-xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* 헤더 */}
               <div className="flex items-center justify-between p-4 border-b border-border">
-                <h2 className="text-lg font-semibold">멤버 초대</h2>
+                <h2 id="invite-modal-title" className="text-lg font-semibold">멤버 초대</h2>
                 <button
                   onClick={onClose}
+                  aria-label="모달 닫기"
                   className="p-1.5 hover:bg-muted rounded-md transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -127,31 +152,34 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
 
                 {/* 이메일 입력 */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-1.5">
+                  <label htmlFor="invite-email" className="block text-sm font-medium mb-1.5">
                     이메일 주소
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                     <input
                       type="email"
-                      id="email"
+                      id="invite-email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="example@email.com"
                       className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                       required
+                      autoComplete="email"
                     />
                   </div>
                 </div>
 
                 {/* 역할 선택 */}
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">역할</label>
-                  <div className="grid grid-cols-3 gap-2">
+                <fieldset>
+                  <legend className="block text-sm font-medium mb-1.5">역할</legend>
+                  <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="역할 선택">
                     {roleOptions.map((option) => (
                       <button
                         key={option.value}
                         type="button"
+                        role="radio"
+                        aria-checked={role === option.value}
                         onClick={() => setRole(option.value)}
                         className={`p-2 text-center rounded-md border transition-colors ${
                           role === option.value
@@ -164,7 +192,7 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
                       </button>
                     ))}
                   </div>
-                </div>
+                </fieldset>
 
                 {/* 제출 버튼 */}
                 <button
@@ -172,7 +200,7 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
                   disabled={inviteMember.isPending || !email.trim()}
                   className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4" aria-hidden="true" />
                   <span>{inviteMember.isPending ? '발송 중...' : '초대 발송'}</span>
                 </button>
               </form>
@@ -180,18 +208,18 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
               {/* 대기 중인 초대 목록 */}
               <div className="border-t border-border p-4">
                 <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <Clock className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   대기 중인 초대 ({invites?.length || 0})
                 </h3>
 
                 {invitesLoading ? (
-                  <div className="text-center py-4 text-muted-foreground text-sm">
+                  <div className="text-center py-4 text-muted-foreground text-sm" aria-live="polite">
                     로딩 중...
                   </div>
                 ) : invites && invites.length > 0 ? (
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <ul className="space-y-2 max-h-48 overflow-y-auto" role="list" aria-label="대기 중인 초대 목록">
                     {invites.map((invite) => (
-                      <div
+                      <li
                         key={invite.id}
                         className="flex items-center justify-between p-2 bg-surface/50 rounded-md"
                       >
@@ -206,12 +234,12 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
                           <button
                             onClick={() => handleCopyLink(invite)}
                             className="p-1.5 hover:bg-muted rounded-md transition-colors"
-                            title="초대 링크 복사"
+                            aria-label={`${invite.email} 초대 링크 복사`}
                           >
                             {copiedToken === invite.id ? (
-                              <Check className="w-4 h-4 text-success" />
+                              <Check className="w-4 h-4 text-success" aria-hidden="true" />
                             ) : (
-                              <Copy className="w-4 h-4 text-muted-foreground" />
+                              <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                             )}
                           </button>
                           {/* 취소 */}
@@ -219,14 +247,14 @@ export function InviteModal({ teamId, teamName, isOpen, onClose }: InviteModalPr
                             onClick={() => handleCancelInvite(invite.id)}
                             disabled={cancelInvite.isPending}
                             className="p-1.5 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
-                            title="초대 취소"
+                            aria-label={`${invite.email} 초대 취소`}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" aria-hidden="true" />
                           </button>
                         </div>
-                      </div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 ) : (
                   <div className="text-center py-4 text-muted-foreground text-sm">
                     대기 중인 초대가 없습니다.

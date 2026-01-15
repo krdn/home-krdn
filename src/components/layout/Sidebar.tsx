@@ -42,7 +42,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 p-4">
+        <nav className="flex-1 space-y-1 p-4" aria-label="관리자 네비게이션">
           {navigation.map((item) => {
             const isActive =
               item.href === "/admin"
@@ -53,6 +53,7 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   // 기본 트랜지션 및 그룹 호버
                   "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
@@ -64,7 +65,7 @@ export function Sidebar() {
                 )}
               >
                 {/* 아이콘 호버 효과 */}
-                <item.icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                <item.icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
                 {item.name}
               </Link>
             );

@@ -72,7 +72,10 @@ export function ToastProvider({ children }: ToastProviderProps) {
             onClose={() => removeToast(toast.id)}
           />
         ))}
-        <Toast.Viewport className="fixed bottom-0 right-0 flex flex-col gap-2 p-4 w-96 max-w-full z-50" />
+        <Toast.Viewport
+          className="fixed bottom-0 right-0 flex flex-col gap-2 p-4 w-96 max-w-full z-50"
+          aria-label="알림"
+        />
       </Toast.Provider>
     </ToastContext.Provider>
   );

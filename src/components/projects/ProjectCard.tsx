@@ -181,9 +181,9 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
                     href={githubLink.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="GitHub"
+                    aria-label={`${project.name} GitHub 저장소 열기`}
                   >
-                    <Github className="h-4 w-4" />
+                    <Github className="h-4 w-4" aria-hidden="true" />
                   </a>
                 </Button>
               )}
@@ -193,9 +193,9 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
                     href={demoLink.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="Demo"
+                    aria-label={`${project.name} 데모 사이트 열기`}
                   >
-                    <ExternalLink className="h-4 w-4" />
+                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
                   </a>
                 </Button>
               )}
