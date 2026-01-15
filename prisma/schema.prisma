@@ -54,6 +54,9 @@ model User {
 
   // 관계: 팀 초대 (초대한 사람)
   teamInvites TeamInvite[] @relation("TeamInviter")
+
+  // 관계: 푸시 구독 (Phase 23)
+  pushSubscriptions PushSubscription[]
 }
 
 // 팀 모델
@@ -185,4 +188,29 @@ model TeamInvite {
   @@index([token])
   @@index([teamId])
   @@index([email])
+}
+
+// ============================================================
+// 푸시 알림 관련 모델 (Phase 23)
+// ============================================================
+
+// 푸시 구독 모델
+model PushSubscription {
+  id String @id @default(cuid())
+
+  // 사용자 연결
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 푸시 구독 정보
+  endpoint String @unique // Push 서버 엔드포인트
+  p256dh   String // 암호화 키 (ECDH P-256)
+  auth     String // 인증 시크릿
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 인덱스: 사용자별 구독 조회
+  @@index([userId])
 }
