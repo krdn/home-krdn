@@ -5,12 +5,14 @@
  * Phase 21: Team Features
  * - 팀 CRUD
  * - 멤버 관리
+ * - 초대 시스템
  * - 권한 검사 헬퍼
  */
 
 import prisma from '@/lib/prisma'
 import { z } from 'zod/v4'
-import type { Team, TeamMember, User, Role } from '@prisma/client'
+import crypto from 'crypto'
+import type { Team, TeamMember, TeamInvite, User, Role } from '@prisma/client'
 
 // ============================================================
 // 타입 정의
@@ -40,6 +42,21 @@ export interface TeamMemberDto {
   displayName: string | null
   role: Role
   joinedAt: Date
+}
+
+/**
+ * 클라이언트 반환용 TeamInvite DTO
+ */
+export interface TeamInviteDto {
+  id: string
+  token: string
+  email: string
+  role: Role
+  teamId: string
+  teamName: string
+  invitedByUsername: string
+  expiresAt: Date
+  createdAt: Date
 }
 
 /**
@@ -99,6 +116,18 @@ export const UpdateMemberRoleInputSchema = z.object({
 
 export type UpdateMemberRoleInput = z.infer<typeof UpdateMemberRoleInputSchema>
 
+/**
+ * 초대 생성 입력 검증 스키마
+ */
+export const CreateInviteInputSchema = z.object({
+  email: z.email('유효한 이메일 주소를 입력해주세요'),
+  role: z.enum(['ADMIN', 'USER', 'VIEWER'], {
+    error: '유효한 역할(ADMIN, USER, VIEWER)을 입력해주세요',
+  }).optional().default('USER'),
+})
+
+export type CreateInviteInput = z.infer<typeof CreateInviteInputSchema>
+
 // ============================================================
 // 헬퍼 함수
 // ============================================================
@@ -112,6 +141,12 @@ type TeamWithOwnerAndCount = Team & {
 // TeamMember with user type
 type TeamMemberWithUser = TeamMember & {
   user: Pick<User, 'username' | 'displayName'>
+}
+
+// TeamInvite with relations type
+type TeamInviteWithRelations = TeamInvite & {
+  team: Pick<Team, 'name'>
+  invitedBy: Pick<User, 'username'>
 }
 
 /**
@@ -145,6 +180,25 @@ export function toTeamMemberDto(member: TeamMemberWithUser): TeamMemberDto {
     displayName: member.user.displayName,
     role: member.role,
     joinedAt: member.joinedAt,
+  }
+}
+
+/**
+ * Prisma TeamInvite를 TeamInviteDto로 변환
+ * @param invite Prisma TeamInvite 엔티티 (team, invitedBy 포함)
+ * @returns TeamInviteDto
+ */
+export function toTeamInviteDto(invite: TeamInviteWithRelations): TeamInviteDto {
+  return {
+    id: invite.id,
+    token: invite.token,
+    email: invite.email,
+    role: invite.role,
+    teamId: invite.teamId,
+    teamName: invite.team.name,
+    invitedByUsername: invite.invitedBy.username,
+    expiresAt: invite.expiresAt,
+    createdAt: invite.createdAt,
   }
 }
 
@@ -594,4 +648,291 @@ export async function hasTeamAdminAccess(
   })
 
   return member !== null && member.role === 'ADMIN'
+}
+
+// ============================================================
+// 초대 관리 함수
+// ============================================================
+
+/**
+ * 초대 토큰 만료 시간 (7일)
+ */
+const INVITE_TOKEN_EXPIRY_DAYS = 7
+
+/**
+ * 팀 초대를 생성합니다.
+ * 동일 이메일에 대한 기존 미사용 초대는 삭제됩니다.
+ *
+ * @param teamId 팀 ID
+ * @param invitedById 초대하는 사용자 ID
+ * @param input 초대 생성 입력 (email, role)
+ * @returns 생성된 초대 DTO
+ * @throws 팀이 없거나 이미 멤버인 경우 에러
+ */
+export async function createTeamInvite(
+  teamId: string,
+  invitedById: string,
+  input: CreateInviteInput
+): Promise<TeamInviteDto> {
+  // 팀 존재 확인
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+  })
+
+  if (!team) {
+    throw new Error('팀을 찾을 수 없습니다')
+  }
+
+  // 이미 팀 멤버인지 확인 (이메일로 사용자 조회)
+  const existingUser = await prisma.user.findUnique({
+    where: { email: input.email },
+    include: {
+      teamMemberships: {
+        where: { teamId },
+      },
+    },
+  })
+
+  if (existingUser && existingUser.teamMemberships.length > 0) {
+    throw new Error('이미 팀 멤버입니다')
+  }
+
+  // 기존 미사용 초대 삭제 (동일 이메일 + 팀)
+  await prisma.teamInvite.deleteMany({
+    where: {
+      teamId,
+      email: input.email,
+      usedAt: null,
+    },
+  })
+
+  // 안전한 토큰 생성 (32바이트 = 64자 hex)
+  const token = crypto.randomBytes(32).toString('hex')
+
+  // 만료 시간 계산 (7일 후)
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + INVITE_TOKEN_EXPIRY_DAYS)
+
+  // 초대 생성
+  const invite = await prisma.teamInvite.create({
+    data: {
+      token,
+      email: input.email,
+      role: input.role ?? 'USER',
+      teamId,
+      invitedById,
+      expiresAt,
+    },
+    include: {
+      team: {
+        select: { name: true },
+      },
+      invitedBy: {
+        select: { username: true },
+      },
+    },
+  })
+
+  return toTeamInviteDto(invite)
+}
+
+/**
+ * 팀의 활성 초대 목록을 조회합니다.
+ * 만료되지 않고 사용되지 않은 초대만 반환합니다.
+ *
+ * @param teamId 팀 ID
+ * @returns 초대 DTO 배열
+ */
+export async function getTeamInvites(teamId: string): Promise<TeamInviteDto[]> {
+  const invites = await prisma.teamInvite.findMany({
+    where: {
+      teamId,
+      usedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+    include: {
+      team: {
+        select: { name: true },
+      },
+      invitedBy: {
+        select: { username: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  return invites.map(toTeamInviteDto)
+}
+
+/**
+ * 이메일로 받은 대기 중인 초대 목록을 조회합니다.
+ * 만료되지 않고 사용되지 않은 초대만 반환합니다.
+ *
+ * @param email 이메일 주소
+ * @returns 초대 DTO 배열
+ */
+export async function getPendingInvitesByEmail(email: string): Promise<TeamInviteDto[]> {
+  const invites = await prisma.teamInvite.findMany({
+    where: {
+      email,
+      usedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+    include: {
+      team: {
+        select: { name: true },
+      },
+      invitedBy: {
+        select: { username: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  return invites.map(toTeamInviteDto)
+}
+
+/**
+ * 유효한 초대를 토큰으로 조회합니다.
+ * 만료되지 않고 사용되지 않은 초대만 반환합니다.
+ *
+ * @param token 초대 토큰
+ * @returns 초대 DTO 또는 null
+ */
+export async function findValidInvite(token: string): Promise<TeamInviteDto | null> {
+  const invite = await prisma.teamInvite.findUnique({
+    where: { token },
+    include: {
+      team: {
+        select: { name: true },
+      },
+      invitedBy: {
+        select: { username: true },
+      },
+    },
+  })
+
+  if (!invite) {
+    return null
+  }
+
+  // 만료 시간 검사
+  if (invite.expiresAt < new Date()) {
+    return null
+  }
+
+  // 사용 여부 검사
+  if (invite.usedAt !== null) {
+    return null
+  }
+
+  return toTeamInviteDto(invite)
+}
+
+/**
+ * 초대를 수락합니다.
+ * 사용자를 팀 멤버로 추가하고 초대를 사용 처리합니다.
+ *
+ * @param token 초대 토큰
+ * @param userId 수락하는 사용자 ID
+ * @returns 추가된 멤버 DTO
+ * @throws 초대가 유효하지 않거나 이미 멤버인 경우 에러
+ */
+export async function acceptInvite(
+  token: string,
+  userId: string
+): Promise<TeamMemberDto> {
+  // 초대 조회 (관계 포함)
+  const invite = await prisma.teamInvite.findUnique({
+    where: { token },
+    include: {
+      team: true,
+    },
+  })
+
+  if (!invite) {
+    throw new Error('초대를 찾을 수 없습니다')
+  }
+
+  // 만료 시간 검사
+  if (invite.expiresAt < new Date()) {
+    throw new Error('초대가 만료되었습니다')
+  }
+
+  // 사용 여부 검사
+  if (invite.usedAt !== null) {
+    throw new Error('이미 사용된 초대입니다')
+  }
+
+  // 이미 팀 멤버인지 확인
+  const existingMember = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: { userId, teamId: invite.teamId },
+    },
+  })
+
+  if (existingMember) {
+    throw new Error('이미 팀 멤버입니다')
+  }
+
+  // 트랜잭션: 멤버 추가 + 초대 사용 처리
+  const [member] = await prisma.$transaction([
+    // 멤버 추가
+    prisma.teamMember.create({
+      data: {
+        teamId: invite.teamId,
+        userId,
+        role: invite.role,
+      },
+      include: {
+        user: {
+          select: { username: true, displayName: true },
+        },
+      },
+    }),
+    // 초대 사용 처리
+    prisma.teamInvite.update({
+      where: { id: invite.id },
+      data: { usedAt: new Date() },
+    }),
+  ])
+
+  return toTeamMemberDto(member)
+}
+
+/**
+ * 초대를 취소(삭제)합니다.
+ *
+ * @param inviteId 초대 ID
+ * @throws 초대가 없으면 Prisma 에러 발생
+ */
+export async function cancelInvite(inviteId: string): Promise<void> {
+  await prisma.teamInvite.delete({
+    where: { id: inviteId },
+  })
+}
+
+/**
+ * 만료된 초대들을 삭제합니다.
+ * 배치 작업용 (cron job 등에서 호출)
+ *
+ * @returns 삭제된 초대 개수
+ */
+export async function deleteExpiredInvites(): Promise<number> {
+  const result = await prisma.teamInvite.deleteMany({
+    where: {
+      OR: [
+        // 만료된 초대
+        { expiresAt: { lt: new Date() } },
+        // 이미 사용된 초대 (7일 이상 지난 것만)
+        {
+          usedAt: {
+            lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          },
+        },
+      ],
+    },
+  })
+
+  return result.count
 }
