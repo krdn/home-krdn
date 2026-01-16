@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 35 of 42 (CI/CD Dashboard) - COMPLETE
-Plan: 2 of 2 complete
-Status: Phase complete
-Last activity: 2026-01-16 — Completed 35-02-PLAN.md (Workflow Dashboard)
+Phase: 36 of 42 (Log Aggregation)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-01-16 — Completed 36-01-PLAN.md (Log Infrastructure)
 
-Progress: ███░░░░░░░ 30% (v2.2 Milestone — Phase 33-35 complete)
+Progress: ████░░░░░░ 35% (v2.2 Milestone — Phase 33-35 complete, 36-01 complete)
 
 ## Performance Metrics
 
@@ -24,6 +24,7 @@ Progress: ███░░░░░░░ 30% (v2.2 Milestone — Phase 33-35 com
 - Milestone v2.0: 17 plans completed
 - Phase 34: 2 plans completed in ~15min
 - Phase 35: 2 plans completed in ~9min (5min + 4min)
+- Phase 36-01: 1 plan completed in ~8min
 
 **By Milestone:**
 
@@ -61,6 +62,10 @@ Key technology decisions for v2.2:
   - WorkflowStatusBadge 상태 시각화 (6가지 상태)
   - WorkflowList, WorkflowRunList 컴포넌트
   - /admin/github 워크플로우 대시보드 (2컬럼 레이아웃)
+- ✅ Phase 36-01: 로그 수집 인프라 구축
+  - LogEntry Zod 스키마 (LogLevel, LogSource, LogQuerySchema)
+  - Prisma LogEntry 모델 (4개 인덱스)
+  - LogStorage 서비스 (write, writeBatch, query, cleanup, getStats)
 - 토큰 암호화: 현재 평문 저장, 향후 암호화 고려
 
 ### Constraints (v2.2)
@@ -92,7 +97,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-16 01:09 UTC
-Stopped at: Completed 35-02-PLAN.md (Workflow Dashboard)
+Last session: 2026-01-16 12:39 UTC
+Stopped at: Completed 36-01-PLAN.md (Log Infrastructure)
 Resume file: None
-Next action: Phase 36 (Log Management) - Research 필요
+Next action: Phase 36-02 (Log Collectors) - Docker/Journal 로그 수집기 구현
