@@ -11,3 +11,9 @@ export type { LogEntryProps } from './LogEntry';
 
 export { LogList } from './LogList';
 export type { LogListProps } from './LogList';
+
+export { LogStats } from './LogStats';
+export type { LogStatsProps } from './LogStats';
+
+export { LogViewer } from './LogViewer';
+export type { LogViewerProps } from './LogViewer';
