@@ -14,7 +14,7 @@ import { isRoleAtLeast } from '@/lib/rbac'
 import { getPortById, updatePort, deletePort } from '@/lib/port-service'
 import { UpdatePortInputSchema } from '@/types/port'
 import type { UserRole, JWTPayload } from '@/types/auth'
-import { logger } from '@/lib/logger'
+import { logger, Logger } from '@/lib/logger'
 
 // Prisma 사용으로 Node.js runtime 필요
 export const runtime = 'nodejs'
@@ -102,7 +102,7 @@ export async function GET(
       port,
     })
   } catch (error) {
-    logger.error('[Ports] 포트 조회 오류:', error)
+    logger.error('[Ports] 포트 조회 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '포트 조회에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }
@@ -197,7 +197,7 @@ export async function PATCH(
       )
     }
 
-    logger.error('[Ports] 포트 수정 오류:', error)
+    logger.error('[Ports] 포트 수정 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '포트 수정에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }
@@ -256,7 +256,7 @@ export async function DELETE(
       message: '포트가 삭제되었습니다',
     })
   } catch (error) {
-    logger.error('[Ports] 포트 삭제 오류:', error)
+    logger.error('[Ports] 포트 삭제 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '포트 삭제에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }

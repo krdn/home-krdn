@@ -16,7 +16,7 @@ import {
   PortFilterInputSchema,
 } from '@/types/port'
 import type { UserRole, JWTPayload } from '@/types/auth'
-import { logger } from '@/lib/logger'
+import { logger, Logger } from '@/lib/logger'
 
 // Prisma 사용으로 Node.js runtime 필요
 export const runtime = 'nodejs'
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       filters: parseResult.data,
     })
   } catch (error) {
-    logger.error('[Ports] 포트 목록 조회 오류:', error)
+    logger.error('[Ports] 포트 목록 조회 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '포트 목록 조회에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    logger.error('[Ports] 포트 등록 오류:', error)
+    logger.error('[Ports] 포트 등록 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '포트 등록에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }

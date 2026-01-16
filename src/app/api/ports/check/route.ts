@@ -19,7 +19,7 @@ import {
 } from '@/lib/port-service'
 import { PortNumberSchema, PORT_RANGE } from '@/types/port'
 import type { UserRole, JWTPayload } from '@/types/auth'
-import { logger } from '@/lib/logger'
+import { logger, Logger } from '@/lib/logger'
 
 // Prisma 사용으로 Node.js runtime 필요
 export const runtime = 'nodejs'
@@ -163,7 +163,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       available: true,
     })
   } catch (error) {
-    logger.error('[Ports] 포트 충돌 검사 오류:', error)
+    logger.error('[Ports] 포트 충돌 검사 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '포트 충돌 검사에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }
@@ -237,7 +237,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       range: { start, end },
     })
   } catch (error) {
-    logger.error('[Ports] 사용 가능한 포트 검색 오류:', error)
+    logger.error('[Ports] 사용 가능한 포트 검색 오류', Logger.errorToContext(error))
     return NextResponse.json(
       { success: false, error: '사용 가능한 포트 검색에 실패했습니다', code: 'INTERNAL_ERROR' },
       { status: 500 }
