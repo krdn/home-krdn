@@ -6,15 +6,17 @@
  * Kubernetes 클러스터 관리 및 리소스 대시보드 페이지
  *
  * Phase 40: K8s Dashboard
+ * Phase 41: Service Mesh Overview
  *
  * - 클러스터 등록/관리
  * - 네임스페이스 선택
  * - Pod/Service/Deployment 목록 조회
+ * - Service Topology 시각화
  */
 
 import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { Server, Loader2, ArrowLeft, Layers, Box, Globe, FolderOpen } from 'lucide-react';
+import { Server, Loader2, ArrowLeft, Layers, Box, Globe, FolderOpen, Network } from 'lucide-react';
 import { AdminOnly } from '@/components/admin/RoleGuard';
 import { Button } from '@/components/ui/Button';
 import { useK8sNamespaces } from '@/hooks/useKubernetes';
@@ -69,8 +71,20 @@ const K8sDeploymentList = dynamic(
   }
 );
 
+const ServiceTopology = dynamic(
+  () => import('@/components/kubernetes/ServiceTopology').then((mod) => mod.ServiceTopology),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center rounded-lg border bg-card p-6 h-[500px]">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
 // 탭 타입
-type ResourceTab = 'pods' | 'services' | 'deployments';
+type ResourceTab = 'topology' | 'pods' | 'services' | 'deployments';
 
 /**
  * 네임스페이스 셀렉터 컴포넌트
@@ -118,6 +132,7 @@ function ResourceTabs({
   onTabChange: (tab: ResourceTab) => void;
 }) {
   const tabs: { key: ResourceTab; label: string; icon: React.ElementType }[] = [
+    { key: 'topology', label: 'Topology', icon: Network },
     { key: 'pods', label: 'Pods', icon: Box },
     { key: 'services', label: 'Services', icon: Globe },
     { key: 'deployments', label: 'Deployments', icon: Layers },
@@ -161,7 +176,7 @@ export default function KubernetesAdminPage() {
   const handleClusterSelect = useCallback((cluster: KubernetesClusterDto) => {
     setSelectedCluster(cluster);
     setSelectedNamespace(cluster.defaultNamespace || null);
-    setActiveTab('pods');
+    setActiveTab('topology');
   }, []);
 
   // 클러스터 선택 해제 (뒤로가기)
@@ -238,6 +253,13 @@ export default function KubernetesAdminPage() {
               <ResourceTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
               {/* 탭 콘텐츠 */}
+              {activeTab === 'topology' && (
+                <ServiceTopology
+                  clusterId={selectedCluster.id}
+                  namespace={selectedNamespace ?? undefined}
+                  refreshInterval={30000}
+                />
+              )}
               {activeTab === 'pods' && (
                 <K8sPodList
                   clusterId={selectedCluster.id}

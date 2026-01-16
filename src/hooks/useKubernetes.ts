@@ -29,6 +29,7 @@ import type {
   K8sService,
   K8sDeployment,
   ResourceFilter,
+  ServiceTopology,
 } from '@/types/kubernetes';
 
 // ============================================================
@@ -489,5 +490,64 @@ export function useK8sClusterMutation() {
     deleteCluster: deleteClusterMutation,
     toggleCluster: toggleClusterMutation,
     testConnection: testConnectionMutation,
+  };
+}
+
+// ============================================================
+// Service Topology (Phase 41)
+// ============================================================
+
+/**
+ * 서비스 토폴로지 조회
+ */
+async function fetchTopology(clusterId: string, namespace?: string): Promise<ApiResponse<ServiceTopology>> {
+  const params = new URLSearchParams();
+  if (namespace) params.set('namespace', namespace);
+
+  const queryString = params.toString();
+  const url = queryString
+    ? `/api/kubernetes/clusters/${clusterId}/topology?${queryString}`
+    : `/api/kubernetes/clusters/${clusterId}/topology`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    return { success: false, error: errorData.error || 'Topology 조회 실패', code: errorData.code };
+  }
+
+  const data = await response.json();
+  return { success: true, data: data.data };
+}
+
+/**
+ * 서비스 토폴로지를 조회하는 훅
+ */
+export function useK8sTopology(
+  clusterId: string | null,
+  namespace?: string,
+  options?: { enabled?: boolean; refreshInterval?: number }
+) {
+  const { enabled = true, refreshInterval } = options ?? {};
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['kubernetes', 'topology', clusterId, namespace],
+    queryFn: () => fetchTopology(clusterId!, namespace),
+    staleTime: 30 * 1000,
+    enabled: enabled && !!clusterId,
+    retry: false,
+    refetchInterval: refreshInterval,
+  });
+
+  return {
+    topology: data?.success ? data.data : null,
+    isLoading,
+    error: error as Error | null,
+    errorCode: data?.code,
+    errorMessage: data?.error,
+    refetch,
   };
 }

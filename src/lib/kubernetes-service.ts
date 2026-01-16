@@ -20,6 +20,9 @@ import type {
   K8sService,
   K8sDeployment,
   ResourceFilter,
+  ServiceTopology,
+  TopologyNode,
+  TopologyEdge,
 } from '@/types/kubernetes';
 
 // ============================================================
@@ -716,4 +719,183 @@ function handleK8sError(error: unknown, operation: string): string {
   }
 
   return `알 수 없는 오류가 발생했습니다. (${operation})`;
+}
+
+// ============================================================
+// Service Topology (Phase 41)
+// ============================================================
+
+/**
+ * 레이블 셀렉터가 레이블과 매칭되는지 확인
+ */
+function matchesSelector(
+  selector: Record<string, string> | undefined,
+  labels: Record<string, string> | undefined
+): boolean {
+  if (!selector || !labels) return false;
+
+  return Object.entries(selector).every(
+    ([key, value]) => labels[key] === value
+  );
+}
+
+/**
+ * Pod 상태를 토폴로지 상태로 변환
+ */
+function getPodTopologyStatus(phase: string): string {
+  switch (phase.toLowerCase()) {
+    case 'running':
+      return 'healthy';
+    case 'pending':
+      return 'warning';
+    case 'failed':
+    case 'unknown':
+      return 'error';
+    default:
+      return 'unknown';
+  }
+}
+
+/**
+ * Deployment 상태를 토폴로지 상태로 변환
+ */
+function getDeploymentTopologyStatus(
+  replicas: number,
+  readyReplicas: number
+): string {
+  if (readyReplicas === replicas && replicas > 0) {
+    return 'healthy';
+  }
+  if (readyReplicas > 0) {
+    return 'warning';
+  }
+  return 'error';
+}
+
+/**
+ * 서비스 토폴로지를 생성합니다.
+ * Service → Deployment → Pod 연결 관계를 분석합니다.
+ *
+ * @param clusterId 클러스터 ID
+ * @param userId 사용자 ID
+ * @param namespace 네임스페이스 (optional, 없으면 모든 네임스페이스)
+ * @returns ServiceTopology
+ */
+export async function getServiceTopology(
+  clusterId: string,
+  userId: string,
+  namespace?: string
+): Promise<ServiceTopology> {
+  await verifyClusterOwnership(clusterId, userId);
+
+  // 병렬로 리소스 조회
+  const filter: ResourceFilter | undefined = namespace ? { namespace } : undefined;
+
+  const [services, deployments, pods] = await Promise.all([
+    getServices(clusterId, userId, filter),
+    getDeployments(clusterId, userId, filter),
+    getPods(clusterId, userId, filter),
+  ]);
+
+  const nodes: TopologyNode[] = [];
+  const edges: TopologyEdge[] = [];
+
+  // Service 노드 추가
+  for (const svc of services) {
+    const nodeId = `svc-${svc.namespace}-${svc.name}`;
+    nodes.push({
+      id: nodeId,
+      type: 'service',
+      name: svc.name,
+      namespace: svc.namespace,
+      status: 'healthy', // Service 자체는 항상 healthy로 간주
+      metadata: {
+        type: svc.type,
+        clusterIP: svc.clusterIP,
+        ports: svc.ports,
+      },
+    });
+  }
+
+  // Deployment 노드 추가
+  for (const deploy of deployments) {
+    const nodeId = `deploy-${deploy.namespace}-${deploy.name}`;
+    nodes.push({
+      id: nodeId,
+      type: 'deployment',
+      name: deploy.name,
+      namespace: deploy.namespace,
+      status: getDeploymentTopologyStatus(deploy.replicas, deploy.readyReplicas),
+      metadata: {
+        replicas: deploy.replicas,
+        readyReplicas: deploy.readyReplicas,
+        strategy: deploy.strategy,
+      },
+    });
+  }
+
+  // Pod 노드 추가
+  for (const pod of pods) {
+    const nodeId = `pod-${pod.namespace}-${pod.name}`;
+    nodes.push({
+      id: nodeId,
+      type: 'pod',
+      name: pod.name,
+      namespace: pod.namespace,
+      status: getPodTopologyStatus(pod.status),
+      metadata: {
+        nodeName: pod.nodeName,
+        podIP: pod.podIP,
+        containers: pod.containers.length,
+      },
+    });
+  }
+
+  // Service → Deployment 엣지 생성 (selector 매칭)
+  for (const svc of services) {
+    if (!svc.selector) continue;
+
+    for (const deploy of deployments) {
+      if (svc.namespace !== deploy.namespace) continue;
+
+      // Deployment의 selector가 Service의 selector와 매칭되는지 확인
+      if (matchesSelector(svc.selector, deploy.selector)) {
+        const edgeId = `edge-svc-${svc.namespace}-${svc.name}-deploy-${deploy.name}`;
+        edges.push({
+          id: edgeId,
+          source: `svc-${svc.namespace}-${svc.name}`,
+          target: `deploy-${deploy.namespace}-${deploy.name}`,
+          type: 'selector',
+          label: 'routes to',
+        });
+      }
+    }
+  }
+
+  // Deployment → Pod 엣지 생성 (selector 매칭)
+  for (const deploy of deployments) {
+    if (!deploy.selector) continue;
+
+    for (const pod of pods) {
+      if (deploy.namespace !== pod.namespace) continue;
+
+      if (matchesSelector(deploy.selector, pod.labels)) {
+        const edgeId = `edge-deploy-${deploy.namespace}-${deploy.name}-pod-${pod.name}`;
+        edges.push({
+          id: edgeId,
+          source: `deploy-${deploy.namespace}-${deploy.name}`,
+          target: `pod-${pod.namespace}-${pod.name}`,
+          type: 'owner',
+          label: 'manages',
+        });
+      }
+    }
+  }
+
+  return {
+    nodes,
+    edges,
+    namespace,
+    generatedAt: new Date().toISOString(),
+  };
 }

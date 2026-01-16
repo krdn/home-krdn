@@ -437,16 +437,18 @@ Plans:
 - [x] 40-02: K8sPodList, K8sServiceList, K8sDeploymentList 컴포넌트
 - [x] 40-03: Admin Kubernetes 대시보드 페이지 통합
 
-#### Phase 41: Service Mesh Overview
+#### Phase 41: Service Mesh Overview ✅
 
 **Goal**: 서비스 간 통신 토폴로지 시각화 — 서비스 그래프, 트래픽 플로우, 의존성 맵
 **Depends on**: Phase 40
-**Research**: Likely (그래프 시각화 라이브러리)
-**Research topics**: react-flow vs vis.js vs d3-force, 토폴로지 레이아웃 알고리즘
-**Plans**: TBD
+**Research**: Complete (React Flow/XyFlow 선택 - React 네이티브, DOM 기반 커스텀 노드)
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 41-01: TBD
+- [x] 41-01: 서비스 토폴로지 타입 + kubernetes-service 함수 + REST API
+- [x] 41-02: ServiceTopology React Flow 시각화 컴포넌트
+- [x] 41-03: Admin Kubernetes 페이지에 Topology 탭 통합
 
 #### Phase 42: DevOps Home
 
@@ -505,8 +507,8 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 38. Log-based Alerts | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 39. Kubernetes Discovery | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 40. K8s Dashboard | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
-| 41. Service Mesh Overview | v2.2 | 0/? | Not started | - |
+| 41. Service Mesh Overview | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 42. DevOps Home | v2.2 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-16 after Phase 40 K8s Dashboard complete*
+*Last updated: 2026-01-16 after Phase 41 Service Mesh Overview complete*

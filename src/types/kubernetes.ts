@@ -187,3 +187,51 @@ export interface K8sApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+// ============================================================
+// Service Topology (Phase 41)
+// ============================================================
+
+/**
+ * 토폴로지 노드 타입
+ */
+export type TopologyNodeType = 'service' | 'deployment' | 'pod' | 'ingress';
+
+/**
+ * 토폴로지 노드
+ */
+export const TopologyNodeSchema = z.object({
+  id: z.string(),
+  type: z.enum(['service', 'deployment', 'pod', 'ingress']),
+  name: z.string(),
+  namespace: z.string(),
+  status: z.string(), // healthy, warning, error, unknown
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+export type TopologyNode = z.infer<typeof TopologyNodeSchema>;
+
+/**
+ * 토폴로지 엣지 (연결)
+ */
+export const TopologyEdgeSchema = z.object({
+  id: z.string(),
+  source: z.string(), // 소스 노드 ID
+  target: z.string(), // 타겟 노드 ID
+  type: z.enum(['selector', 'owner', 'endpoint']), // 연결 유형
+  label: z.string().optional(),
+});
+
+export type TopologyEdge = z.infer<typeof TopologyEdgeSchema>;
+
+/**
+ * 서비스 토폴로지 전체 데이터
+ */
+export const ServiceTopologySchema = z.object({
+  nodes: z.array(TopologyNodeSchema),
+  edges: z.array(TopologyEdgeSchema),
+  namespace: z.string().optional(),
+  generatedAt: z.string(),
+});
+
+export type ServiceTopology = z.infer<typeof ServiceTopologySchema>;
