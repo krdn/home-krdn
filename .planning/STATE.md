@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 ## Current Position
 
 Phase: 34 of 42 (GitHub Integration)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-16 — Completed 34-01-PLAN.md (GitHub API Infrastructure)
+Last activity: 2026-01-16 — Completed 34-02-PLAN.md (GitHub API Routes)
 
-Progress: █░░░░░░░░░ 13% (v2.2 Milestone — 1.3/10 phases complete)
+Progress: █░░░░░░░░░ 16% (v2.2 Milestone — 1.6/10 phases complete)
 
 ## Performance Metrics
 
@@ -50,6 +50,8 @@ Key technology decisions for v2.1:
 Key technology decisions for v2.2 (Phase 34):
 - ✅ Octokit 사용: GitHub 공식 SDK, 타입 안전성, REST API 완전 지원
 - ✅ DTO 패턴: 토큰 값 미노출, hasToken boolean만 제공
+- ✅ 7개 GitHub REST API: 설정 CRUD, 레포/커밋/워크플로우/실행기록 조회
+- ✅ Next.js 15+ 동적 라우트: params Promise await 처리
 - 토큰 암호화: 현재 평문 저장, 향후 암호화 필요
 
 ### Constraints (v2.2)
@@ -81,7 +83,7 @@ None — Starting fresh milestone v2.1.
 
 ## Session Continuity
 
-Last session: 2026-01-16 00:33
-Stopped at: Completed 34-01-PLAN.md (GitHub API Infrastructure)
+Last session: 2026-01-16 00:45
+Stopped at: Completed 34-02-PLAN.md (GitHub API Routes)
 Resume file: None
-Next action: Execute 34-02-PLAN.md (GitHub API Routes)
+Next action: Execute 34-03-PLAN.md (GitHub Dashboard UI)
