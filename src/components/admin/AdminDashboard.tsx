@@ -17,6 +17,7 @@ import {
   ExternalLink,
   FolderKanban,
   Layers,
+  Network,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -172,7 +173,23 @@ const QuickLinksSection = memo(function QuickLinksSection() {
           </Card>
         </Link>
 
-        <Link href="/admin/system" className="sm:col-span-2 lg:col-span-1">
+        <Link href="/admin/ports">
+          <Card hover className="h-full">
+            <CardContent className="flex items-center gap-4 p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
+                <Network className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">Ports</p>
+                <p className="text-sm text-muted-foreground">
+                  Port registry management
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/admin/system">
           <Card hover className="h-full">
             <CardContent className="flex items-center gap-4 p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
