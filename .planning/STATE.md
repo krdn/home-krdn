@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 ## Current Position
 
 Phase: 36 of 42 (Log Aggregation)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-01-16 — Completed 36-01-PLAN.md (Log Infrastructure)
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-16 — Completed 36-02-PLAN.md (Log Collectors)
 
-Progress: ████░░░░░░ 35% (v2.2 Milestone — Phase 33-35 complete, 36-01 complete)
+Progress: ████░░░░░░ 40% (v2.2 Milestone — Phase 33-36 complete)
 
 ## Performance Metrics
 
@@ -24,7 +24,7 @@ Progress: ████░░░░░░ 35% (v2.2 Milestone — Phase 33-35 com
 - Milestone v2.0: 17 plans completed
 - Phase 34: 2 plans completed in ~15min
 - Phase 35: 2 plans completed in ~9min (5min + 4min)
-- Phase 36-01: 1 plan completed in ~8min
+- Phase 36: 2 plans completed in ~18min (8min + 10min)
 
 **By Milestone:**
 
@@ -62,10 +62,11 @@ Key technology decisions for v2.2:
   - WorkflowStatusBadge 상태 시각화 (6가지 상태)
   - WorkflowList, WorkflowRunList 컴포넌트
   - /admin/github 워크플로우 대시보드 (2컬럼 레이아웃)
-- ✅ Phase 36-01: 로그 수집 인프라 구축
-  - LogEntry Zod 스키마 (LogLevel, LogSource, LogQuerySchema)
-  - Prisma LogEntry 모델 (4개 인덱스)
-  - LogStorage 서비스 (write, writeBatch, query, cleanup, getStats)
+- ✅ Phase 36: 로그 수집 백엔드 완성
+  - 36-01: LogEntry Zod 스키마, Prisma 모델, LogStorage 서비스
+  - 36-02: DockerLogCollector 클래스 (Docker socket 스트리밍)
+  - LogCollectorManager Docker 수집기 관리 통합
+  - 8바이트 헤더 파싱 (stdout/stderr 분리)
 - 토큰 암호화: 현재 평문 저장, 향후 암호화 고려
 
 ### Constraints (v2.2)
@@ -93,11 +94,11 @@ None.
 - v1.1 Enhancement completed: 8 phases (9-16), shipped 2026-01-15
 - v2.0 Multi-User Foundation completed: 8 phases (17-24), shipped 2026-01-15
 - v2.1 Polish completed: 8 phases (25-32), shipped 2026-01-15
-- v2.2 DevOps Tools: 10 phases (33-42), Phase 33-35 complete
+- v2.2 DevOps Tools: 10 phases (33-42), Phase 33-36 complete
 
 ## Session Continuity
 
-Last session: 2026-01-16 12:39 UTC
-Stopped at: Completed 36-01-PLAN.md (Log Infrastructure)
+Last session: 2026-01-16 13:10 UTC
+Stopped at: Completed 36-02-PLAN.md (Log Collectors)
 Resume file: None
-Next action: Phase 36-02 (Log Collectors) - Docker/Journal 로그 수집기 구현
+Next action: Phase 37 (Log Viewer UI) - 로그 뷰어 대시보드 구현
