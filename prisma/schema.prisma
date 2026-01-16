@@ -291,3 +291,29 @@ model GitHubSettings {
   // 인덱스: 사용자별 조회 최적화
   @@index([userId])
 }
+
+// ============================================================
+// Log Aggregation 모델 (Phase 36)
+// ============================================================
+
+// 로그 엔트리 모델
+// Docker, systemd journal, 애플리케이션 로그를 통합 저장
+model LogEntry {
+  id        String   @id @default(uuid())
+  source    String   // docker, journal, app
+  sourceId  String   // container id, unit name, file path
+  level     String   // trace, debug, info, warn, error, fatal
+  message   String
+  timestamp DateTime @default(now())
+  metadata  String?  // JSON string (optional)
+  createdAt DateTime @default(now())
+
+  // 인덱스: 소스별 시간순 조회
+  @@index([source, timestamp])
+  // 인덱스: 레벨별 시간순 조회
+  @@index([level, timestamp])
+  // 인덱스: 전체 시간순 조회
+  @@index([timestamp])
+  // 인덱스: 특정 소스(컨테이너 등) 조회
+  @@index([sourceId])
+}
