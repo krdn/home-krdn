@@ -386,25 +386,31 @@ Plans:
 - [x] 36-02: Docker 로그 수집기 (DockerLogCollector, LogCollectorManager)
 - [x] 36-03: 파일 로그 수집기 + WebSocket 채널 (FileLogCollector, subscribe-logs)
 
-#### Phase 37: Log Viewer UI
+#### Phase 37: Log Viewer UI ✅
 
 **Goal**: 로그 검색, 필터링, 실시간 스트리밍 뷰어 — 소스별 필터, 시간 범위, 텍스트 검색
 **Depends on**: Phase 36
 **Research**: Unlikely (기존 가상화/WebSocket 패턴)
-**Plans**: TBD
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 37-01: TBD
+- [x] 37-01: 로그 조회 REST API + useLogs/useLogStats 훅
+- [x] 37-02: useLogStream 훅 + LogFilter/LogEntry/LogList 컴포넌트
+- [x] 37-03: LogViewer 통합 + LogStats + Admin 로그 페이지 교체
 
 #### Phase 38: Log-based Alerts
 
 **Goal**: 로그 패턴 기반 알림 규칙 — 에러 키워드 감지, 빈도 기반 알림, 기존 alertEngine 확장
 **Depends on**: Phase 37
 **Research**: Unlikely (기존 alertEngine 확장)
-**Plans**: TBD
+**Status**: 🚧 In Progress
+**Plans**: 0/3 complete
 
 Plans:
-- [ ] 38-01: TBD
+- [ ] 38-01: LogAlertRule 타입 + Prisma 모델 + log-alert-engine
+- [ ] 38-02: REST API + LogCollectorManager 통합 + useLogAlerts 훅
+- [ ] 38-03: LogAlertRuleForm + Admin 페이지 + 사이드바 링크
 
 #### Phase 39: Kubernetes Discovery
 

@@ -92,6 +92,7 @@ function formatAlertMessage(rule: AlertRule, value: number): string {
     disk: '디스크',
     network: '네트워크',
     container: '컨테이너',
+    log: '로그',
   };
 
   const categoryName = categoryNames[rule.category];

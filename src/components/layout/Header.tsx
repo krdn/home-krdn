@@ -14,6 +14,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { AuthButton } from "@/components/auth/AuthButton";
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
@@ -66,6 +67,7 @@ export function Header() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <AuthButton />
 
           {/* Mobile menu button */}
           <Button

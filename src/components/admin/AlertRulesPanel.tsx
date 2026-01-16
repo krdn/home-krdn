@@ -34,6 +34,7 @@ const categoryLabels: Record<AlertCategory, string> = {
   disk: '디스크',
   network: '네트워크',
   container: '컨테이너',
+  log: '로그',
 };
 
 // 연산자 표시 문자

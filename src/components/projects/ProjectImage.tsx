@@ -98,8 +98,11 @@ function ProjectImageComponent({
   const isValid = isValidImageUrl(src);
   const effectiveHasError = hasError || !isValid;
 
-  // shimmer 효과를 위한 blur data URL
-  const blurDataURL = showShimmer ? getShimmerDataUrl(width, height) : undefined;
+  // SVG 파일은 최적화하지 않음
+  const isSvg = src.toLowerCase().endsWith(".svg");
+
+  // shimmer 효과를 위한 blur data URL (SVG는 blur 효과 미적용)
+  const blurDataURL = showShimmer && !isSvg ? getShimmerDataUrl(width, height) : undefined;
 
   // 에러 시 카테고리별 플레이스홀더 표시
   if (effectiveHasError) {
@@ -152,6 +155,7 @@ function ProjectImageComponent({
         sizes={sizes}
         placeholder={blurDataURL ? "blur" : "empty"}
         blurDataURL={blurDataURL}
+        unoptimized={isSvg}
         className={cn(
           "transition-opacity duration-300",
           fill ? `object-${objectFit}` : "object-cover",

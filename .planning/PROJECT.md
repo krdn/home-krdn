@@ -53,13 +53,31 @@
 - ✓ Admin Dashboard UI — Phase 15
 - ✓ Playwright E2E 테스트 — Phase 16
 
+**v2.0 Multi-User Foundation (신규 구현)**
+- ✓ Prisma 7 + SQLite 데이터베이스 인프라 — Phase 17
+- ✓ 회원가입, 비밀번호 재설정, 역할 관리 — Phase 18
+- ✓ RBAC 권한 기반 접근 제어 — Phase 19
+- ✓ 대시보드 커스터마이징 (위젯 배치) — Phase 20
+- ✓ 팀 생성/초대, 멤버 관리, 팀 알림 — Phase 21
+- ✓ PWA 설치 프롬프트 및 매니페스트 — Phase 22
+- ✓ Web Push 알림 (VAPID) — Phase 23
+- ✓ 오프라인 캐싱 및 폴백 페이지 — Phase 24
+
+**v2.1 Polish (신규 구현)**
+- ✓ 테스트 커버리지 확대 (378개 테스트) — Phase 25
+- ✓ Playwright E2E 다중 브라우저 지원 — Phase 26
+- ✓ 중앙집중식 에러 핸들링 시스템 — Phase 27
+- ✓ 접근성 개선 (WCAG, ARIA, 키보드) — Phase 28
+- ✓ 성능 최적화 (메모이제이션, 가상화) — Phase 29
+- ✓ 문서화 강화 (README, API 문서) — Phase 30
+- ✓ Pino 기반 구조화된 로깅 — Phase 31
+- ✓ 번들 분석 및 최적화 — Phase 32
+
 ### Active
 
 <!-- 다음 버전 빌드 목표 -->
 
-- [ ] 멀티 유저 지원
-- [ ] PWA 오프라인 지원
-- [ ] 대시보드 커스터마이징 (위젯 배치)
+(현재 계획된 Active 항목 없음)
 
 ### Out of Scope
 
@@ -71,18 +89,20 @@
 
 ## Context
 
-### 기술 스택 (v1.1)
+### 기술 스택 (v2.1)
 
 - **Framework**: Next.js 16.1.1, React 19.2.3
 - **Language**: TypeScript 5.x
 - **Styling**: Tailwind CSS 4, Framer Motion
 - **State**: Zustand, TanStack Query
-- **Testing**: Vitest, Playwright
+- **Database**: Prisma 7 + SQLite (better-sqlite3)
+- **Auth**: jose (JWT), bcryptjs, RBAC
+- **Real-time**: ws, next-ws
+- **Notifications**: Resend API, Slack Webhook, Web Push (VAPID)
+- **Testing**: Vitest, Playwright (다중 브라우저)
 - **Charts**: Recharts
 - **Validation**: Zod
-- **Auth**: jose (JWT), bcryptjs
-- **Real-time**: ws, next-ws
-- **Notifications**: Resend API, Slack Webhook
+- **Logging**: Pino
 
 ### 아키텍처
 
@@ -90,13 +110,15 @@
 - **Docker 통합**: Unix 소켓 기반 직접 통신
 - **WebSocket**: 양방향 실시간 통신 (메트릭, 컨테이너)
 - **파일 구조**: Feature-based 컴포넌트 + 중앙화된 설정
+- **PWA**: Service Worker 캐싱, 오프라인 지원
 
-### 현재 상태 (v1.1 완료)
+### 현재 상태 (v2.1 완료)
 
-- **코드베이스**: 15,718 lines TypeScript
-- **테스트**: Vitest 단위/통합 + Playwright E2E
-- **파일 수**: ~140 TypeScript 파일
-- **마일스톤**: v1.0 MVP + v1.1 Enhancement 완료
+- **코드베이스**: ~172 TypeScript 파일
+- **테스트**: 378개 (Vitest 단위/통합 + Playwright E2E)
+- **컴포넌트**: 51개
+- **API 라우트**: 30개
+- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 완료
 
 ## Constraints
 
@@ -118,6 +140,10 @@
 | Slack Block Kit | 시각적으로 풍부한 알림, SDK 불필요 | ✅ Validated |
 | JSON 파일 저장 | DB 대비 심플, 소규모 데이터 적합 | ✅ Validated |
 | Playwright E2E | Cypress 대비 빠름, 멀티 브라우저 지원 | ✅ Validated |
+| Prisma 7 + SQLite | 마이그레이션 용이, 멀티유저 데이터 저장 | ✅ Validated |
+| Web Push (VAPID) | 표준 기반, 서버 측 푸시 알림 | ✅ Validated |
+| Native Service Worker | Workbox 대비 경량, Next.js 16 호환 | ✅ Validated |
+| Pino Logger | 성능 우수, JSON 기본, 작은 번들 | ✅ Validated |
 
 ---
-*Last updated: 2026-01-15 after v1.1 milestone*
+*Last updated: 2026-01-15 after v2.1 milestone*

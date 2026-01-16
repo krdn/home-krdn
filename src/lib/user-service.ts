@@ -174,6 +174,7 @@ export async function isUsernameTaken(username: string): Promise<boolean> {
 /**
  * 새 사용자 생성
  * 비밀번호는 자동으로 해싱됩니다.
+ * 첫 번째 사용자는 자동으로 ADMIN 역할을 부여받습니다.
  *
  * @param input 회원가입 입력 데이터
  * @returns 생성된 사용자 (passwordHash 제외)
@@ -182,6 +183,10 @@ export async function createUser(input: RegisterInput): Promise<CreateUserResult
   // 비밀번호 해싱
   const passwordHash = await hashPassword(input.password)
 
+  // 첫 번째 사용자인지 확인 (시스템에 사용자가 없으면 ADMIN으로 설정)
+  const userCount = await prisma.user.count()
+  const isFirstUser = userCount === 0
+
   // 사용자 생성
   const user = await prisma.user.create({
     data: {
@@ -189,7 +194,8 @@ export async function createUser(input: RegisterInput): Promise<CreateUserResult
       username: input.username,
       passwordHash,
       displayName: input.displayName,
-      // role은 기본값 USER 사용 (schema.prisma에서 설정)
+      // 첫 번째 사용자는 ADMIN, 그 외는 USER
+      role: isFirstUser ? 'ADMIN' : 'USER',
     },
   })
 

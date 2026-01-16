@@ -24,12 +24,12 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/home-krdn-dashboard.png",
+        src: "/images/projects/home-krdn-dashboard.svg",
         alt: "Home KRDN 대시보드 메인 화면",
         isPrimary: true,
       },
       {
-        src: "/images/projects/home-krdn-services.png",
+        src: "/images/projects/home-krdn-services.svg",
         alt: "서비스 관리 화면",
       },
     ],
@@ -70,7 +70,7 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/docker-n8n-workflow.png",
+        src: "/images/projects/docker-n8n-workflow.svg",
         alt: "n8n 워크플로우 편집기",
         isPrimary: true,
       },
@@ -111,7 +111,7 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/ai-note-editor.png",
+        src: "/images/projects/ai-note-editor.svg",
         alt: "AI 노트 에디터 화면",
         isPrimary: true,
       },
@@ -151,7 +151,7 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/krdn-claude-diagram.png",
+        src: "/images/projects/krdn-claude-diagram.svg",
         alt: "KRDN Claude 아키텍처 다이어그램",
         isPrimary: true,
       },
@@ -193,7 +193,7 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/news-sentiment-dashboard.png",
+        src: "/images/projects/news-sentiment-dashboard.svg",
         alt: "뉴스 감정 분석 대시보드",
         isPrimary: true,
       },

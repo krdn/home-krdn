@@ -63,6 +63,9 @@ model User {
 
   // 관계: GitHub 설정 (Phase 34)
   gitHubSettings GitHubSettings?
+
+  // 관계: 로그 알림 규칙 (Phase 38)
+  logAlertRules LogAlertRule[]
 }
 
 // 팀 모델
@@ -316,4 +319,41 @@ model LogEntry {
   @@index([timestamp])
   // 인덱스: 특정 소스(컨테이너 등) 조회
   @@index([sourceId])
+}
+
+// ============================================================
+// Log Alert 모델 (Phase 38)
+// ============================================================
+
+// 로그 알림 규칙 모델
+// 로그 패턴 기반 알림 규칙 (키워드, 정규식, 빈도)
+model LogAlertRule {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  // JSON으로 조건 저장 (flexibility)
+  // { type, keywords?, pattern?, caseSensitive?, threshold?, windowMinutes?, level? }
+  condition String
+
+  // 필터 조건 (JSON 배열)
+  sources   String? // JSON: ["docker", "journal", "app"]
+  sourceIds String? // JSON: ["container-id-1", "container-id-2"]
+
+  // 알림 설정
+  severity String  @default("warning") // info, warning, critical
+  enabled  Boolean @default(true)
+  cooldown Int     @default(300) // 쿨다운 시간 (초), 기본 5분
+
+  // 소유자 (null이면 전역 규칙)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 인덱스
+  @@index([userId])
+  @@index([enabled])
 }

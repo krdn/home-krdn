@@ -10,7 +10,7 @@ export type AlertSeverity = 'info' | 'warning' | 'critical';
 export type AlertStatus = 'active' | 'acknowledged' | 'resolved';
 
 // 알림 카테고리
-export type AlertCategory = 'cpu' | 'memory' | 'disk' | 'container' | 'network';
+export type AlertCategory = 'cpu' | 'memory' | 'disk' | 'container' | 'network' | 'log';
 
 // 조건 연산자
 export type AlertOperator = '>' | '<' | '>=' | '<=' | '==';

@@ -1,5 +1,57 @@
 # Project Milestones: Home-KRDN
 
+## v2.1 Polish (Shipped: 2026-01-15)
+
+**Delivered:** 테스트 커버리지 확대, E2E 다중 브라우저, 에러 핸들링 표준화, 접근성 개선, 성능 최적화, 문서화 강화, Pino 로깅
+
+**Phases completed:** 25-32 (16 plans total)
+
+**Key accomplishments:**
+- 테스트 커버리지 확대 (103개 → 378개)
+- Playwright E2E 다중 브라우저 (Chromium, Firefox, Webkit)
+- 중앙집중식 에러 핸들링 (7개 커스텀 에러 클래스)
+- WCAG 접근성 컴플라이언스 (ARIA 50+, useFocusTrap)
+- 성능 최적화 (메모이제이션, 가상화, Dynamic Import)
+- README 4배 확장, API 문서 30개 엔드포인트
+- Pino 기반 구조화된 로깅
+
+**Stats:**
+- 378 tests (275 added)
+- 8 phases, 16 plans
+- v2.0 → v2.1: same day release
+
+**Git range:** `feat(25-01)` → `docs(32)`
+
+**What's next:** 추가 기능 계획 대기
+
+---
+
+## v2.0 Multi-User Foundation (Shipped: 2026-01-15)
+
+**Delivered:** Prisma DB 인프라, 멀티유저 인증/인가, 팀 협업, PWA 모바일 경험
+
+**Phases completed:** 17-24 (17 plans total)
+
+**Key accomplishments:**
+- Prisma 7 + SQLite 데이터베이스 인프라
+- 회원가입, 비밀번호 재설정, 역할 관리
+- RBAC 권한 기반 접근 제어
+- 팀 생성/초대, 멤버 관리, 팀 알림
+- PWA 설치 프롬프트 및 매니페스트
+- Web Push 알림 (VAPID)
+- 오프라인 캐싱 및 폴백 페이지
+
+**Stats:**
+- 6 DB models (User, UserSettings, Team, TeamMember, TeamInvite, PushSubscription)
+- 8 phases, 17 plans
+- v1.1 → v2.0: same day release
+
+**Git range:** `feat(17-01)` → `feat(24-01)`
+
+**What's next:** v2.1 Polish — 테스트, 접근성, 문서화
+
+---
+
 ## v1.1 Enhancement (Shipped: 2026-01-15)
 
 **Delivered:** WebSocket 실시간 통신, 이메일/Slack 알림 채널, 프로젝트 관리 Admin 기능, E2E 테스트 인프라
