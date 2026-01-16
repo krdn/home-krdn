@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   FolderKanban,
   Bell,
+  BellRing,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Services", href: "/admin/services", icon: Layers },
   { name: "Containers", href: "/admin/containers", icon: Box },
   { name: "Logs", href: "/admin/logs", icon: ScrollText },
+  { name: "Log Alerts", href: "/admin/log-alerts", icon: BellRing },
   { name: "Alerts", href: "/admin/alerts", icon: Bell },
   { name: "System", href: "/admin/system", icon: Activity },
 ];
