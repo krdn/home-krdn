@@ -349,16 +349,17 @@ Plans:
 - [x] 33-02: REST API 엔드포인트 (/api/ports)
 - [x] 33-03: Admin 포트 관리 UI (/admin/ports)
 
-#### Phase 34: GitHub Integration
+#### Phase 34: GitHub Integration ✅
 
 **Goal**: GitHub API 연동 — 레포지토리 목록, Actions workflows, commit history 조회
 **Depends on**: Phase 33
-**Research**: Likely (GitHub REST/GraphQL API)
-**Research topics**: GitHub API 인증 (PAT vs GitHub App), rate limiting, webhook 설정
-**Plans**: TBD
+**Research**: Complete (Octokit SDK 채택)
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 34-01: TBD
+- [x] 34-01: Prisma GitHubSettings 모델 + Octokit Service Layer
+- [x] 34-02: GitHub REST API 엔드포인트 (7개 라우트)
 
 #### Phase 35: CI/CD Dashboard
 
@@ -483,7 +484,7 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 31. Logging Infrastructure | v2.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 32. Bundle Analysis & Optimization | v2.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 33. Port Registry System | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
-| 34. GitHub Integration | v2.2 | 0/? | Not started | - |
+| 34. GitHub Integration | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 35. CI/CD Dashboard | v2.2 | 0/? | Not started | - |
 | 36. Log Aggregation Backend | v2.2 | 0/? | Not started | - |
 | 37. Log Viewer UI | v2.2 | 0/? | Not started | - |
