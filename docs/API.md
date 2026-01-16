@@ -643,6 +643,518 @@ Slack 알림 발송
 
 ---
 
+## Port Registry API (v2.2)
+
+### GET /api/ports
+
+포트 레지스트리 목록 조회
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `protocol`: `tcp` | `udp` | `all` (기본: all)
+- `project`: 프로젝트명으로 필터
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "port": 3000,
+      "protocol": "tcp",
+      "service": "home-krdn",
+      "project": "web",
+      "description": "메인 대시보드",
+      "url": "http://localhost:3000",
+      "createdAt": "2026-01-16T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### POST /api/ports
+
+포트 등록
+
+**Auth Required:** `admin`
+
+**Request Body:**
+```json
+{
+  "port": 3000,
+  "protocol": "tcp",
+  "service": "서비스명",
+  "project": "프로젝트명",
+  "description": "설명 (선택)",
+  "url": "서비스 URL (선택)"
+}
+```
+
+**Errors:**
+- `409`: 포트 충돌 (이미 등록된 포트)
+
+---
+
+### PUT /api/ports/[id]
+
+포트 정보 수정
+
+**Auth Required:** `admin`
+
+---
+
+### DELETE /api/ports/[id]
+
+포트 삭제
+
+**Auth Required:** `admin`
+
+---
+
+## GitHub API (v2.2)
+
+### GET /api/github/settings
+
+GitHub 설정 조회
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "connected": true,
+    "username": "github-user"
+  }
+}
+```
+
+---
+
+### POST /api/github/settings
+
+GitHub PAT 저장 (암호화)
+
+**Auth Required:** `admin`
+
+**Request Body:**
+```json
+{
+  "token": "ghp_xxxxx"
+}
+```
+
+---
+
+### GET /api/github/repos
+
+레포지토리 목록 조회
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 123,
+      "name": "home-krdn",
+      "fullName": "krdn/home-krdn",
+      "private": false,
+      "url": "https://github.com/krdn/home-krdn",
+      "defaultBranch": "main",
+      "updatedAt": "2026-01-16T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### GET /api/github/repos/[owner]/[repo]/workflows
+
+워크플로우 목록 조회
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 456,
+      "name": "CI/CD",
+      "path": ".github/workflows/ci.yml",
+      "state": "active"
+    }
+  ]
+}
+```
+
+---
+
+### GET /api/github/repos/[owner]/[repo]/workflows/[workflowId]/runs
+
+워크플로우 실행 이력 조회
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `per_page`: 결과 수 (기본: 10)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 789,
+      "status": "completed",
+      "conclusion": "success",
+      "event": "push",
+      "branch": "main",
+      "commit": "abc1234",
+      "createdAt": "2026-01-16T00:00:00Z",
+      "url": "https://github.com/..."
+    }
+  ]
+}
+```
+
+---
+
+## Log API (v2.2)
+
+### GET /api/logs
+
+로그 조회
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `source`: `docker` | `file` | `all`
+- `level`: `error` | `warn` | `info` | `debug`
+- `search`: 검색어
+- `from`: 시작 시간 (ISO 8601)
+- `to`: 종료 시간 (ISO 8601)
+- `limit`: 결과 수 (기본: 100)
+- `offset`: 오프셋
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "timestamp": "2026-01-16T10:00:00Z",
+      "source": "docker",
+      "container": "nginx",
+      "level": "info",
+      "message": "로그 메시지"
+    }
+  ],
+  "total": 1000
+}
+```
+
+---
+
+### GET /api/logs/stats
+
+로그 통계 조회
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "total": 10000,
+    "byLevel": {
+      "error": 50,
+      "warn": 200,
+      "info": 8000,
+      "debug": 1750
+    },
+    "bySource": {
+      "docker": 6000,
+      "file": 4000
+    }
+  }
+}
+```
+
+---
+
+### WS /api/ws (logs 채널)
+
+실시간 로그 스트리밍
+
+**Subscribe:**
+```json
+{
+  "type": "subscribe",
+  "channel": "logs",
+  "filter": {
+    "source": "docker",
+    "container": "nginx"
+  }
+}
+```
+
+---
+
+## Log Alerts API (v2.2)
+
+### GET /api/log-alerts
+
+로그 알림 규칙 목록
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Error Alert",
+      "pattern": "error|exception",
+      "isRegex": true,
+      "level": "error",
+      "source": "all",
+      "channels": ["toast", "email"],
+      "enabled": true,
+      "cooldown": 300
+    }
+  ]
+}
+```
+
+---
+
+### POST /api/log-alerts
+
+로그 알림 규칙 생성
+
+**Auth Required:** `admin`
+
+**Request Body:**
+```json
+{
+  "name": "규칙 이름",
+  "pattern": "검색 패턴",
+  "isRegex": false,
+  "level": "error",
+  "source": "docker",
+  "container": "nginx",
+  "channels": ["toast", "slack"],
+  "cooldown": 300
+}
+```
+
+---
+
+### PUT /api/log-alerts/[id]
+
+로그 알림 규칙 수정
+
+**Auth Required:** `admin`
+
+---
+
+### DELETE /api/log-alerts/[id]
+
+로그 알림 규칙 삭제
+
+**Auth Required:** `admin`
+
+---
+
+## Kubernetes API (v2.2)
+
+### GET /api/kubernetes/clusters
+
+클러스터 목록 조회
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "name": "production",
+      "server": "https://k8s.example.com:6443",
+      "connected": true
+    }
+  ]
+}
+```
+
+---
+
+### POST /api/kubernetes/clusters
+
+클러스터 등록
+
+**Auth Required:** `admin`
+
+**Request Body:**
+```json
+{
+  "name": "클러스터명",
+  "server": "https://k8s.example.com:6443",
+  "token": "service-account-token",
+  "caCert": "base64-encoded-ca-cert (선택)"
+}
+```
+
+---
+
+### GET /api/kubernetes/clusters/[id]/namespaces
+
+네임스페이스 목록
+
+**Auth Required:** `admin`
+
+---
+
+### GET /api/kubernetes/clusters/[id]/pods
+
+Pod 목록
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `namespace`: 네임스페이스 (기본: default)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "name": "nginx-abc123",
+      "namespace": "default",
+      "status": "Running",
+      "ready": "1/1",
+      "restarts": 0,
+      "age": "2d",
+      "nodeName": "node-1"
+    }
+  ]
+}
+```
+
+---
+
+### GET /api/kubernetes/clusters/[id]/services
+
+Service 목록
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `namespace`: 네임스페이스 (기본: default)
+
+---
+
+### GET /api/kubernetes/clusters/[id]/deployments
+
+Deployment 목록
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `namespace`: 네임스페이스 (기본: default)
+
+---
+
+### GET /api/kubernetes/clusters/[id]/topology
+
+서비스 토폴로지 조회
+
+**Auth Required:** `admin`
+
+**Query Parameters:**
+- `namespace`: 네임스페이스 (기본: default)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "nodes": [
+      {
+        "id": "svc-nginx",
+        "type": "service",
+        "data": { "name": "nginx", "type": "ClusterIP" }
+      },
+      {
+        "id": "deploy-nginx",
+        "type": "deployment",
+        "data": { "name": "nginx", "replicas": 3 }
+      }
+    ],
+    "edges": [
+      { "source": "svc-nginx", "target": "deploy-nginx" }
+    ]
+  }
+}
+```
+
+---
+
+## DevOps Summary API (v2.2)
+
+### GET /api/devops/summary
+
+DevOps 전체 상태 요약
+
+**Auth Required:** `admin`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "github": {
+      "connected": true,
+      "recentRuns": 5,
+      "failedRuns": 1
+    },
+    "kubernetes": {
+      "clusters": 2,
+      "totalPods": 45,
+      "runningPods": 42
+    },
+    "ports": {
+      "total": 15,
+      "byProtocol": { "tcp": 12, "udp": 3 }
+    },
+    "logAlerts": {
+      "total": 5,
+      "triggered24h": 12
+    }
+  }
+}
+```
+
+---
+
 ## Error Codes
 
 | Code | Description |
@@ -655,7 +1167,9 @@ Slack 알림 발송
 | `CONFLICT` | 리소스 충돌 |
 | `RATE_LIMIT` | 요청 제한 초과 |
 | `INTERNAL_ERROR` | 서버 내부 오류 |
+| `GITHUB_API_ERROR` | GitHub API 오류 (v2.2) |
+| `K8S_CONNECTION_ERROR` | Kubernetes 연결 오류 (v2.2) |
 
 ---
 
-*Last updated: 2026-01-15*
+*Last updated: 2026-01-16 (v2.2 DevOps Tools)*

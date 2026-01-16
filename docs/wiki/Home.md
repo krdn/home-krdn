@@ -1,8 +1,9 @@
 # home-krdn Wiki
 
-> v2.1 기준 (2026-01-15 업데이트)
+> v2.2 기준 (2026-01-16 업데이트)
 
 홈서버의 모든 서비스, 컨테이너, 시스템 리소스를 **한눈에 파악하고 관리**하는 통합 모니터링 대시보드입니다.
+CI/CD 파이프라인, Kubernetes 클러스터, 로그 관리까지 **DevOps 통합 경험**을 제공합니다.
 
 ## 목차
 
@@ -75,6 +76,15 @@ docker-compose up -d
 - 앱 설치 프롬프트
 - 오프라인 폴백 페이지
 
+### DevOps Tools (v2.2)
+- **Port Registry**: 포트 등록/관리, 충돌 감지
+- **GitHub Integration**: Actions 워크플로우 모니터링, CI/CD 대시보드
+- **Log Aggregation**: Docker/파일 로그 수집, 실시간 스트리밍
+- **Log Alerts**: 로그 패턴 기반 알림 규칙 엔진
+- **Kubernetes Dashboard**: Pod/Service/Deployment 관리
+- **Service Mesh Overview**: React Flow 기반 서비스 토폴로지 시각화
+- **DevOps Home**: 전체 DevOps 상태 요약
+
 ## 접속 정보
 
 | 환경 | URL | 포트 |
@@ -94,7 +104,8 @@ docker-compose up -d
 | v1.0 MVP | ✅ 완료 | 기본 모니터링, Docker 관리, 알림 |
 | v1.1 Enhancement | ✅ 완료 | WebSocket, 이메일/Slack 알림, Admin CRUD |
 | v2.0 Multi-User | ✅ 완료 | 인증, RBAC, 팀, PWA |
-| v2.1 Polish | 🚧 진행중 | 테스트 확대, 접근성, 성능 최적화, 문서화 |
+| v2.1 Polish | ✅ 완료 | 테스트 확대, 접근성, 성능 최적화, 문서화 |
+| v2.2 DevOps Tools | ✅ 완료 | Port Registry, GitHub CI/CD, Log Viewer, K8s Dashboard |
 
 ## 라이선스
 

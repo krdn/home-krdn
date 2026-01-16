@@ -3,6 +3,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.1-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-2.2-blue)](CHANGELOG.md)
 
 홈서버의 모든 서비스, 컨테이너, 시스템 리소스를 한눈에 파악하고 관리할 수 있는 **통합 모니터링 대시보드**입니다.
 
@@ -28,6 +29,15 @@
 - **Push Notification**: Web Push API 알림
 - **설치 가능**: 앱처럼 홈 화면에 추가
 
+### DevOps Tools (v2.2)
+- **Port Registry**: 프로젝트별 포트 할당, 충돌 감지, 서비스 URL 관리
+- **GitHub Integration**: Actions 워크플로우, 실행 이력, CI/CD 상태 대시보드
+- **Log Aggregation**: Docker/파일 로그 수집, 실시간 스트리밍, 검색/필터링
+- **Log Alerts**: 로그 패턴 기반 알림 규칙 엔진
+- **Kubernetes Dashboard**: Pod/Service/Deployment 관리, 네임스페이스 필터
+- **Service Mesh Overview**: React Flow 기반 서비스 토폴로지 시각화
+- **DevOps Home**: 전체 DevOps 상태 요약 대시보드
+
 ## Tech Stack
 
 | Category | Technologies |
@@ -41,6 +51,8 @@
 | Auth | jose (JWT), bcryptjs |
 | Charts | Recharts |
 | Validation | Zod |
+| DevOps | @octokit/rest, @kubernetes/client-node |
+| Visualization | @xyflow/react (React Flow) |
 
 ## Quick Start
 
@@ -83,6 +95,12 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxx
 # Push Notifications (선택)
 VAPID_PUBLIC_KEY=xxxxx
 VAPID_PRIVATE_KEY=xxxxx
+
+# GitHub Integration (선택) - Admin UI에서 설정 가능
+# GITHUB_TOKEN=ghp_xxxxx
+
+# Kubernetes (선택) - Admin UI에서 클러스터별 설정
+# KUBECONFIG=~/.kube/config
 ```
 
 ### Scripts
@@ -102,12 +120,26 @@ npm run lint      # ESLint 검사
 src/
 ├── app/                 # Next.js App Router
 │   ├── api/            # API Routes
+│   │   ├── auth/       # 인증 API
+│   │   ├── docker/     # Docker 관리 API
+│   │   ├── ports/      # 포트 레지스트리 API (v2.2)
+│   │   ├── github/     # GitHub 연동 API (v2.2)
+│   │   ├── logs/       # 로그 수집 API (v2.2)
+│   │   ├── kubernetes/ # Kubernetes API (v2.2)
+│   │   └── devops/     # DevOps 요약 API (v2.2)
 │   ├── admin/          # Admin 페이지
+│   │   ├── ports/      # 포트 관리 (v2.2)
+│   │   ├── github/     # CI/CD 대시보드 (v2.2)
+│   │   ├── logs/       # 로그 뷰어 (v2.2)
+│   │   ├── log-alerts/ # 로그 알림 규칙 (v2.2)
+│   │   ├── kubernetes/ # K8s 대시보드 (v2.2)
+│   │   └── devops/     # DevOps 홈 (v2.2)
 │   ├── services/       # 서비스 카탈로그
 │   └── teams/          # 팀 관리
 ├── components/         # React 컴포넌트
 │   ├── ui/            # 기본 UI 컴포넌트
 │   ├── admin/         # Admin 전용 컴포넌트
+│   ├── devops/        # DevOps 컴포넌트 (v2.2)
 │   └── landing/       # 랜딩 페이지 컴포넌트
 ├── hooks/              # Custom Hooks
 ├── lib/                # 유틸리티 & 서비스
@@ -153,4 +185,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-*Built with Claude Code*
+*Built with Claude Code — v2.2 DevOps Tools (2026-01-16)*
