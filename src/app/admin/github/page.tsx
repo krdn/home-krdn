@@ -3,24 +3,25 @@
 /**
  * GitHub Admin 페이지
  *
- * GitHub 연동 설정 및 레포지토리 목록 조회 페이지
+ * GitHub 연동 설정 및 CI/CD 대시보드 페이지
  *
  * Phase 35: CI/CD Dashboard
  *
  * - GitHub 토큰 등록/해제
  * - 계정 정보 표시
  * - 레포지토리 목록 조회
- * - 레포 선택 시 상세 정보 표시 (Plan 02에서 구현)
+ * - 레포 선택 시 워크플로우 대시보드 표시
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Github, Loader2 } from 'lucide-react';
+import { Github, Loader2, ArrowLeft, GitBranch, PlayCircle } from 'lucide-react';
 import { AdminOnly } from '@/components/admin/RoleGuard';
+import { Button } from '@/components/ui/Button';
 import { useGitHubSettings } from '@/hooks/useGitHub';
-import type { GitHubRepo } from '@/types/github';
+import type { GitHubRepo, GitHubWorkflow } from '@/types/github';
 
-// Dynamic Import: GitHubSetup, RepoList 지연 로딩
+// Dynamic Import: GitHubSetup, RepoList, WorkflowList, WorkflowRunList 지연 로딩
 const GitHubSetup = dynamic(
   () => import('@/components/github/GitHubSetup').then((mod) => mod.GitHubSetup),
   {
@@ -45,6 +46,30 @@ const RepoList = dynamic(
   }
 );
 
+const WorkflowList = dynamic(
+  () => import('@/components/github/WorkflowList').then((mod) => mod.WorkflowList),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center rounded-lg border bg-card p-6">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
+const WorkflowRunList = dynamic(
+  () => import('@/components/github/WorkflowRunList').then((mod) => mod.WorkflowRunList),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center rounded-lg border bg-card p-6">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
 /**
  * GitHub Admin 페이지 컴포넌트
  */
@@ -52,19 +77,42 @@ export default function GitHubAdminPage() {
   // GitHub 설정 조회
   const { hasToken, refetch } = useGitHubSettings();
 
-  // 선택된 레포지토리 상태 (Plan 02에서 상세/워크플로우 표시용)
+  // 선택된 레포지토리 상태
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null);
+
+  // 선택된 워크플로우 상태 (특정 워크플로우의 실행 기록만 표시)
+  const [selectedWorkflow, setSelectedWorkflow] = useState<GitHubWorkflow | null>(null);
+
+  // owner/repo 파싱
+  const [owner, repo] = useMemo(() => {
+    if (!selectedRepo) return ['', ''];
+    const parts = selectedRepo.full_name.split('/');
+    return [parts[0] || '', parts[1] || ''];
+  }, [selectedRepo]);
 
   // 설정 변경 핸들러
   const handleSettingsChange = useCallback(() => {
     refetch();
     setSelectedRepo(null);
+    setSelectedWorkflow(null);
   }, [refetch]);
 
   // 레포지토리 선택 핸들러
   const handleSelectRepo = useCallback((repo: GitHubRepo) => {
     setSelectedRepo(repo);
-    // TODO: Plan 02에서 상세/워크플로우 섹션 표시
+    setSelectedWorkflow(null); // 레포 변경 시 워크플로우 선택 해제
+  }, []);
+
+  // 레포지토리 선택 해제 (뒤로가기)
+  const handleDeselectRepo = useCallback(() => {
+    setSelectedRepo(null);
+    setSelectedWorkflow(null);
+  }, []);
+
+  // 워크플로우 선택 핸들러
+  const handleSelectWorkflow = useCallback((workflow: GitHubWorkflow) => {
+    // 같은 워크플로우 클릭 시 선택 해제 (토글)
+    setSelectedWorkflow((prev) => (prev?.id === workflow.id ? null : workflow));
   }, []);
 
   return (
@@ -88,25 +136,93 @@ export default function GitHubAdminPage() {
         {/* GitHub 설정 (토큰 등록/계정 정보) */}
         <GitHubSetup onSettingsChange={handleSettingsChange} />
 
-        {/* 토큰 등록 시 레포지토리 목록 표시 */}
-        {hasToken && (
+        {/* 레포지토리 미선택 시: 레포 목록 표시 */}
+        {hasToken && !selectedRepo && (
           <RepoList
             hasToken={hasToken}
             onSelectRepo={handleSelectRepo}
-            selectedRepo={selectedRepo?.full_name ?? null}
+            selectedRepo={null}
           />
         )}
 
-        {/* TODO: Plan 02에서 구현 - 선택된 레포 상세/워크플로우 */}
-        {selectedRepo && (
-          <div className="rounded-lg border bg-card p-6">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Github className="h-4 w-4" />
-              <span>선택된 레포지토리: <strong>{selectedRepo.full_name}</strong></span>
+        {/* 레포지토리 선택 시: 워크플로우 대시보드 */}
+        {hasToken && selectedRepo && (
+          <div className="space-y-6">
+            {/* 선택된 레포 헤더 + 뒤로가기 */}
+            <div className="flex items-center gap-4 rounded-lg border bg-card p-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDeselectRepo}
+                className="shrink-0"
+              >
+                <ArrowLeft className="mr-1 h-4 w-4" />
+                목록
+              </Button>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <Github className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <span className="font-semibold truncate">{selectedRepo.full_name}</span>
+                </div>
+                {selectedRepo.description && (
+                  <p className="mt-1 text-sm text-muted-foreground truncate">
+                    {selectedRepo.description}
+                  </p>
+                )}
+              </div>
+              {selectedRepo.default_branch && (
+                <div className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground shrink-0">
+                  <GitBranch className="h-4 w-4" />
+                  <span>{selectedRepo.default_branch}</span>
+                </div>
+              )}
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              커밋 히스토리와 워크플로우 정보는 다음 계획에서 구현됩니다.
-            </p>
+
+            {/* 워크플로우 대시보드 레이아웃: 반응형 */}
+            <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+              {/* 왼쪽: 워크플로우 목록 */}
+              <div className="order-2 lg:order-1">
+                <WorkflowList
+                  owner={owner}
+                  repo={repo}
+                  onWorkflowSelect={handleSelectWorkflow}
+                  selectedWorkflowId={selectedWorkflow?.id ?? null}
+                />
+              </div>
+
+              {/* 오른쪽: 워크플로우 실행 기록 */}
+              <div className="order-1 lg:order-2">
+                {selectedWorkflow ? (
+                  <div className="space-y-4">
+                    {/* 선택된 워크플로우 표시 */}
+                    <div className="flex items-center gap-2 rounded-lg border bg-primary/5 p-3">
+                      <PlayCircle className="h-5 w-5 text-primary shrink-0" />
+                      <span className="font-medium truncate">{selectedWorkflow.name}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedWorkflow(null)}
+                        className="ml-auto shrink-0 h-7 px-2 text-xs"
+                      >
+                        전체 보기
+                      </Button>
+                    </div>
+                    <WorkflowRunList
+                      owner={owner}
+                      repo={repo}
+                      workflowId={selectedWorkflow.id}
+                      autoRefresh
+                    />
+                  </div>
+                ) : (
+                  <WorkflowRunList
+                    owner={owner}
+                    repo={repo}
+                    autoRefresh
+                  />
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
