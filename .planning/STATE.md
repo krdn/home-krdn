@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 34 of 42 (GitHub Integration)
-Plan: 2 of 2 complete
-Status: Phase complete
-Last activity: 2026-01-16 — Completed Phase 34 GitHub Integration
+Phase: 35 of 42 (CI/CD Dashboard)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-01-16 — Completed 35-01-PLAN.md (GitHub UI Components)
 
-Progress: ██░░░░░░░░ 20% (v2.2 Milestone — 2/10 phases complete)
+Progress: ███░░░░░░░ 30% (v2.2 Milestone — 3/10 phases in progress)
 
 ## Performance Metrics
 
@@ -23,6 +23,7 @@ Progress: ██░░░░░░░░ 20% (v2.2 Milestone — 2/10 phases com
 - Milestone v1.1: 9 plans completed in ~7hrs
 - Milestone v2.0: 17 plans completed
 - Phase 34: 2 plans completed in ~15min
+- Phase 35-01: 1 plan completed in ~5min
 
 **By Milestone:**
 
@@ -32,7 +33,7 @@ Progress: ██░░░░░░░░ 20% (v2.2 Milestone — 2/10 phases com
 | v1.1 Enhancement | 9-16 | 9 | ✅ Shipped | 2026-01-15 |
 | v2.0 Multi-User Foundation | 17-24 | 17 | ✅ Shipped | 2026-01-15 |
 | v2.1 Polish | 25-32 | 10 | ✅ Shipped | 2026-01-15 |
-| v2.2 DevOps Tools | 33-42 | 5 | 🚧 In Progress | - |
+| v2.2 DevOps Tools | 33-42 | 5+ | 🚧 In Progress | - |
 
 ## Accumulated Context
 
@@ -55,6 +56,11 @@ Key technology decisions for v2.2:
   - 11개 서비스 함수 (Settings CRUD, 레포/커밋/워크플로우 조회)
   - 7개 REST API 라우트
   - DTO 패턴으로 토큰 값 미노출 (hasToken boolean만)
+- ✅ Phase 35-01: GitHub UI 컴포넌트
+  - useGitHub 훅 (설정/레포 조회, mutation)
+  - GitHubSetup, RepoList 컴포넌트
+  - /admin/github 페이지
+  - Dynamic Import로 초기 번들 최적화
 - 토큰 암호화: 현재 평문 저장, 향후 암호화 고려
 
 ### Constraints (v2.2)
@@ -74,7 +80,7 @@ None.
 
 ### Blockers/Concerns Carried Forward
 
-None.
+1. **/login 페이지 빌드 에러**: untracked 파일, useSearchParams Suspense 에러, 별도 수정 필요
 
 ### Roadmap Evolution
 
@@ -82,11 +88,11 @@ None.
 - v1.1 Enhancement completed: 8 phases (9-16), shipped 2026-01-15
 - v2.0 Multi-User Foundation completed: 8 phases (17-24), shipped 2026-01-15
 - v2.1 Polish completed: 8 phases (25-32), shipped 2026-01-15
-- v2.2 DevOps Tools: 10 phases (33-42), 2/10 complete
+- v2.2 DevOps Tools: 10 phases (33-42), 3/10 in progress
 
 ## Session Continuity
 
-Last session: 2026-01-16
-Stopped at: Phase 34 GitHub Integration 완료
+Last session: 2026-01-16 01:03 UTC
+Stopped at: Completed 35-01-PLAN.md (GitHub UI Components)
 Resume file: None
-Next action: /gsd:plan-phase 35 (CI/CD Dashboard)
+Next action: /gsd:execute-plan 35-02 (GitHub Detail + Workflow UI)
