@@ -66,6 +66,9 @@ model User {
 
   // 관계: 로그 알림 규칙 (Phase 38)
   logAlertRules LogAlertRule[]
+
+  // 관계: Kubernetes 클러스터 (Phase 39)
+  kubernetesClusters KubernetesCluster[]
 }
 
 // 팀 모델
@@ -356,4 +359,44 @@ model LogAlertRule {
   // 인덱스
   @@index([userId])
   @@index([enabled])
+}
+
+// ============================================================
+// Kubernetes Integration 모델 (Phase 39)
+// ============================================================
+
+// Kubernetes 클러스터 설정 모델
+// 사용자별 여러 클러스터 연결 가능 (1:N)
+model KubernetesCluster {
+  id   String @id @default(cuid())
+  name String // 클러스터 표시 이름
+
+  // 사용자 연결 (N:1 - 한 사용자가 여러 클러스터 가능)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 클러스터 연결 정보
+  server        String  // API 서버 URL (https://...)
+  caData        String? // Base64 인코딩된 CA 인증서
+  skipTLSVerify Boolean @default(false)
+
+  // 인증 정보 (토큰 또는 인증서)
+  authType          String  @default("token") // token, certificate
+  token             String? // Bearer 토큰 (암호화 저장)
+  clientCertificate String? // 클라이언트 인증서 (Base64)
+  clientKey         String? // 클라이언트 키 (Base64)
+
+  // 기본 namespace
+  defaultNamespace String @default("default")
+
+  // 상태
+  isActive Boolean @default(true)
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 인덱스
+  @@index([userId])
+  @@unique([userId, name]) // 사용자별 클러스터 이름 유일
 }

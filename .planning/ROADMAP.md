@@ -412,16 +412,17 @@ Plans:
 - [x] 38-02: REST API + useLogAlerts 훅
 - [x] 38-03: LogAlertRuleForm + Admin 페이지 + 사이드바 링크
 
-#### Phase 39: Kubernetes Discovery
+#### Phase 39: Kubernetes Discovery ✅
 
 **Goal**: Kubernetes API 연동 및 리소스 목록화 — 클러스터 연결, namespace/pod/service 조회
 **Depends on**: Phase 38
-**Research**: Likely (Kubernetes API)
-**Research topics**: @kubernetes/client-node, kubeconfig 관리, RBAC 권한 최소화
-**Plans**: TBD
+**Research**: Complete (@kubernetes/client-node, 프로그래매틱 kubeconfig, 토큰 인증)
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 39-01: TBD
+- [x] 39-01: Prisma KubernetesCluster 모델 + Service Layer
+- [x] 39-02: REST API 엔드포인트 (9개)
 
 #### Phase 40: K8s Dashboard
 
@@ -499,10 +500,10 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 36. Log Aggregation Backend | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 37. Log Viewer UI | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 38. Log-based Alerts | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
-| 39. Kubernetes Discovery | v2.2 | 0/? | Not started | - |
+| 39. Kubernetes Discovery | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 40. K8s Dashboard | v2.2 | 0/? | Not started | - |
 | 41. Service Mesh Overview | v2.2 | 0/? | Not started | - |
 | 42. DevOps Home | v2.2 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-16 after Phase 38 Log-based Alerts complete*
+*Last updated: 2026-01-16 after Phase 39 Kubernetes Discovery complete*
