@@ -8,9 +8,14 @@
  */
 
 import { FileLogCollector, type LogCollector } from './file-collector';
+import { DockerLogCollector } from './docker-collector';
 import { logStorage, type LogStorage } from '@/lib/log-storage';
 import type { LogEntryInput, LogLevel, LogSource } from '@/types/log';
 import { isLogLevelAtLeast } from '@/types/log';
+import { createModuleLogger } from '@/lib/logger';
+
+// 모듈 로거
+const moduleLogger = createModuleLogger('log-collector');
 
 // ============================================================
 // 타입 정의
@@ -118,7 +123,7 @@ export class LogCollectorManager {
 
     // 이미 존재하는 수집기는 건너뜀
     if (this.collectors.has(collectorId)) {
-      console.log(`[LogCollector] File collector already exists: ${filePath}`);
+      moduleLogger.info('파일 수집기 이미 존재', { filePath });
       return;
     }
 
@@ -131,13 +136,94 @@ export class LogCollectorManager {
 
     // 에러 이벤트 핸들러
     collector.on('error', (err) => {
-      console.error(`[LogCollector] File collector error (${filePath}):`, err);
+      moduleLogger.error('파일 수집기 에러', {
+        filePath,
+        error: err.message,
+      });
     });
 
     await collector.start();
     this.collectors.set(collectorId, collector);
 
-    console.log(`[LogCollector] File collector started: ${filePath}`);
+    moduleLogger.info('파일 수집기 시작', { filePath });
+  }
+
+  /**
+   * Docker 컨테이너 로그 수집기 시작
+   *
+   * 지정된 컨테이너의 로그를 실시간으로 수집합니다.
+   * 이미 동일한 컨테이너의 수집기가 실행 중이면 무시합니다.
+   *
+   * @param containerId Docker 컨테이너 ID
+   * @param containerName 컨테이너 이름 (로그 식별용)
+   * @param tailLines 초기 로드할 로그 줄 수 (기본값: 100)
+   */
+  async startDockerCollector(
+    containerId: string,
+    containerName: string,
+    tailLines: number = 100
+  ): Promise<void> {
+    const collectorId = `docker:${containerId}`;
+
+    // 이미 존재하는 수집기는 건너뜀
+    if (this.collectors.has(collectorId)) {
+      moduleLogger.info('Docker 수집기 이미 존재', { containerId, containerName });
+      return;
+    }
+
+    const collector = new DockerLogCollector(containerId, containerName, tailLines);
+
+    // 로그 이벤트 핸들러
+    collector.on('log', (entry) => {
+      this.handleLog(entry);
+    });
+
+    // 에러 이벤트 핸들러
+    collector.on('error', (err) => {
+      moduleLogger.error('Docker 수집기 에러', {
+        containerId,
+        containerName,
+        error: err.message,
+      });
+    });
+
+    try {
+      await collector.start();
+      this.collectors.set(collectorId, collector);
+      moduleLogger.info('Docker 수집기 시작', { containerId, containerName, tailLines });
+    } catch (err) {
+      moduleLogger.error('Docker 수집기 시작 실패', {
+        containerId,
+        containerName,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw err;
+    }
+  }
+
+  /**
+   * Docker 컨테이너 수집기 중지 (편의 메서드)
+   *
+   * @param containerId Docker 컨테이너 ID
+   * @returns 수집기가 중지되었으면 true
+   */
+  stopDockerCollector(containerId: string): boolean {
+    const key = `docker:${containerId}`;
+    if (this.collectors.has(key)) {
+      this.stopCollector(key);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Docker 컨테이너 수집기가 활성 상태인지 확인
+   *
+   * @param containerId Docker 컨테이너 ID
+   * @returns 활성 상태이면 true
+   */
+  isDockerCollectorActive(containerId: string): boolean {
+    return this.collectors.has(`docker:${containerId}`);
   }
 
   /**
@@ -150,7 +236,7 @@ export class LogCollectorManager {
     if (collector) {
       collector.stop();
       this.collectors.delete(collectorId);
-      console.log(`[LogCollector] Collector stopped: ${collectorId}`);
+      moduleLogger.info('수집기 중지', { collectorId });
     }
   }
 
@@ -158,9 +244,10 @@ export class LogCollectorManager {
    * 모든 수집기 중지
    */
   stopAll(): void {
+    const count = this.collectors.size;
+
     for (const [id, collector] of this.collectors) {
       collector.stop();
-      console.log(`[LogCollector] Collector stopped: ${id}`);
     }
     this.collectors.clear();
 
@@ -172,6 +259,8 @@ export class LogCollectorManager {
 
     // 남은 버퍼 플러시
     this.flushBuffer();
+
+    moduleLogger.info('모든 수집기 중지', { count });
   }
 
   /**
@@ -189,7 +278,7 @@ export class LogCollectorManager {
   ): string {
     const id = `sub-${this.nextSubId++}`;
     this.subscriptions.push({ id, handler, options });
-    console.log(`[LogCollector] Subscription added: ${id}`);
+    moduleLogger.debug('로그 구독 추가', { subscriptionId: id, options });
     return id;
   }
 
@@ -202,7 +291,7 @@ export class LogCollectorManager {
     const index = this.subscriptions.findIndex((s) => s.id === subscriptionId);
     if (index !== -1) {
       this.subscriptions.splice(index, 1);
-      console.log(`[LogCollector] Subscription removed: ${subscriptionId}`);
+      moduleLogger.debug('로그 구독 해제', { subscriptionId });
     }
   }
 
@@ -249,10 +338,10 @@ export class LogCollectorManager {
         try {
           sub.handler(entry);
         } catch (err) {
-          console.error(
-            `[LogCollector] Subscription handler error (${sub.id}):`,
-            err
-          );
+          moduleLogger.error('구독 핸들러 에러', {
+            subscriptionId: sub.id,
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
     }
@@ -311,9 +400,12 @@ export class LogCollectorManager {
     const entries = [...this.logBuffer];
     this.logBuffer = [];
 
-    // 비동기 배치 저장 (에러 무시)
+    // 비동기 배치 저장 (에러 로깅)
     this.storage.writeBatch(entries).catch((err) => {
-      console.error('[LogCollector] Failed to flush log buffer:', err);
+      moduleLogger.error('로그 버퍼 플러시 실패', {
+        entriesCount: entries.length,
+        error: err instanceof Error ? err.message : String(err),
+      });
     });
   }
 }
@@ -327,6 +419,8 @@ export class LogCollectorManager {
  */
 export const logCollectorManager = new LogCollectorManager();
 
+// Re-exports
 export { FileLogCollector } from './file-collector';
+export { DockerLogCollector } from './docker-collector';
 export type { LogCollector } from './file-collector';
 export default logCollectorManager;
