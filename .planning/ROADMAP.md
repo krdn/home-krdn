@@ -373,16 +373,18 @@ Plans:
 - [x] 35-01: GitHub 설정 UI + 레포지토리 목록 (useGitHub 훅, GitHubSetup, RepoList)
 - [x] 35-02: 워크플로우 대시보드 (WorkflowList, WorkflowRunList, WorkflowStatusBadge)
 
-#### Phase 36: Log Aggregation Backend
+#### Phase 36: Log Aggregation Backend ✅
 
 **Goal**: 다중 소스 로그 수집 서비스 — 컨테이너 로그, 시스템 로그, 애플리케이션 로그 통합
 **Depends on**: Phase 35
-**Research**: Likely (로그 수집 아키텍처)
-**Research topics**: 파일 테일링 vs Docker API vs journald, 로그 저장소 (파일 vs DB), 로테이션 전략
-**Plans**: TBD
+**Research**: Complete (Docker socket streaming, node-tail, Prisma/SQLite 저장소)
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 36-01: TBD
+- [x] 36-01: 로그 인프라 (Zod 타입, Prisma LogEntry 모델, LogStorage 서비스)
+- [x] 36-02: Docker 로그 수집기 (DockerLogCollector, LogCollectorManager)
+- [x] 36-03: 파일 로그 수집기 + WebSocket 채널 (FileLogCollector, subscribe-logs)
 
 #### Phase 37: Log Viewer UI
 
@@ -488,7 +490,7 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 33. Port Registry System | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 34. GitHub Integration | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 35. CI/CD Dashboard | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
-| 36. Log Aggregation Backend | v2.2 | 0/? | Not started | - |
+| 36. Log Aggregation Backend | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 37. Log Viewer UI | v2.2 | 0/? | Not started | - |
 | 38. Log-based Alerts | v2.2 | 0/? | Not started | - |
 | 39. Kubernetes Discovery | v2.2 | 0/? | Not started | - |
@@ -497,4 +499,4 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 42. DevOps Home | v2.2 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-16 after Phase 35 CI/CD Dashboard complete*
+*Last updated: 2026-01-16 after Phase 36 Log Aggregation Backend complete*
