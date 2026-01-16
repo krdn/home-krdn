@@ -361,15 +361,17 @@ Plans:
 - [x] 34-01: Prisma GitHubSettings 모델 + Octokit Service Layer
 - [x] 34-02: GitHub REST API 엔드포인트 (7개 라우트)
 
-#### Phase 35: CI/CD Dashboard
+#### Phase 35: CI/CD Dashboard ✅
 
 **Goal**: 빌드/배포 파이프라인 시각화 — workflow 상태, 실행 이력, 배포 타임라인
 **Depends on**: Phase 34
 **Research**: Unlikely (Phase 34 API 활용)
-**Plans**: TBD
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 2/2 complete
 
 Plans:
-- [ ] 35-01: TBD
+- [x] 35-01: GitHub 설정 UI + 레포지토리 목록 (useGitHub 훅, GitHubSetup, RepoList)
+- [x] 35-02: 워크플로우 대시보드 (WorkflowList, WorkflowRunList, WorkflowStatusBadge)
 
 #### Phase 36: Log Aggregation Backend
 
@@ -485,7 +487,7 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 32. Bundle Analysis & Optimization | v2.1 | 1/1 | ✅ Complete | 2026-01-15 |
 | 33. Port Registry System | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 34. GitHub Integration | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
-| 35. CI/CD Dashboard | v2.2 | 0/? | Not started | - |
+| 35. CI/CD Dashboard | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 36. Log Aggregation Backend | v2.2 | 0/? | Not started | - |
 | 37. Log Viewer UI | v2.2 | 0/? | Not started | - |
 | 38. Log-based Alerts | v2.2 | 0/? | Not started | - |
@@ -495,4 +497,4 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 42. DevOps Home | v2.2 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-16 after v2.2 DevOps Tools milestone created*
+*Last updated: 2026-01-16 after Phase 35 CI/CD Dashboard complete*
