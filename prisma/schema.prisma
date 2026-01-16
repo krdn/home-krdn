@@ -60,6 +60,9 @@ model User {
 
   // 관계: 포트 레지스트리 (Phase 33)
   portRegistries PortRegistry[]
+
+  // 관계: GitHub 설정 (Phase 34)
+  gitHubSettings GitHubSettings?
 }
 
 // 팀 모델
@@ -259,4 +262,32 @@ model PortRegistry {
   @@index([projectId])
   @@index([category])
   @@index([status])
+}
+
+// ============================================================
+// GitHub Integration 모델 (Phase 34)
+// ============================================================
+
+// GitHub 설정 모델 (사용자별 1:1)
+model GitHubSettings {
+  id String @id @default(cuid())
+
+  // 사용자 연결 (1:1)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // GitHub 인증 정보
+  accessToken    String    // 암호화된 Personal Access Token 저장
+  tokenExpiresAt DateTime? // 선택적 만료일
+
+  // GitHub 프로필 정보 (API 응답에서 획득)
+  username  String? // GitHub 사용자명
+  avatarUrl String? // GitHub 아바타 URL
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 인덱스: 사용자별 조회 최적화
+  @@index([userId])
 }
