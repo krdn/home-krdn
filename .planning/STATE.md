@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 36 of 42 (Log Aggregation)
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-01-16 — Completed 36-03-PLAN.md (File Log Collector + WebSocket)
+Phase: 37 of 42 (Log Viewer UI)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-01-16 — Completed 37-01-PLAN.md (Log REST API + Hooks)
 
-Progress: ████░░░░░░ 42% (v2.2 Milestone — Phase 33-36 complete)
+Progress: ████░░░░░░ 44% (v2.2 Milestone — Phase 33-36 complete, 37-01 done)
 
 ## Performance Metrics
 
@@ -25,6 +25,7 @@ Progress: ████░░░░░░ 42% (v2.2 Milestone — Phase 33-36 com
 - Phase 34: 2 plans completed in ~15min
 - Phase 35: 2 plans completed in ~9min (5min + 4min)
 - Phase 36: 3 plans completed in ~30min (8min + 10min + 12min)
+- Phase 37-01: ~4min
 
 **By Milestone:**
 
@@ -67,6 +68,8 @@ Key technology decisions for v2.2:
   - 36-02: DockerLogCollector 클래스 (Docker socket 스트리밍)
   - 36-03: FileLogCollector (node-tail), WebSocket 로그 채널
   - LogCollectorManager 통합, 100ms 버퍼링 배치 전송
+- 🚧 Phase 37: Log Viewer UI 진행 중
+  - 37-01: 로그 조회 REST API 2개, useLogs/useLogStats 훅
 - 토큰 암호화: 현재 평문 저장, 향후 암호화 고려
 
 ### Constraints (v2.2)
@@ -98,7 +101,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-16 13:00 UTC
-Stopped at: Completed 36-03-PLAN.md (File Log Collector + WebSocket)
+Last session: 2026-01-16 05:05 UTC
+Stopped at: Completed 37-01-PLAN.md (Log REST API + Hooks)
 Resume file: None
-Next action: Phase 37 (Log Viewer UI) - 로그 뷰어 대시보드 구현
+Next action: Phase 37-02 (LogViewer 컴포넌트) - 로그 뷰어 UI 컴포넌트 구현
