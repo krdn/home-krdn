@@ -424,15 +424,18 @@ Plans:
 - [x] 39-01: Prisma KubernetesCluster 모델 + Service Layer
 - [x] 39-02: REST API 엔드포인트 (9개)
 
-#### Phase 40: K8s Dashboard
+#### Phase 40: K8s Dashboard ✅
 
-**Goal**: Pod/Service/Deployment 관리 UI — 상태 모니터링, 로그 조회, 스케일링 제어
+**Goal**: Pod/Service/Deployment 관리 UI — 상태 모니터링, 리소스 목록, 네임스페이스 필터
 **Depends on**: Phase 39
 **Research**: Unlikely (Phase 39 API 활용)
-**Plans**: TBD
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 40-01: TBD
+- [x] 40-01: useKubernetes 훅 + K8sClusterSetup 컴포넌트
+- [x] 40-02: K8sPodList, K8sServiceList, K8sDeploymentList 컴포넌트
+- [x] 40-03: Admin Kubernetes 대시보드 페이지 통합
 
 #### Phase 41: Service Mesh Overview
 
@@ -501,9 +504,9 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 37. Log Viewer UI | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 38. Log-based Alerts | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 39. Kubernetes Discovery | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
-| 40. K8s Dashboard | v2.2 | 0/? | Not started | - |
+| 40. K8s Dashboard | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 41. Service Mesh Overview | v2.2 | 0/? | Not started | - |
 | 42. DevOps Home | v2.2 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-16 after Phase 39 Kubernetes Discovery complete*
+*Last updated: 2026-01-16 after Phase 40 K8s Dashboard complete*
