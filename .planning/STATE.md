@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 35 of 42 (CI/CD Dashboard)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-01-16 — Completed 35-01-PLAN.md (GitHub UI Components)
+Phase: 35 of 42 (CI/CD Dashboard) - COMPLETE
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-16 — Completed 35-02-PLAN.md (Workflow Dashboard)
 
-Progress: ███░░░░░░░ 30% (v2.2 Milestone — 3/10 phases in progress)
+Progress: ███░░░░░░░ 30% (v2.2 Milestone — Phase 33-35 complete)
 
 ## Performance Metrics
 
@@ -23,7 +23,7 @@ Progress: ███░░░░░░░ 30% (v2.2 Milestone — 3/10 phases in 
 - Milestone v1.1: 9 plans completed in ~7hrs
 - Milestone v2.0: 17 plans completed
 - Phase 34: 2 plans completed in ~15min
-- Phase 35-01: 1 plan completed in ~5min
+- Phase 35: 2 plans completed in ~9min (5min + 4min)
 
 **By Milestone:**
 
@@ -56,11 +56,11 @@ Key technology decisions for v2.2:
   - 11개 서비스 함수 (Settings CRUD, 레포/커밋/워크플로우 조회)
   - 7개 REST API 라우트
   - DTO 패턴으로 토큰 값 미노출 (hasToken boolean만)
-- ✅ Phase 35-01: GitHub UI 컴포넌트
-  - useGitHub 훅 (설정/레포 조회, mutation)
-  - GitHubSetup, RepoList 컴포넌트
-  - /admin/github 페이지
-  - Dynamic Import로 초기 번들 최적화
+- ✅ Phase 35: GitHub CI/CD Dashboard 완성
+  - useWorkflows, useWorkflowRuns 훅 (자동 새로고침)
+  - WorkflowStatusBadge 상태 시각화 (6가지 상태)
+  - WorkflowList, WorkflowRunList 컴포넌트
+  - /admin/github 워크플로우 대시보드 (2컬럼 레이아웃)
 - 토큰 암호화: 현재 평문 저장, 향후 암호화 고려
 
 ### Constraints (v2.2)
@@ -88,11 +88,11 @@ None.
 - v1.1 Enhancement completed: 8 phases (9-16), shipped 2026-01-15
 - v2.0 Multi-User Foundation completed: 8 phases (17-24), shipped 2026-01-15
 - v2.1 Polish completed: 8 phases (25-32), shipped 2026-01-15
-- v2.2 DevOps Tools: 10 phases (33-42), 3/10 in progress
+- v2.2 DevOps Tools: 10 phases (33-42), Phase 33-35 complete
 
 ## Session Continuity
 
-Last session: 2026-01-16 01:03 UTC
-Stopped at: Completed 35-01-PLAN.md (GitHub UI Components)
+Last session: 2026-01-16 01:09 UTC
+Stopped at: Completed 35-02-PLAN.md (Workflow Dashboard)
 Resume file: None
-Next action: /gsd:execute-plan 35-02 (GitHub Detail + Workflow UI)
+Next action: Phase 36 (Log Management) - Research 필요
