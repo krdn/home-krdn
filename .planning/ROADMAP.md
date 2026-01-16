@@ -399,18 +399,18 @@ Plans:
 - [x] 37-02: useLogStream 훅 + LogFilter/LogEntry/LogList 컴포넌트
 - [x] 37-03: LogViewer 통합 + LogStats + Admin 로그 페이지 교체
 
-#### Phase 38: Log-based Alerts
+#### Phase 38: Log-based Alerts ✅
 
 **Goal**: 로그 패턴 기반 알림 규칙 — 에러 키워드 감지, 빈도 기반 알림, 기존 alertEngine 확장
 **Depends on**: Phase 37
 **Research**: Unlikely (기존 alertEngine 확장)
-**Status**: 🚧 In Progress
-**Plans**: 0/3 complete
+**Status**: ✅ Complete (2026-01-16)
+**Plans**: 3/3 complete
 
 Plans:
-- [ ] 38-01: LogAlertRule 타입 + Prisma 모델 + log-alert-engine
-- [ ] 38-02: REST API + LogCollectorManager 통합 + useLogAlerts 훅
-- [ ] 38-03: LogAlertRuleForm + Admin 페이지 + 사이드바 링크
+- [x] 38-01: LogAlertRule 타입 + Prisma 모델 + log-alert-engine
+- [x] 38-02: REST API + useLogAlerts 훅
+- [x] 38-03: LogAlertRuleForm + Admin 페이지 + 사이드바 링크
 
 #### Phase 39: Kubernetes Discovery
 
@@ -497,12 +497,12 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 34. GitHub Integration | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 35. CI/CD Dashboard | v2.2 | 2/2 | ✅ Complete | 2026-01-16 |
 | 36. Log Aggregation Backend | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
-| 37. Log Viewer UI | v2.2 | 0/? | Not started | - |
-| 38. Log-based Alerts | v2.2 | 0/? | Not started | - |
+| 37. Log Viewer UI | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
+| 38. Log-based Alerts | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 39. Kubernetes Discovery | v2.2 | 0/? | Not started | - |
 | 40. K8s Dashboard | v2.2 | 0/? | Not started | - |
 | 41. Service Mesh Overview | v2.2 | 0/? | Not started | - |
 | 42. DevOps Home | v2.2 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-01-16 after Phase 36 Log Aggregation Backend complete*
+*Last updated: 2026-01-16 after Phase 38 Log-based Alerts complete*
