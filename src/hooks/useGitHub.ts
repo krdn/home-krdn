@@ -22,7 +22,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
   GitHubSettingsDto,
   GitHubRepo,
+  GitHubWorkflow,
+  GitHubWorkflowRun,
   RepositoryFilter,
+  WorkflowRunFilter,
 } from '@/types/github';
 
 // ============================================================
@@ -46,6 +49,21 @@ interface SettingsResponse {
 interface ReposResponse {
   success: boolean;
   repos: GitHubRepo[];
+  error?: string;
+  code?: string;
+}
+
+interface WorkflowsResponse {
+  success: boolean;
+  workflows: GitHubWorkflow[];
+  error?: string;
+  code?: string;
+}
+
+interface WorkflowRunsResponse {
+  success: boolean;
+  runs: GitHubWorkflowRun[];
+  total_count?: number;
   error?: string;
   code?: string;
 }
@@ -147,6 +165,71 @@ async function fetchRepositories(filter?: RepositoryFilter): Promise<ReposRespon
   return { success: true, repos: data.repos ?? [] };
 }
 
+/**
+ * 워크플로우 목록을 조회합니다.
+ * @param owner 레포지토리 소유자
+ * @param repo 레포지토리 이름
+ */
+async function fetchWorkflows(owner: string, repo: string): Promise<WorkflowsResponse> {
+  const response = await fetch(`/api/github/repos/${owner}/${repo}/workflows`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      return { success: false, workflows: [], error: '로그인이 필요합니다', code: 'UNAUTHORIZED' };
+    }
+    const errorData = await response.json().catch(() => ({}));
+    return { success: false, workflows: [], error: errorData.error || '워크플로우 조회 실패', code: errorData.code };
+  }
+
+  const data = await response.json();
+  return { success: true, workflows: data.workflows ?? [] };
+}
+
+/**
+ * 워크플로우 실행 기록을 조회합니다.
+ * @param owner 레포지토리 소유자
+ * @param repo 레포지토리 이름
+ * @param filter 필터 옵션
+ */
+async function fetchWorkflowRuns(
+  owner: string,
+  repo: string,
+  filter?: WorkflowRunFilter
+): Promise<WorkflowRunsResponse> {
+  const params = new URLSearchParams();
+
+  if (filter?.actor) params.set('actor', filter.actor);
+  if (filter?.branch) params.set('branch', filter.branch);
+  if (filter?.event) params.set('event', filter.event);
+  if (filter?.status) params.set('status', filter.status);
+  if (filter?.per_page) params.set('per_page', filter.per_page.toString());
+  if (filter?.page) params.set('page', filter.page.toString());
+
+  const queryString = params.toString();
+  const url = queryString
+    ? `/api/github/repos/${owner}/${repo}/runs?${queryString}`
+    : `/api/github/repos/${owner}/${repo}/runs`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      return { success: false, runs: [], error: '로그인이 필요합니다', code: 'UNAUTHORIZED' };
+    }
+    const errorData = await response.json().catch(() => ({}));
+    return { success: false, runs: [], error: errorData.error || '워크플로우 실행 기록 조회 실패', code: errorData.code };
+  }
+
+  const data = await response.json();
+  return { success: true, runs: data.runs ?? [], total_count: data.total_count };
+}
+
 // ============================================================
 // Query 훅
 // ============================================================
@@ -199,6 +282,87 @@ export function useRepositories(filter?: RepositoryFilter, enabled: boolean = tr
 
   return {
     repos: data?.success ? data.repos : [],
+    isLoading,
+    error: error as Error | null,
+    errorCode: data?.code,
+    errorMessage: data?.error,
+    refetch,
+  };
+}
+
+/**
+ * 워크플로우 목록을 조회하는 훅
+ *
+ * @param owner 레포지토리 소유자
+ * @param repo 레포지토리 이름
+ * @param enabled 활성화 여부 (레포 선택 시만 조회)
+ * @returns workflows - GitHubWorkflow 배열
+ * @returns isLoading - 로딩 중 여부
+ * @returns error - 에러 객체
+ * @returns refetch - 재조회 함수
+ */
+export function useWorkflows(owner: string, repo: string, enabled: boolean = true) {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['github', 'workflows', owner, repo],
+    queryFn: () => fetchWorkflows(owner, repo),
+    staleTime: 60 * 1000, // 1분
+    enabled: enabled && !!owner && !!repo,
+    retry: false,
+  });
+
+  return {
+    workflows: data?.success ? data.workflows : [],
+    isLoading,
+    error: error as Error | null,
+    errorCode: data?.code,
+    errorMessage: data?.error,
+    refetch,
+  };
+}
+
+/**
+ * useWorkflowRuns 훅 옵션
+ */
+interface UseWorkflowRunsOptions {
+  /** 필터 옵션 */
+  filter?: WorkflowRunFilter;
+  /** 활성화 여부 */
+  enabled?: boolean;
+  /** 자동 새로고침 간격 (ms) */
+  refreshInterval?: number;
+}
+
+/**
+ * 워크플로우 실행 기록을 조회하는 훅
+ *
+ * @param owner 레포지토리 소유자
+ * @param repo 레포지토리 이름
+ * @param options 옵션 (filter, enabled, refreshInterval)
+ * @returns runs - GitHubWorkflowRun 배열
+ * @returns totalCount - 전체 실행 기록 수
+ * @returns isLoading - 로딩 중 여부
+ * @returns error - 에러 객체
+ * @returns refetch - 재조회 함수
+ */
+export function useWorkflowRuns(
+  owner: string,
+  repo: string,
+  options: UseWorkflowRunsOptions = {}
+) {
+  const { filter, enabled = true, refreshInterval } = options;
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['github', 'runs', owner, repo, filter],
+    queryFn: () => fetchWorkflowRuns(owner, repo, filter),
+    staleTime: 30 * 1000, // 30초 (실행 중인 워크플로우가 있을 수 있음)
+    enabled: enabled && !!owner && !!repo,
+    retry: false,
+    refetchInterval: refreshInterval, // 자동 새로고침
+  });
+
+  return {
+    runs: data?.success ? data.runs : [],
+    totalCount: data?.total_count ?? 0,
     isLoading,
     error: error as Error | null,
     errorCode: data?.code,
