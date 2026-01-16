@@ -12,9 +12,15 @@ import {
   type WSChannel,
   type WSMetricsData,
   type WSContainersData,
+  type WSLogEntry,
+  type WSLogSource,
+  type WSLogLevel,
 } from '@/types/websocket';
 import { getSystemMetrics } from '@/lib/system';
 import { listContainers, startContainer, stopContainer, restartContainer, type ContainerInfo } from '@/lib/docker';
+import { logCollectorManager } from '@/lib/log-collector';
+import type { LogEntryInput, LogLevel } from '@/types/log';
+import { isLogLevelAtLeast } from '@/types/log';
 
 // ============================================================
 // 클라이언트 관리
@@ -186,6 +192,18 @@ export function handleMessage(ws: WebSocket, data: unknown): void {
 
     case 'ping':
       handlePing(ws, state);
+      break;
+
+    case 'subscribe-logs':
+      handleLogSubscribe(ws, state, {
+        sources: message.sources as WSLogSource[] | undefined,
+        containers: message.containers,
+        minLevel: message.minLevel as WSLogLevel | undefined,
+      });
+      break;
+
+    case 'unsubscribe-logs':
+      handleLogUnsubscribe(ws, state);
       break;
 
     default:
@@ -515,4 +533,161 @@ export function stopContainersBroadcast(): void {
  */
 export function isContainersBroadcastRunning(): boolean {
   return containersBroadcastInterval !== null;
+}
+
+// ============================================================
+// 로그 브로드캐스트 (Phase 36)
+// ============================================================
+
+/** 로그 브로드캐스트 관련 상태 */
+interface LogBroadcastState {
+  subscriptionId: string | null;
+  buffer: WSLogEntry[];
+  flushTimer: ReturnType<typeof setInterval> | null;
+}
+
+const logBroadcastState: LogBroadcastState = {
+  subscriptionId: null,
+  buffer: [],
+  flushTimer: null,
+};
+
+/** 로그 버퍼 플러시 간격 (ms) */
+const LOG_BUFFER_FLUSH_INTERVAL = 100;
+
+/**
+ * LogEntryInput을 WSLogEntry로 변환
+ */
+function transformToWSLogEntry(entry: LogEntryInput & { id?: string }): WSLogEntry {
+  return {
+    id: entry.id ?? crypto.randomUUID(),
+    source: entry.source,
+    sourceId: entry.sourceId,
+    level: entry.level,
+    message: entry.message,
+    timestamp: (entry.timestamp ?? new Date()).toISOString(),
+  };
+}
+
+/**
+ * 로그 버퍼 플러시 (구독자에게 전송)
+ */
+function flushLogBuffer(): void {
+  if (logBroadcastState.buffer.length === 0) {
+    return;
+  }
+
+  const logs = [...logBroadcastState.buffer];
+  logBroadcastState.buffer = [];
+
+  // 로그 구독자에게 필터링 후 전송
+  for (const [ws, state] of connectedClients) {
+    if (!state.subscriptions.has('logs')) {
+      continue;
+    }
+
+    // 필터링 적용
+    const filteredLogs = logs.filter((log) => {
+      // 소스 필터
+      if (state.logOptions?.sources && state.logOptions.sources.length > 0) {
+        if (!state.logOptions.sources.includes(log.source as WSLogSource)) {
+          return false;
+        }
+      }
+
+      // 레벨 필터
+      if (state.logOptions?.minLevel) {
+        if (!isLogLevelAtLeast(log.level as LogLevel, state.logOptions.minLevel as LogLevel)) {
+          return false;
+        }
+      }
+
+      // 컨테이너 필터 (docker 소스 전용)
+      if (state.logOptions?.containers && state.logOptions.containers.length > 0) {
+        if (log.source === 'docker') {
+          if (!state.logOptions.containers.includes(log.sourceId)) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    });
+
+    if (filteredLogs.length > 0) {
+      sendToClient(ws, {
+        type: 'logs',
+        data: filteredLogs,
+        timestamp: Date.now(),
+      });
+    }
+  }
+}
+
+/**
+ * 로그 구독 처리
+ */
+function handleLogSubscribe(
+  ws: WebSocket,
+  state: WSClientState,
+  options: {
+    sources?: WSLogSource[];
+    containers?: string[];
+    minLevel?: WSLogLevel;
+  }
+): void {
+  state.subscriptions.add('logs');
+  state.logOptions = options;
+  console.log(`[WS] Client ${state.id} subscribed to logs`, options);
+
+  // 첫 로그 구독자라면 LogCollectorManager 구독 시작
+  if (!logBroadcastState.subscriptionId) {
+    logBroadcastState.subscriptionId = logCollectorManager.subscribe(
+      (entry) => {
+        // 버퍼에 로그 추가
+        logBroadcastState.buffer.push(transformToWSLogEntry(entry));
+      },
+      {} // 필터링은 WebSocket 레벨에서 처리
+    );
+
+    // 버퍼 플러시 타이머 시작
+    logBroadcastState.flushTimer = setInterval(() => {
+      flushLogBuffer();
+    }, LOG_BUFFER_FLUSH_INTERVAL);
+
+    console.log('[WS] Log broadcast started');
+  }
+}
+
+/**
+ * 로그 구독 해제 처리
+ */
+function handleLogUnsubscribe(ws: WebSocket, state: WSClientState): void {
+  state.subscriptions.delete('logs');
+  state.logOptions = undefined;
+  console.log(`[WS] Client ${state.id} unsubscribed from logs`);
+
+  // 로그 구독자가 더 이상 없으면 LogCollectorManager 구독 해제
+  const hasLogSubscribers = Array.from(connectedClients.values()).some(
+    (s) => s.subscriptions.has('logs')
+  );
+
+  if (!hasLogSubscribers && logBroadcastState.subscriptionId) {
+    logCollectorManager.unsubscribe(logBroadcastState.subscriptionId);
+    logBroadcastState.subscriptionId = null;
+
+    if (logBroadcastState.flushTimer) {
+      clearInterval(logBroadcastState.flushTimer);
+      logBroadcastState.flushTimer = null;
+    }
+
+    console.log('[WS] Log broadcast stopped');
+  }
+}
+
+/**
+ * 로그 브로드캐스트 실행 여부 확인
+ */
+export function isLogsBroadcastRunning(): boolean {
+  return logBroadcastState.subscriptionId !== null;
 }

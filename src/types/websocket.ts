@@ -16,14 +16,17 @@ export const WSServerMessageType = z.enum([
   'container-ack',  // 컨테이너 액션 응답
   'heartbeat',      // 연결 유지 확인 (pong)
   'error',          // 에러 응답
+  'logs',           // 로그 데이터 (Phase 36)
 ]);
 
 /** 클라이언트 → 서버 메시지 타입 */
 export const WSClientMessageType = z.enum([
-  'subscribe',      // 데이터 구독 시작
-  'unsubscribe',    // 데이터 구독 해제
+  'subscribe',        // 데이터 구독 시작
+  'unsubscribe',      // 데이터 구독 해제
   'container-action', // 컨테이너 제어 (start, stop, restart)
-  'ping',           // 연결 상태 확인
+  'ping',             // 연결 상태 확인
+  'subscribe-logs',   // 로그 구독 시작 (Phase 36)
+  'unsubscribe-logs', // 로그 구독 해제 (Phase 36)
 ]);
 
 // ============================================================
@@ -69,12 +72,63 @@ export const WSPingMessageSchema = z.object({
   timestamp: z.number(),
 });
 
+// ============================================================
+// 로그 관련 메시지 (Phase 36)
+// ============================================================
+
+/** 로그 소스 타입 */
+export const WSLogSourceSchema = z.enum(['docker', 'journal', 'app']);
+
+/** 로그 레벨 타입 */
+export const WSLogLevelSchema = z.enum([
+  'trace',
+  'debug',
+  'info',
+  'warn',
+  'error',
+  'fatal',
+]);
+
+/** 로그 구독 요청 메시지 (클라이언트 → 서버) */
+export const WSLogSubscribeMessageSchema = z.object({
+  type: z.literal('subscribe-logs'),
+  sources: z.array(WSLogSourceSchema).optional(),
+  containers: z.array(z.string()).optional(),
+  minLevel: WSLogLevelSchema.optional(),
+  timestamp: z.number(),
+});
+
+/** 로그 구독 해제 메시지 (클라이언트 → 서버) */
+export const WSLogUnsubscribeMessageSchema = z.object({
+  type: z.literal('unsubscribe-logs'),
+  timestamp: z.number(),
+});
+
+/** 로그 데이터 항목 스키마 */
+export const WSLogEntrySchema = z.object({
+  id: z.string(),
+  source: WSLogSourceSchema,
+  sourceId: z.string(),
+  level: z.string(),
+  message: z.string(),
+  timestamp: z.string(), // ISO string
+});
+
+/** 로그 데이터 메시지 (서버 → 클라이언트) */
+export const WSLogMessageSchema = z.object({
+  type: z.literal('logs'),
+  data: z.array(WSLogEntrySchema),
+  timestamp: z.number(),
+});
+
 /** 클라이언트 메시지 통합 스키마 */
 export const WSClientMessageSchema = z.discriminatedUnion('type', [
   WSSubscribeMessageSchema,
   WSUnsubscribeMessageSchema,
   WSContainerActionMessageSchema,
   WSPingMessageSchema,
+  WSLogSubscribeMessageSchema,
+  WSLogUnsubscribeMessageSchema,
 ]);
 
 // ============================================================
@@ -175,6 +229,7 @@ export const WSServerMessageSchema = z.discriminatedUnion('type', [
   WSContainerAckMessageSchema,
   WSHeartbeatMessageSchema,
   WSErrorMessageSchema,
+  WSLogMessageSchema,
 ]);
 
 // ============================================================
@@ -188,6 +243,8 @@ export type WSSubscribeMessage = z.infer<typeof WSSubscribeMessageSchema>;
 export type WSUnsubscribeMessage = z.infer<typeof WSUnsubscribeMessageSchema>;
 export type WSContainerActionMessage = z.infer<typeof WSContainerActionMessageSchema>;
 export type WSPingMessage = z.infer<typeof WSPingMessageSchema>;
+export type WSLogSubscribeMessage = z.infer<typeof WSLogSubscribeMessageSchema>;
+export type WSLogUnsubscribeMessage = z.infer<typeof WSLogUnsubscribeMessageSchema>;
 export type WSClientMessage = z.infer<typeof WSClientMessageSchema>;
 
 export type WSConnectedMessage = z.infer<typeof WSConnectedMessageSchema>;
@@ -198,6 +255,10 @@ export type WSContainersMessage = z.infer<typeof WSContainersMessageSchema>;
 export type WSContainerAckMessage = z.infer<typeof WSContainerAckMessageSchema>;
 export type WSHeartbeatMessage = z.infer<typeof WSHeartbeatMessageSchema>;
 export type WSErrorMessage = z.infer<typeof WSErrorMessageSchema>;
+export type WSLogEntry = z.infer<typeof WSLogEntrySchema>;
+export type WSLogMessage = z.infer<typeof WSLogMessageSchema>;
+export type WSLogSource = z.infer<typeof WSLogSourceSchema>;
+export type WSLogLevel = z.infer<typeof WSLogLevelSchema>;
 export type WSServerMessage = z.infer<typeof WSServerMessageSchema>;
 
 // ============================================================
@@ -205,11 +266,19 @@ export type WSServerMessage = z.infer<typeof WSServerMessageSchema>;
 // ============================================================
 
 /** 구독 채널 */
-export type WSChannel = 'metrics' | 'containers';
+export type WSChannel = 'metrics' | 'containers' | 'logs';
+
+/** 로그 구독 옵션 */
+export interface WSLogSubscriptionOptions {
+  sources?: WSLogSource[];
+  containers?: string[];
+  minLevel?: WSLogLevel;
+}
 
 /** 클라이언트 구독 상태 */
 export interface WSClientState {
   id: string;
   subscriptions: Set<WSChannel>;
+  logOptions?: WSLogSubscriptionOptions;
   lastPing: number;
 }

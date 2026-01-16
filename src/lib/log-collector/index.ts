@@ -246,7 +246,7 @@ export class LogCollectorManager {
   stopAll(): void {
     const count = this.collectors.size;
 
-    for (const [id, collector] of this.collectors) {
+    for (const [, collector] of this.collectors) {
       collector.stop();
     }
     this.collectors.clear();
