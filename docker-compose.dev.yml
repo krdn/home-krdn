@@ -1,0 +1,60 @@
+# Home-KRDN 개발 환경 Docker Compose
+#
+# 사용법:
+#   docker compose -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.dev.yml logs -f
+#   docker compose -f docker-compose.dev.yml down
+#
+# 특징:
+#   - Hot Reload: 소스 변경 시 자동 반영
+#   - 디버깅 용이: 상세 로그, 넓은 리소스
+#   - 개발 DB: ./prisma/dev.db 사용
+
+version: "3.8"
+
+services:
+  home-krdn-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        - DOCKER_GID=988
+    image: home-krdn:dev
+    container_name: home-krdn-dev
+    restart: unless-stopped
+    # 개발 환경은 리소스 제한 완화
+    mem_limit: 512m
+    cpus: 1.0
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+      - WATCHPACK_POLLING=true  # Docker에서 파일 변경 감지
+    env_file:
+      - .env
+      - .env.development
+      - .env.development.local
+    volumes:
+      # 소스 코드 마운트 (Hot Reload)
+      - ./src:/app/src:cached
+      - ./public:/app/public:cached
+      - ./prisma:/app/prisma:cached
+      # node_modules는 컨테이너 내부 사용
+      - /app/node_modules
+      - /app/.next
+      # Docker 소켓
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "3005:3005"       # 메인 앱
+      - "9229:9229"       # Node.js 디버거
+    networks:
+      - home-krdn-dev-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3005/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s  # 개발 모드는 시작 시간 더 필요
+
+networks:
+  home-krdn-dev-network:
+    driver: bridge

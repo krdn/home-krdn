@@ -9,6 +9,12 @@ import { PrismaClient, Role } from '@prisma/client'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import bcrypt from 'bcryptjs'
 import path from 'node:path'
+import { config } from 'dotenv'
+
+// 환경 변수 로드 (우선순위: .env.development.local > .env.development > .env)
+config({ path: '.env.development.local' })
+config({ path: '.env.development' })
+config({ path: '.env' })
 
 // Prisma 클라이언트 생성 (seed 전용)
 function createPrismaClient(): PrismaClient {
@@ -37,15 +43,21 @@ async function main() {
     console.warn('ADMIN_PASSWORD_HASH not set, generating default hash for development')
   }
 
+  // 비밀번호 해시 준비
+  const passwordHash = adminPasswordHash || await bcrypt.hash('admin', 10)
+
   // 기존 관리자 계정을 DB로 마이그레이션
   const adminUser = await prisma.user.upsert({
     where: { username: adminUsername },
-    update: {},
+    update: {
+      // 환경변수가 설정되어 있으면 비밀번호 업데이트
+      ...(adminPasswordHash && { passwordHash: adminPasswordHash }),
+    },
     create: {
       id: 'admin-001', // 기존 ID 유지 (JWT 호환)
       email: `${adminUsername}@localhost`,
       username: adminUsername,
-      passwordHash: adminPasswordHash || await bcrypt.hash('admin', 10),
+      passwordHash,
       role: Role.ADMIN,
       displayName: 'Administrator',
     },

@@ -22,6 +22,7 @@
 
 # production
 /build
+/data
 
 # misc
 .DS_Store
@@ -33,9 +34,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
+# env files
+# 추적됨: .env, .env.example, .env.development, .env.production
+# 무시됨: .env.local, .env.*.local (민감한 정보)
+.env.local
+.env.*.local
 
 # vercel
 .vercel

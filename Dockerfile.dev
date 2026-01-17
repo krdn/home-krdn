@@ -1,0 +1,48 @@
+# Home-KRDN 개발 환경 Dockerfile
+#
+# 특징:
+#   - npm run dev로 Hot Reload 지원
+#   - 전체 node_modules 포함
+#   - 디버깅 포트 노출
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# 시스템 의존성
+RUN apk add --no-cache libc6-compat
+
+# Docker 그룹 GID (호스트와 일치시켜야 함)
+ARG DOCKER_GID=988
+
+# 사용자 및 그룹 설정
+RUN addgroup --system --gid 1001 nodejs && \
+    addgroup --system --gid ${DOCKER_GID} docker && \
+    adduser --system --uid 1001 nextjs && \
+    addgroup nextjs nodejs && \
+    addgroup nextjs docker
+
+# 의존성 설치
+COPY package*.json ./
+RUN npm ci
+
+# Prisma 클라이언트 생성
+COPY prisma ./prisma
+RUN npx prisma generate
+
+# 소스 코드 (볼륨 마운트로 오버라이드됨)
+COPY . .
+
+# 권한 설정
+RUN chown -R nextjs:nodejs /app
+USER nextjs
+
+# 환경 변수
+ENV NODE_ENV=development
+ENV PORT=3005
+ENV HOSTNAME=0.0.0.0
+
+EXPOSE 3005 9229
+
+# 개발 서버 실행
+CMD ["npm", "run", "dev"]

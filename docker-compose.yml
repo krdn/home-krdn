@@ -1,3 +1,16 @@
+# Home-KRDN 운영 환경 Docker Compose
+#
+# 사용법:
+#   docker compose up -d --build
+#   docker compose logs -f
+#   docker compose down
+#
+# 특징:
+#   - 최적화된 빌드 (Multi-stage)
+#   - 리소스 제한 (256MB RAM)
+#   - Nginx 리버스 프록시
+#   - 데이터 영속화 (./data 볼륨)
+
 version: "3.8"
 
 services:
@@ -14,7 +27,14 @@ services:
     cpus: 0.5
     environment:
       - NODE_ENV=production
+    env_file:
+      - .env
+      - .env.production
+      - .env.production.local
     volumes:
+      # 데이터 영속화 (DB, 업로드 등)
+      - ./data:/app/data
+      # Docker 소켓 (읽기 전용)
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - home-krdn-network
