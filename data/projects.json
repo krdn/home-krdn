@@ -191,7 +191,7 @@
         },
         {
           "type": "demo",
-          "url": "https://home.krdn.kr",
+          "url": "https://all.krdn.kr",
           "label": "적용 사이트"
         }
       ],
@@ -443,7 +443,7 @@
         },
         {
           "type": "production",
-          "url": "https://home.krdn.kr",
+          "url": "https://all.krdn.kr",
           "label": "운영"
         },
         {

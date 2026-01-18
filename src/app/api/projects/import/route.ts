@@ -527,7 +527,7 @@ function extractLinks(
   // 3. 기본 패턴 (slug.krdn.kr) - 잘 알려진 프로젝트만
   if (!demoUrl) {
     const knownProjects: Record<string, { url: string; label: string }> = {
-      "home-krdn": { url: "https://home.krdn.kr", label: "Live Demo" },
+      "home-krdn": { url: "https://all.krdn.kr", label: "Live Demo" },
       "docker-n8n": { url: "https://n8n.krdn.kr", label: "n8n Instance" },
       "news-sentiment-analyzer": { url: "https://news.krdn.kr", label: "Live Demo" },
       "ai-note-taking": { url: "https://note.krdn.kr", label: "Live Demo" },

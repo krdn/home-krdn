@@ -20,7 +20,7 @@ export const projects: Project[] = [
     ],
     links: [
       { type: "github", url: "https://github.com/krdn/home-krdn", label: "GitHub" },
-      { type: "demo", url: "https://home.krdn.kr", label: "Live Demo" },
+      { type: "demo", url: "https://all.krdn.kr", label: "Live Demo" },
     ],
     images: [
       {
