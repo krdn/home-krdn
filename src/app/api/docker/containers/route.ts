@@ -34,6 +34,7 @@ export async function GET() {
           status: c.status,
           created: c.created.toISOString(),
           ports: c.ports,
+          project: c.project,
         })),
         summary: dockerInfo
           ? {

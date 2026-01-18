@@ -21,6 +21,7 @@ export const DockerContainerSchema = z.object({
   Status: z.string(),
   Created: z.number(),
   Ports: z.array(DockerPortSchema),
+  Labels: z.record(z.string(), z.string()).optional(),
 });
 
 // Container 목록 응답 스키마
@@ -78,6 +79,7 @@ export const ContainerInfoSchema = z.object({
   status: z.string(),
   created: z.date(),
   ports: z.array(z.string()),
+  project: z.string().optional(), // docker-compose 프로젝트 이름
 });
 
 // 타입 추출

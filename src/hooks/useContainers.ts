@@ -11,6 +11,7 @@ export interface ContainerData {
   status: string;
   created: string;
   ports: string[];
+  project?: string; // docker-compose 프로젝트 이름
 }
 
 export interface ContainerSummary {

@@ -22,7 +22,9 @@ export interface ContainerStats {
 // Re-export types for external use
 export type { DockerContainer, ContainerInfo } from '@/types/docker';
 
-const DOCKER_SOCKET = process.env.DOCKER_HOST || '/var/run/docker.sock';
+// DOCKER_HOST에서 unix:// 프리픽스 제거 (http.socketPath는 순수 경로만 지원)
+const rawDockerHost = process.env.DOCKER_HOST || '/var/run/docker.sock';
+const DOCKER_SOCKET = rawDockerHost.replace(/^unix:\/\//, '');
 
 /**
  * Docker socket으로 HTTP 요청을 보냅니다.
@@ -75,17 +77,23 @@ export async function listContainers(all: boolean = true): Promise<ContainerInfo
     // 런타임 검증: Docker API 응답 스키마 확인
     const containers = DockerContainerListSchema.parse(rawData);
 
-    return containers.map((c) => ({
-      id: c.Id.substring(0, 12),
-      name: c.Names[0]?.replace(/^\//, '') || 'unknown',
-      image: c.Image,
-      state: c.State as ContainerInfo['state'],
-      status: c.Status,
-      created: new Date(c.Created * 1000),
-      ports: c.Ports.filter((p) => p.PublicPort).map(
-        (p) => `${p.PublicPort}:${p.PrivatePort}/${p.Type}`
-      ),
-    }));
+    return containers.map((c) => {
+      // docker-compose 프로젝트 이름 추출 (라벨 기반)
+      const project = c.Labels?.['com.docker.compose.project'];
+
+      return {
+        id: c.Id.substring(0, 12),
+        name: c.Names[0]?.replace(/^\//, '') || 'unknown',
+        image: c.Image,
+        state: c.State as ContainerInfo['state'],
+        status: c.Status,
+        created: new Date(c.Created * 1000),
+        ports: c.Ports.filter((p) => p.PublicPort).map(
+          (p) => `${p.PublicPort}:${p.PrivatePort}/${p.Type}`
+        ),
+        project,
+      };
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       console.error('Docker API 응답 검증 실패:', error.issues);

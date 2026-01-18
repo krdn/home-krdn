@@ -16,8 +16,9 @@ import type { LogSource, LogLevel, LogEntryInput } from '@/types/log'
 // 상수 및 타입 정의
 // ============================================================
 
-/** Docker socket 경로 (환경변수 또는 기본값) */
-const DOCKER_SOCKET = process.env.DOCKER_HOST || '/var/run/docker.sock'
+/** Docker socket 경로 (환경변수 또는 기본값, unix:// 프리픽스 제거) */
+const rawDockerHost = process.env.DOCKER_HOST || '/var/run/docker.sock'
+const DOCKER_SOCKET = rawDockerHost.replace(/^unix:\/\//, '')
 
 /**
  * 로그 수집기 인터페이스

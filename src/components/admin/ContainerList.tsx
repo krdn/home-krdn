@@ -9,8 +9,11 @@ import {
   RefreshCw,
   Box,
   AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  Folder,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useContainers, ContainerData } from '@/hooks/useContainers';
@@ -128,8 +131,15 @@ const ContainerRow = memo(function ContainerRow({
 
 // 가상화 리스트 상수
 const ITEM_HEIGHT = 120; // 컨테이너 행 높이 (px)
-const LIST_MAX_HEIGHT = 600; // 최대 리스트 높이 (px)
-const VIRTUALIZATION_THRESHOLD = 20; // 이 개수 이상일 때 가상화 적용
+const LIST_MAX_HEIGHT = 800; // 최대 리스트 높이 (px)
+const VIRTUALIZATION_THRESHOLD = 50; // 이 개수 이상일 때 가상화 적용
+
+/** 프로젝트 그룹 인터페이스 */
+interface ProjectGroup {
+  name: string;
+  containers: ContainerData[];
+  runningCount: number;
+}
 
 export function ContainerList() {
   const { containers, summary, loading, error, refetch, performAction } =
@@ -137,6 +147,7 @@ export function ContainerList() {
   const { hasPermission } = useAuth();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'running' | 'stopped'>('all');
+  const [collapsedProjects, setCollapsedProjects] = useState<Set<string>>(new Set());
 
   // 가상화를 위한 스크롤 컨테이너 ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -162,6 +173,51 @@ export function ContainerList() {
       return true;
     });
   }, [containers, filter]);
+
+  // 프로젝트별 그룹화 (docker-compose project 기준)
+  const groupedContainers = useMemo(() => {
+    const groups = new Map<string, ContainerData[]>();
+
+    for (const container of filteredContainers) {
+      const projectName = container.project || 'standalone';
+      if (!groups.has(projectName)) {
+        groups.set(projectName, []);
+      }
+      groups.get(projectName)!.push(container);
+    }
+
+    // 프로젝트 그룹 배열로 변환 (이름순 정렬, standalone은 마지막)
+    const result: ProjectGroup[] = [];
+    const sortedKeys = Array.from(groups.keys()).sort((a, b) => {
+      if (a === 'standalone') return 1;
+      if (b === 'standalone') return -1;
+      return a.localeCompare(b);
+    });
+
+    for (const name of sortedKeys) {
+      const groupContainers = groups.get(name)!;
+      result.push({
+        name,
+        containers: groupContainers,
+        runningCount: groupContainers.filter((c) => c.state === 'running').length,
+      });
+    }
+
+    return result;
+  }, [filteredContainers]);
+
+  // 프로젝트 접기/펼치기 토글
+  const toggleProject = useCallback((projectName: string) => {
+    setCollapsedProjects((prev) => {
+      const next = new Set(prev);
+      if (next.has(projectName)) {
+        next.delete(projectName);
+      } else {
+        next.add(projectName);
+      }
+      return next;
+    });
+  }, []);
 
   // 가상화 설정 (20개 이상일 때만 활성화)
   const shouldVirtualize = filteredContainers.length >= VIRTUALIZATION_THRESHOLD;
@@ -250,79 +306,110 @@ export function ContainerList() {
       </div>
 
       {/* Container List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Box className="h-5 w-5" />
-            Containers ({filteredContainers.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {filteredContainers.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">
-              No containers found
-            </p>
-          ) : shouldVirtualize ? (
-            // 가상화 리스트: 20개 이상일 때 사용
-            <div
-              ref={parentRef}
-              className="overflow-auto scrollbar-thin"
-              style={{
-                height: Math.min(
-                  filteredContainers.length * ITEM_HEIGHT,
-                  LIST_MAX_HEIGHT
-                ),
-              }}
-            >
-              <div
-                style={{
-                  height: virtualizer.getTotalSize(),
-                  width: '100%',
-                  position: 'relative',
-                }}
-              >
-                {virtualizer.getVirtualItems().map((virtualRow) => {
-                  const container = filteredContainers[virtualRow.index];
-                  return (
-                    <div
-                      key={container.id}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: virtualRow.size,
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
-                      className="pb-3"
-                    >
+      {filteredContainers.length === 0 ? (
+        <p className="py-8 text-center text-muted-foreground">
+          No containers found
+        </p>
+      ) : shouldVirtualize ? (
+        // 가상화 리스트: 20개 이상일 때 사용
+        <div
+          ref={parentRef}
+          className="overflow-auto scrollbar-thin"
+          style={{
+            height: Math.min(
+              filteredContainers.length * ITEM_HEIGHT,
+              LIST_MAX_HEIGHT
+            ),
+          }}
+        >
+          <div
+            style={{
+              height: virtualizer.getTotalSize(),
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const container = filteredContainers[virtualRow.index];
+              return (
+                <div
+                  key={container.id}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: virtualRow.size,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  className="pb-3"
+                >
+                  <ContainerRow
+                    container={container}
+                    onAction={handleAction}
+                    isLoading={actionLoading === container.name}
+                    canControl={canControlContainers}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        // 일반 리스트: 프로젝트별 그룹화
+        <div className="space-y-4">
+          {groupedContainers.map((group) => {
+            const isCollapsed = collapsedProjects.has(group.name);
+            return (
+              <div key={group.name} className="rounded-lg border bg-card">
+                {/* 프로젝트 헤더 */}
+                <button
+                  type="button"
+                  onClick={() => toggleProject(group.name)}
+                  className="flex w-full items-center justify-between gap-3 p-3 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    {isCollapsed ? (
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    <Folder className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">
+                      {group.name === 'standalone' ? 'Standalone' : group.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {group.containers.length}
+                    </Badge>
+                    {group.runningCount > 0 && (
+                      <Badge variant="default" className="bg-green-600 text-xs">
+                        {group.runningCount} running
+                      </Badge>
+                    )}
+                  </div>
+                </button>
+
+                {/* 컨테이너 목록 (접힘 상태가 아닐 때만) */}
+                {!isCollapsed && (
+                  <div className="space-y-2 border-t p-3">
+                    {group.containers.map((container) => (
                       <ContainerRow
+                        key={container.id}
                         container={container}
                         onAction={handleAction}
                         isLoading={actionLoading === container.name}
                         canControl={canControlContainers}
                       />
-                    </div>
-                  );
-                })}
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          ) : (
-            // 일반 리스트: 20개 미만일 때 사용 (가상화 오버헤드 방지)
-            <div className="space-y-3">
-              {filteredContainers.map((container) => (
-                <ContainerRow
-                  key={container.id}
-                  container={container}
-                  onAction={handleAction}
-                  isLoading={actionLoading === container.name}
-                  canControl={canControlContainers}
-                />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
