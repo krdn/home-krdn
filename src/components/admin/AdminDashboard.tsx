@@ -14,10 +14,12 @@ import {
   Activity,
   Bell,
   Box,
-  ExternalLink,
+  Rocket,
+  Code,
   FolderKanban,
   Layers,
   Network,
+  Link2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -30,6 +32,7 @@ import { AdminOverview } from '@/components/admin/AdminOverview';
 import { RoleBanner } from '@/components/admin/RoleBanner';
 import { WidgetCustomizer } from '@/components/admin/WidgetCustomizer';
 import { getRunningServices } from '@/config/services';
+import { getServiceProdUrl, getServiceDevUrl } from '@/lib/service-utils';
 import { useDashboardStore, parseDashboardLayout } from '@/stores/dashboardStore';
 import { useSettings } from '@/hooks/useSettings';
 import type { WidgetId } from '@/types/dashboard';
@@ -71,17 +74,32 @@ const RunningServicesCard = memo(function RunningServicesCard() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {service.url && (
+                <div className="flex items-center gap-1">
+                  {getServiceProdUrl(service) && (
                     <Button asChild variant="ghost" size="sm">
                       <a
-                        href={service.url}
+                        href={getServiceProdUrl(service)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1"
-                        aria-label={`${service.name} 열기 (새 탭)`}
+                        aria-label={`${service.name} 운영 환경 열기 (새 탭)`}
+                        title="Production"
                       >
-                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                        <Rocket className="h-4 w-4 text-green-500" aria-hidden="true" />
+                      </a>
+                    </Button>
+                  )}
+                  {getServiceDevUrl(service) && (
+                    <Button asChild variant="ghost" size="sm">
+                      <a
+                        href={getServiceDevUrl(service)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1"
+                        aria-label={`${service.name} 개발 환경 열기 (새 탭)`}
+                        title="Development"
+                      >
+                        <Code className="h-4 w-4 text-orange-500" aria-hidden="true" />
                       </a>
                     </Button>
                   )}
@@ -101,6 +119,103 @@ const RunningServicesCard = memo(function RunningServicesCard() {
 });
 
 RunningServicesCard.displayName = 'RunningServicesCard';
+
+/**
+ * URL Quick Reference 위젯 컴포넌트
+ * 실행 중인 서비스의 Production/Development URL을 테이블 형태로 표시
+ */
+const UrlQuickReference = memo(function UrlQuickReference() {
+  const services = getRunningServices().filter(
+    (s) => s.urls || s.port || s.url
+  );
+
+  if (services.length === 0) {
+    return null;
+  }
+
+  return (
+    <Card className="h-full">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="flex items-center gap-2">
+          <Link2 className="h-5 w-5" aria-hidden="true" />
+          URL Quick Reference
+        </CardTitle>
+        <Button asChild variant="outline" size="sm">
+          <Link href="/ports">URL Registry</Link>
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b text-left text-muted-foreground">
+                <th className="pb-2 font-medium">Service</th>
+                <th className="pb-2 font-medium">Port</th>
+                <th className="pb-2 font-medium">Production</th>
+                <th className="pb-2 font-medium">Development</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {services.map((service) => {
+                const prodUrl = getServiceProdUrl(service);
+                const devUrl = getServiceDevUrl(service);
+
+                return (
+                  <tr key={service.id} className="hover:bg-muted/50">
+                    <td className="py-2 pr-4">
+                      <span className="font-medium">{service.name}</span>
+                    </td>
+                    <td className="py-2 pr-4">
+                      {service.port && (
+                        <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                          {service.port}
+                        </code>
+                      )}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {prodUrl && (
+                        <a
+                          href={prodUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-green-600 hover:text-green-700 hover:underline dark:text-green-400"
+                          title="Open production URL"
+                        >
+                          <Rocket className="h-3.5 w-3.5" aria-hidden="true" />
+                          <span className="max-w-[140px] truncate">
+                            {prodUrl.replace(/^https?:\/\//, '')}
+                          </span>
+                        </a>
+                      )}
+                    </td>
+                    <td className="py-2">
+                      {devUrl && (
+                        <a
+                          href={devUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 hover:underline dark:text-orange-400"
+                          title="Open development URL"
+                        >
+                          <Code className="h-3.5 w-3.5" aria-hidden="true" />
+                          <span className="font-mono text-xs">
+                            :{service.port || devUrl.split(':').pop()}
+                          </span>
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+UrlQuickReference.displayName = 'UrlQuickReference';
 
 /**
  * Quick Links 섹션 컴포넌트
@@ -234,6 +349,11 @@ const WIDGET_COMPONENTS: Record<WidgetId, () => ReactNode> = {
     </section>
   ),
   'quick-links': () => <QuickLinksSection />,
+  'url-reference': () => (
+    <section aria-label="URL Quick Reference">
+      <UrlQuickReference />
+    </section>
+  ),
 };
 
 /**

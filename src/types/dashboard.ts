@@ -17,7 +17,8 @@ export type WidgetId =
   | 'containers' // ContainerStats
   | 'services' // RunningServicesCard
   | 'overview' // AdminOverview
-  | 'quick-links'; // Quick Access
+  | 'quick-links' // Quick Access
+  | 'url-reference'; // URL Quick Reference
 
 /**
  * 위젯 설정
@@ -93,6 +94,11 @@ export const WIDGET_META: Record<WidgetId, WidgetMeta> = {
     name: 'Quick Links',
     description: '빠른 접근 링크',
   },
+  'url-reference': {
+    id: 'url-reference',
+    name: 'URL Quick Reference',
+    description: '서비스 URL 빠른 참조',
+  },
 };
 
 /**
@@ -106,7 +112,8 @@ export const DEFAULT_DASHBOARD_LAYOUT: DashboardLayout = {
     { id: 'metrics-charts', visible: true, order: 1 },
     { id: 'containers', visible: true, order: 2 },
     { id: 'services', visible: true, order: 3 },
-    { id: 'overview', visible: true, order: 4 },
-    { id: 'quick-links', visible: true, order: 5 },
+    { id: 'url-reference', visible: true, order: 4 },
+    { id: 'overview', visible: true, order: 5 },
+    { id: 'quick-links', visible: true, order: 6 },
   ],
 };
