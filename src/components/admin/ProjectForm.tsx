@@ -44,6 +44,8 @@ const linkTypes = [
   { value: "demo", label: "Demo" },
   { value: "docs", label: "Docs" },
   { value: "api", label: "API" },
+  { value: "production", label: "Production (운영)" },
+  { value: "development", label: "Development (개발)" },
   { value: "other", label: "Other" },
 ] as const;
 

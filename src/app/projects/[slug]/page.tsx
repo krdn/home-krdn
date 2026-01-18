@@ -9,6 +9,8 @@ import {
   Globe,
   Calendar,
   CheckCircle2,
+  Rocket,
+  Code,
 } from "lucide-react";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 import { Button } from "@/components/ui/Button";
@@ -61,6 +63,8 @@ const linkIcons: Record<ProjectLink["type"], typeof Github> = {
   docs: FileText,
   api: FileText,
   other: ExternalLink,
+  production: Rocket,
+  development: Code,
 };
 
 // 링크 타입별 레이블 매핑
@@ -70,6 +74,19 @@ const linkLabels: Record<ProjectLink["type"], string> = {
   docs: "Documentation",
   api: "API Docs",
   other: "Link",
+  production: "Production",
+  development: "Development",
+};
+
+// 링크 타입별 버튼 색상 클래스
+const linkColors: Record<ProjectLink["type"], string> = {
+  github: "",
+  demo: "",
+  docs: "",
+  api: "",
+  other: "",
+  production: "text-green-600 hover:text-green-700",
+  development: "text-orange-600 hover:text-orange-700",
 };
 
 // 기술 스택 색상 매핑
@@ -210,11 +227,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap gap-2">
             {project.links.map((link) => {
               const LinkIcon = linkIcons[link.type];
+              const isPrimary = link.type === "production" || link.type === "demo";
+              const iconColor = link.type === "production"
+                ? "text-green-500"
+                : link.type === "development"
+                  ? "text-orange-500"
+                  : "";
               return (
                 <Button
                   key={link.url}
                   asChild
-                  variant={link.type === "demo" ? "default" : "outline"}
+                  variant={isPrimary ? "default" : "outline"}
                   className="gap-2"
                 >
                   <a
@@ -222,7 +245,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <LinkIcon className="h-4 w-4" />
+                    <LinkIcon className={cn("h-4 w-4", iconColor)} />
                     {link.label || linkLabels[link.type]}
                   </a>
                 </Button>

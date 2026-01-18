@@ -2,6 +2,12 @@ export type ServiceStatus = "running" | "stopped" | "starting" | "error" | "unkn
 
 export type ServiceCategory = "ai" | "n8n" | "infrastructure";
 
+// 운영/개발 환경별 URL 구조
+export interface ServiceUrls {
+  production?: string;   // 운영 환경 URL (예: https://gonsai.krdn.kr)
+  development?: string;  // 개발 환경 URL (예: http://localhost:8081)
+}
+
 export interface Service {
   id: string;
   name: string;
@@ -12,7 +18,8 @@ export interface Service {
   techStack: string[];
   port?: number;
   path?: string;
-  url?: string;
+  url?: string;           // 기존 필드 유지 (하위 호환성)
+  urls?: ServiceUrls;     // 환경별 URL 구조
   docsUrl?: string;
   githubUrl?: string;
   features: string[];

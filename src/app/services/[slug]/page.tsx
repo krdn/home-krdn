@@ -2,13 +2,16 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
-  ExternalLink,
+  Rocket,
+  Code,
   FolderOpen,
   Server,
   Box,
+  Globe,
 } from "lucide-react";
 import { services, getServiceById } from "@/config/services";
 import { getIcon } from "@/lib/icons";
+import { getServiceProdUrl, getServiceDevUrl } from "@/lib/service-utils";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/services/StatusBadge";
@@ -46,6 +49,8 @@ export default async function ServiceDetailPage({ params }: PageProps) {
   }
 
   const IconComponent = getIcon(service.icon);
+  const prodUrl = getServiceProdUrl(service);
+  const devUrl = getServiceDevUrl(service);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -89,19 +94,31 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           </div>
 
           <div className="flex gap-2">
-            {service.url && (
+            {prodUrl && (
               <Button asChild className="gap-2">
                 <a
-                  href={service.url}
+                  href={prodUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Open App
-                  <ExternalLink className="h-4 w-4" />
+                  <Rocket className="h-4 w-4" />
+                  Production
                 </a>
               </Button>
             )}
-            <Button asChild variant="outline">
+            {devUrl && (
+              <Button asChild variant="outline" className="gap-2">
+                <a
+                  href={devUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Code className="h-4 w-4" />
+                  Development
+                </a>
+              </Button>
+            )}
+            <Button asChild variant="ghost">
               <Link href="/admin">관리</Link>
             </Button>
           </div>
@@ -163,6 +180,34 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 <Box className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">Containers:</span>
                 <span>{service.containers.length}</span>
+              </div>
+            )}
+            {prodUrl && (
+              <div className="flex items-center gap-2 text-sm">
+                <Rocket className="h-4 w-4 text-green-500" />
+                <span className="text-muted-foreground">Production:</span>
+                <a
+                  href={prodUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-primary hover:underline truncate max-w-[200px]"
+                >
+                  {prodUrl}
+                </a>
+              </div>
+            )}
+            {devUrl && (
+              <div className="flex items-center gap-2 text-sm">
+                <Code className="h-4 w-4 text-orange-500" />
+                <span className="text-muted-foreground">Development:</span>
+                <a
+                  href={devUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-primary hover:underline truncate max-w-[200px]"
+                >
+                  {devUrl}
+                </a>
               </div>
             )}
           </CardContent>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Play, Square, RefreshCw } from "lucide-react";
+import { Rocket, Code, Play, Square, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/services/StatusBadge";
 import { TechBadge } from "@/components/services/TechBadge";
 import { services } from "@/config/services";
+import { getServiceProdUrl, getServiceDevUrl } from "@/lib/service-utils";
 import { CATEGORY_LABELS } from "@/types/service";
 import { cn } from "@/lib/utils";
 
@@ -90,16 +91,31 @@ export default function AdminServicesPage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                  {service.url && (
+                  {getServiceProdUrl(service) && (
                     <Button asChild variant="outline" size="sm">
                       <a
-                        href={service.url}
+                        href={getServiceProdUrl(service)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="gap-2"
+                        title="Production (운영)"
                       >
-                        <ExternalLink className="h-4 w-4" />
-                        Open
+                        <Rocket className="h-4 w-4 text-green-500" />
+                        Prod
+                      </a>
+                    </Button>
+                  )}
+                  {getServiceDevUrl(service) && (
+                    <Button asChild variant="ghost" size="sm">
+                      <a
+                        href={getServiceDevUrl(service)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gap-2"
+                        title="Development (개발)"
+                      >
+                        <Code className="h-4 w-4 text-orange-500" />
+                        Dev
                       </a>
                     </Button>
                   )}

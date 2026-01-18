@@ -1,75 +1,6 @@
 {
   "projects": [
     {
-      "id": "home-krdn",
-      "slug": "home-krdn",
-      "name": "Home KRDN",
-      "description": "개인 홈서버 대시보드 및 프로젝트 갤러리",
-      "longDescription": "Next.js 16과 React 19를 기반으로 구축된 개인 홈서버 관리 대시보드입니다. 실시간 시스템 모니터링, Docker 컨테이너 관리, 서비스 상태 확인, 프로젝트 갤러리 등의 기능을 제공합니다.",
-      "category": "web",
-      "status": "active",
-      "techStack": [
-        {
-          "name": "Next.js 16",
-          "icon": "nextjs",
-          "url": "https://nextjs.org"
-        },
-        {
-          "name": "React 19",
-          "icon": "react",
-          "url": "https://react.dev"
-        },
-        {
-          "name": "TypeScript",
-          "icon": "typescript",
-          "url": "https://typescriptlang.org"
-        },
-        {
-          "name": "Tailwind CSS",
-          "icon": "tailwindcss",
-          "url": "https://tailwindcss.com"
-        },
-        {
-          "name": "Framer Motion",
-          "icon": "framer",
-          "url": "https://framer.com/motion"
-        }
-      ],
-      "links": [
-        {
-          "type": "github",
-          "url": "https://github.com/krdn/home-krdn",
-          "label": "GitHub"
-        },
-        {
-          "type": "demo",
-          "url": "https://home.krdn.kr",
-          "label": "Live Demo"
-        }
-      ],
-      "images": [
-        {
-          "src": "/images/projects/home-krdn-dashboard.svg",
-          "alt": "Home KRDN 대시보드 메인 화면",
-          "isPrimary": true
-        },
-        {
-          "src": "/images/projects/home-krdn-services.svg",
-          "alt": "서비스 관리 화면"
-        }
-      ],
-      "features": [
-        "실시간 시스템 리소스 모니터링 (CPU, Memory, Disk)",
-        "Docker 컨테이너 상태 관리",
-        "서비스별 상세 정보 및 링크 제공",
-        "반응형 디자인 및 다크 모드 지원",
-        "프로젝트 갤러리 및 포트폴리오"
-      ],
-      "startDate": "2024-12-01",
-      "featured": true,
-      "order": 1
-    },
-    {
       "id": "docker-n8n",
       "slug": "docker-n8n",
       "name": "Docker n8n Environment",
@@ -327,9 +258,14 @@
           "label": "GitHub"
         },
         {
-          "type": "demo",
+          "type": "production",
           "url": "https://news.krdn.kr",
-          "label": "Live Demo"
+          "label": "운영"
+        },
+        {
+          "type": "development",
+          "url": "http://localhost:3010",
+          "label": "개발"
         }
       ],
       "images": [
@@ -419,7 +355,125 @@
       "order": 7
     },
     {
-      "id": "8e59b9b9-da3f-45d7-8424-9bf674b22922",
+      "id": "92863b26-74a3-45cc-8fff-c34ee861c9fd",
+      "slug": "home-krdn",
+      "name": "home-krdn",
+      "description": "홈서버의 모든 서비스, 컨테이너, 시스템 리소스를 한눈에 파악하고 관리할 수 있는 **통합 모니터링 대시보드**입니다.",
+      "category": "web",
+      "status": "active",
+      "techStack": [
+        {
+          "name": "TypeScript",
+          "icon": "typescript",
+          "url": "https://typescriptlang.org"
+        },
+        {
+          "name": "Next.js",
+          "icon": "nextjs",
+          "url": "https://nextjs.org"
+        },
+        {
+          "name": "React",
+          "icon": "react",
+          "url": "https://react.dev"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "tailwindcss",
+          "url": "https://tailwindcss.com"
+        },
+        {
+          "name": "Zustand",
+          "icon": "zustand"
+        },
+        {
+          "name": "Framer Motion",
+          "icon": "framer",
+          "url": "https://www.framer.com/motion"
+        },
+        {
+          "name": "Prisma",
+          "icon": "prisma",
+          "url": "https://prisma.io"
+        },
+        {
+          "name": "SQLite",
+          "icon": "sqlite"
+        },
+        {
+          "name": "Vitest",
+          "icon": "vitest",
+          "url": "https://vitest.dev"
+        },
+        {
+          "name": "Playwright",
+          "icon": "playwright",
+          "url": "https://playwright.dev"
+        },
+        {
+          "name": "Zod",
+          "icon": "zod",
+          "url": "https://zod.dev"
+        },
+        {
+          "name": "React Query",
+          "icon": "reactquery",
+          "url": "https://tanstack.com/query"
+        },
+        {
+          "name": "Radix UI",
+          "icon": "radix",
+          "url": "https://radix-ui.com"
+        },
+        {
+          "name": "Lucide Icons",
+          "icon": "lucide",
+          "url": "https://lucide.dev"
+        },
+        {
+          "name": "WebSocket",
+          "icon": "websocket"
+        }
+      ],
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/home-krdn",
+          "label": "GitHub"
+        },
+        {
+          "type": "production",
+          "url": "https://home.krdn.kr",
+          "label": "운영"
+        },
+        {
+          "type": "development",
+          "url": "http://localhost:3001",
+          "label": "개발"
+        }
+      ],
+      "images": [
+        {
+          "src": "/images/projects/home-krdn-dashboard.svg",
+          "alt": "Home KRDN 대시보드",
+          "isPrimary": true
+        }
+      ],
+      "features": [
+        "TypeScript 기반 타입 안전 개발",
+        "Next.js 기반 풀스택 웹 애플리케이션",
+        "React 컴포넌트 기반 UI",
+        "Prisma ORM 기반 데이터베이스 연동",
+        "단위 테스트 환경 구성",
+        "E2E 테스트 자동화",
+        "실시간 양방향 통신 지원",
+        "Tailwind CSS 유틸리티 스타일링"
+      ],
+      "startDate": "2026-01-06",
+      "featured": false
+    },
+    {
+      "id": "f971e89f-ea03-4e1f-8194-fedf7dad86be",
       "slug": "gonsai2",
       "name": "gonsai2",
       "description": "AI-Optimized Project with n8n and MongoDB integration",
@@ -473,9 +527,14 @@
           "label": "GitHub"
         },
         {
-          "type": "demo",
+          "type": "production",
           "url": "https://gonsai.krdn.kr",
-          "label": "Live Demo"
+          "label": "운영"
+        },
+        {
+          "type": "development",
+          "url": "http://localhost:8081",
+          "label": "개발"
         }
       ],
       "images": [
@@ -499,5 +558,5 @@
       "featured": false
     }
   ],
-  "lastUpdated": "2026-01-18T01:35:54.633Z"
+  "lastUpdated": "2026-01-18T05:30:11.478Z"
 }

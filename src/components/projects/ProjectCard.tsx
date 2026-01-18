@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Github, FileText, Globe } from "lucide-react";
+import { ExternalLink, Github, FileText, Globe, Rocket, Code } from "lucide-react";
 import { ProjectImage } from "./ProjectImage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -27,6 +27,8 @@ const linkIcons: Record<ProjectLink["type"], typeof Github> = {
   docs: FileText,
   api: FileText,
   other: ExternalLink,
+  production: Rocket,
+  development: Code,
 };
 
 // 기술 스택 색상 매핑
@@ -63,8 +65,11 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
   const primaryImage =
     project.images.find((img) => img.isPrimary) || project.images[0];
 
-  // GitHub와 Demo 링크 분리
+  // GitHub와 환경별 링크 분리
   const githubLink = project.links.find((link) => link.type === "github");
+  const prodLink = project.links.find((link) => link.type === "production");
+  const devLink = project.links.find((link) => link.type === "development");
+  // demo 링크는 production이 없을 때 폴백으로 사용
   const demoLink = project.links.find((link) => link.type === "demo");
 
   // 카드 클릭 시 상세 페이지로 이동
@@ -187,7 +192,34 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
                   </a>
                 </Button>
               )}
-              {demoLink && (
+              {prodLink && (
+                <Button asChild variant="ghost" size="sm">
+                  <a
+                    href={prodLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${project.name} 운영 환경 열기`}
+                    title="Production (운영)"
+                  >
+                    <Rocket className="h-4 w-4 text-green-500" aria-hidden="true" />
+                  </a>
+                </Button>
+              )}
+              {devLink && (
+                <Button asChild variant="ghost" size="sm">
+                  <a
+                    href={devLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${project.name} 개발 환경 열기`}
+                    title="Development (개발)"
+                  >
+                    <Code className="h-4 w-4 text-orange-500" aria-hidden="true" />
+                  </a>
+                </Button>
+              )}
+              {/* production이 없고 demo만 있는 경우 demo 링크 표시 */}
+              {!prodLink && demoLink && (
                 <Button asChild variant="ghost" size="sm">
                   <a
                     href={demoLink.url}

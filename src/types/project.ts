@@ -13,9 +13,12 @@ export interface TechStack {
   url?: string;
 }
 
+// 프로젝트 링크 타입
+export type ProjectLinkType = "github" | "demo" | "docs" | "api" | "other" | "production" | "development";
+
 // 프로젝트 링크
 export interface ProjectLink {
-  type: "github" | "demo" | "docs" | "api" | "other";
+  type: ProjectLinkType;
   url: string;
   label?: string;
 }
@@ -102,7 +105,7 @@ const techStackSchema = z.object({
 
 // 프로젝트 링크 스키마
 const projectLinkSchema = z.object({
-  type: z.enum(["github", "demo", "docs", "api", "other"]),
+  type: z.enum(["github", "demo", "docs", "api", "other", "production", "development"]),
   url: z.string().url("유효한 URL을 입력하세요"),
   label: z.string().optional(),
 });

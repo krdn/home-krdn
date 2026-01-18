@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { Rocket, Code } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "./StatusBadge";
 import { TechBadge } from "./TechBadge";
 import { getIcon } from "@/lib/icons";
+import { getServiceProdUrl, getServiceDevUrl } from "@/lib/service-utils";
 import type { Service } from "@/types/service";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,8 @@ interface ServiceCardProps {
 
 export function ServiceCard({ service, showControls = true }: ServiceCardProps) {
   const IconComponent = getIcon(service.icon);
+  const prodUrl = getServiceProdUrl(service);
+  const devUrl = getServiceDevUrl(service);
 
   return (
     <Card hover className="flex flex-col h-full">
@@ -67,15 +70,27 @@ export function ServiceCard({ service, showControls = true }: ServiceCardProps) 
             <Button asChild variant="outline" size="sm" className="flex-1">
               <Link href={`/services/${service.id}`}>상세 보기</Link>
             </Button>
-            {service.url && (
+            {prodUrl && (
               <Button asChild variant="ghost" size="sm">
                 <a
-                  href={service.url}
+                  href={prodUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="Open service"
+                  title="Production (운영)"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <Rocket className="h-4 w-4 text-green-500" />
+                </a>
+              </Button>
+            )}
+            {devUrl && (
+              <Button asChild variant="ghost" size="sm">
+                <a
+                  href={devUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Development (개발)"
+                >
+                  <Code className="h-4 w-4 text-orange-500" />
                 </a>
               </Button>
             )}

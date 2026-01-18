@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { Rocket, Code, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/services/StatusBadge";
 import { TechBadge } from "@/components/services/TechBadge";
 import { getFeaturedServices } from "@/config/services";
+import { getServiceProdUrl, getServiceDevUrl } from "@/lib/service-utils";
 
 export function FeaturedServices() {
   const featuredServices = getFeaturedServices();
@@ -62,14 +63,27 @@ export function FeaturedServices() {
                   <Button asChild variant="outline" size="sm" className="flex-1">
                     <Link href={`/services/${service.id}`}>상세 보기</Link>
                   </Button>
-                  {service.url && (
+                  {getServiceProdUrl(service) && (
                     <Button asChild variant="ghost" size="sm">
                       <a
-                        href={service.url}
+                        href={getServiceProdUrl(service)}
                         target="_blank"
                         rel="noopener noreferrer"
+                        title="Production (운영)"
                       >
-                        <ExternalLink className="h-4 w-4" />
+                        <Rocket className="h-4 w-4 text-green-500" />
+                      </a>
+                    </Button>
+                  )}
+                  {getServiceDevUrl(service) && (
+                    <Button asChild variant="ghost" size="sm">
+                      <a
+                        href={getServiceDevUrl(service)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Development (개발)"
+                      >
+                        <Code className="h-4 w-4 text-orange-500" />
                       </a>
                     </Button>
                   )}

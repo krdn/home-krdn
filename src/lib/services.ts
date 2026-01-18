@@ -8,7 +8,7 @@
 import "server-only";
 import { promises as fs } from "fs";
 import path from "path";
-import type { Service, ServiceCategory, ServiceStatus } from "@/types/service";
+import type { Service, ServiceCategory, ServiceStatus, ServiceUrls } from "@/types/service";
 import { syncServicePort } from "@/lib/port-service";
 
 // 데이터 파일 경로
@@ -32,6 +32,7 @@ export interface CreateServiceInput {
   port?: number;
   path?: string;
   url?: string;
+  urls?: ServiceUrls;  // 환경별 URL 추가
   docsUrl?: string;
   githubUrl?: string;
   features: string[];

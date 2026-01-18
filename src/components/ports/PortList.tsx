@@ -16,7 +16,8 @@ import {
   Search,
   Edit,
   Trash2,
-  ExternalLink,
+  Rocket,
+  Code,
   AlertCircle,
   ChevronDown,
 } from 'lucide-react';
@@ -307,29 +308,29 @@ export function PortList({ onEdit, readOnly = false }: PortListProps) {
 
                       {/* URL */}
                       <td className="hidden py-3 pr-4 lg:table-cell">
-                        <div className="flex gap-1">
-                          {port.internalUrl && (
-                            <a
-                              href={port.internalUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                              title="내부 URL"
-                            >
-                              Internal
-                              <ExternalLink className="h-3 w-3" />
-                            </a>
-                          )}
+                        <div className="flex gap-2">
                           {port.externalUrl && (
                             <a
                               href={port.externalUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                              title="외부 URL"
+                              className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 hover:underline"
+                              title="Production (운영)"
                             >
-                              External
-                              <ExternalLink className="h-3 w-3" />
+                              <Rocket className="h-3 w-3" />
+                              Prod
+                            </a>
+                          )}
+                          {port.internalUrl && (
+                            <a
+                              href={port.internalUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 hover:underline"
+                              title="Development (개발)"
+                            >
+                              <Code className="h-3 w-3" />
+                              Dev
                             </a>
                           )}
                           {!port.internalUrl && !port.externalUrl && (
