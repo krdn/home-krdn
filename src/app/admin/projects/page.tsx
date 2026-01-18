@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Pencil, Trash2, Star, ExternalLink, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Star,
+  ExternalLink,
+  Loader2,
+  List,
+  FolderSearch,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -19,9 +28,29 @@ const ProjectForm = dynamic(
         </div>
       </div>
     ),
-    ssr: false, // 모달은 클라이언트에서만 필요
+    ssr: false,
   }
 );
+
+// Dynamic Import: ProjectScanner도 지연 로딩
+const ProjectScanner = dynamic(
+  () =>
+    import("@/components/admin/ProjectScanner").then(
+      (mod) => mod.ProjectScanner
+    ),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center py-12">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>스캐너 로딩 중...</span>
+        </div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
 import {
   CATEGORY_LABELS,
   STATUS_LABELS,
@@ -34,10 +63,15 @@ import { cn } from "@/lib/utils";
 
 /**
  * Admin 프로젝트 관리 페이지
- * 프로젝트 CRUD 기능을 제공하는 관리 페이지입니다.
+ * 프로젝트 CRUD 기능과 폴더 스캔 기능을 제공하는 관리 페이지입니다.
  */
 
+type TabType = "list" | "scan";
+
 export default function AdminProjectsPage() {
+  // 현재 탭 상태
+  const [activeTab, setActiveTab] = useState<TabType>("list");
+
   // 프로젝트 목록 상태
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -164,9 +198,14 @@ export default function AdminProjectsPage() {
         err instanceof Error ? err.message : "저장에 실패했습니다",
         "error"
       );
-      throw err; // 폼 에러 처리를 위해 다시 throw
+      throw err;
     }
   };
+
+  // 스캐너에서 임포트 성공 시 목록 새로고침
+  const handleImportSuccess = useCallback(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   return (
     <div className="space-y-6">
@@ -189,153 +228,204 @@ export default function AdminProjectsPage() {
         <div>
           <h1 className="text-2xl font-bold sm:text-3xl">Projects</h1>
           <p className="mt-1 text-muted-foreground">
-            프로젝트 관리 및 CRUD 작업
+            프로젝트 관리 및 폴더 스캔
           </p>
         </div>
 
-        <Button onClick={handleCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          새 프로젝트
-        </Button>
+        {activeTab === "list" && (
+          <Button onClick={handleCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            새 프로젝트
+          </Button>
+        )}
       </div>
 
-      {/* Error State */}
-      {error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
-          {error}
-        </div>
-      )}
+      {/* 탭 네비게이션 */}
+      <div className="border-b">
+        <nav className="-mb-px flex gap-4">
+          <button
+            onClick={() => setActiveTab("list")}
+            className={cn(
+              "flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors",
+              activeTab === "list"
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
+            )}
+          >
+            <List className="h-4 w-4" />
+            프로젝트 목록
+            <Badge variant="secondary" className="ml-1">
+              {projects.length}
+            </Badge>
+          </button>
+          <button
+            onClick={() => setActiveTab("scan")}
+            className={cn(
+              "flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors",
+              activeTab === "scan"
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
+            )}
+          >
+            <FolderSearch className="h-4 w-4" />
+            폴더에서 가져오기
+          </button>
+        </nav>
+      </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
-      )}
+      {/* 탭 컨텐츠: 프로젝트 목록 */}
+      {activeTab === "list" && (
+        <>
+          {/* Error State */}
+          {error && (
+            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
+              {error}
+            </div>
+          )}
 
-      {/* Projects List */}
-      {!isLoading && !error && (
-        <div className="space-y-4">
-          {projects.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <p className="text-muted-foreground">
-                  등록된 프로젝트가 없습니다
-                </p>
-                <Button onClick={handleCreate} variant="outline" className="mt-4">
-                  첫 프로젝트 만들기
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            projects.map((project) => (
-              <Card key={project.id}>
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    {/* Project Info */}
-                    <div className="flex-1 space-y-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {project.featured && (
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        )}
-                        <h3 className="text-lg font-semibold">
-                          {project.name}
-                        </h3>
-                        <Badge variant="outline">
-                          {CATEGORY_LABELS[project.category]}
-                        </Badge>
-                        <Badge
-                          className={cn(
-                            "text-white",
-                            STATUS_COLORS[project.status]
-                          )}
-                        >
-                          {STATUS_LABELS[project.status]}
-                        </Badge>
-                      </div>
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+          )}
 
-                      <p className="text-sm text-muted-foreground">
-                        {project.description}
-                      </p>
-
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                        <span className="font-mono">/{project.slug}</span>
-                        {project.order !== undefined && (
-                          <span>| Order: {project.order}</span>
-                        )}
-                        {project.techStack.length > 0 && (
-                          <span>
-                            | Tech: {project.techStack.map((t) => t.name).join(", ")}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Links */}
-                      {project.links.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {project.links.map((link, idx) => (
-                            <a
-                              key={idx}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-1 text-xs hover:bg-secondary/80"
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              {link.label || link.type}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(project)}
-                        className="gap-2"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        수정
+          {/* Projects List */}
+          {!isLoading && !error && (
+            <div className="space-y-4">
+              {projects.length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <p className="text-muted-foreground">
+                      등록된 프로젝트가 없습니다
+                    </p>
+                    <div className="mt-4 flex gap-2">
+                      <Button onClick={handleCreate} variant="outline">
+                        직접 추가하기
                       </Button>
+                      <Button onClick={() => setActiveTab("scan")}>
+                        폴더에서 가져오기
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                projects.map((project) => (
+                  <Card key={project.id}>
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        {/* Project Info */}
+                        <div className="flex-1 space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            {project.featured && (
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            )}
+                            <h3 className="text-lg font-semibold">
+                              {project.name}
+                            </h3>
+                            <Badge variant="outline">
+                              {CATEGORY_LABELS[project.category]}
+                            </Badge>
+                            <Badge
+                              className={cn(
+                                "text-white",
+                                STATUS_COLORS[project.status]
+                              )}
+                            >
+                              {STATUS_LABELS[project.status]}
+                            </Badge>
+                          </div>
 
-                      {deletingId === project.id ? (
+                          <p className="text-sm text-muted-foreground">
+                            {project.description}
+                          </p>
+
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                            <span className="font-mono">/{project.slug}</span>
+                            {project.order !== undefined && (
+                              <span>| Order: {project.order}</span>
+                            )}
+                            {project.techStack.length > 0 && (
+                              <span>
+                                | Tech:{" "}
+                                {project.techStack.map((t) => t.name).join(", ")}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Links */}
+                          {project.links.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-2">
+                              {project.links.map((link, idx) => (
+                                <a
+                                  key={idx}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-1 text-xs hover:bg-secondary/80"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  {link.label || link.type}
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Actions */}
                         <div className="flex items-center gap-2">
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(project.id)}
-                          >
-                            확인
-                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setDeletingId(null)}
+                            onClick={() => handleEdit(project)}
+                            className="gap-2"
                           >
-                            취소
+                            <Pencil className="h-4 w-4" />
+                            수정
                           </Button>
+
+                          {deletingId === project.id ? (
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDelete(project.id)}
+                              >
+                                확인
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setDeletingId(null)}
+                              >
+                                취소
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setDeletingId(project.id)}
+                              className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              삭제
+                            </Button>
+                          )}
                         </div>
-                      ) : (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setDeletingId(project.id)}
-                          className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          삭제
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
           )}
-        </div>
+        </>
+      )}
+
+      {/* 탭 컨텐츠: 폴더 스캔 */}
+      {activeTab === "scan" && (
+        <ProjectScanner onImportSuccess={handleImportSuccess} />
       )}
 
       {/* Project Form Dialog */}

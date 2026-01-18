@@ -22,6 +22,8 @@ import {
   CreatePortInputSchema,
   UpdatePortInputSchema,
   isWellKnownPort,
+  PORT_CATEGORY_RANGES,
+  PORT_ENVIRONMENT_OFFSET,
 } from '@/types/port'
 
 // ============================================================
@@ -549,4 +551,267 @@ export async function countPorts(filters?: PortFilterOptions): Promise<number> {
   }
 
   return prisma.portRegistry.count({ where })
+}
+
+// ============================================================
+// Services 동기화 함수
+// ============================================================
+
+/**
+ * Service 카테고리를 Port 카테고리로 매핑합니다.
+ */
+function mapServiceCategoryToPortCategory(
+  serviceCategory: string
+): PortCategory {
+  switch (serviceCategory) {
+    case 'ai':
+      return 'ai'
+    case 'n8n':
+      return 'n8n'
+    case 'infrastructure':
+      return 'system'
+    default:
+      return 'other'
+  }
+}
+
+/**
+ * Service 데이터에서 포트를 등록하거나 업데이트합니다.
+ * 포트가 이미 존재하면 정보를 업데이트하고, 없으면 새로 생성합니다.
+ *
+ * @param service Service 데이터
+ * @returns 생성/업데이트된 포트 또는 null (포트 없는 경우)
+ */
+export async function syncServicePort(service: {
+  id: string
+  name: string
+  description: string
+  category: string
+  status: string
+  port?: number
+  url?: string
+  path?: string
+}): Promise<PortRegistryDto | null> {
+  // 포트가 없으면 건너뛰기
+  if (!service.port) {
+    return null
+  }
+
+  // 기존 포트 확인
+  const existing = await prisma.portRegistry.findUnique({
+    where: { port: service.port },
+    include: {
+      createdBy: {
+        select: { username: true },
+      },
+    },
+  })
+
+  const portCategory = mapServiceCategoryToPortCategory(service.category)
+  const environment: PortEnvironment = service.status === 'running' ? 'production' : 'development'
+
+  if (existing) {
+    // 기존 포트 업데이트
+    const updated = await prisma.portRegistry.update({
+      where: { port: service.port },
+      data: {
+        projectId: service.id,
+        projectName: service.name,
+        description: service.description,
+        category: portCategory,
+        environment,
+        status: service.status === 'running' ? 'active' : 'reserved',
+        externalUrl: service.url ?? null,
+      },
+      include: {
+        createdBy: {
+          select: { username: true },
+        },
+      },
+    })
+    return toPortRegistryDto(updated)
+  }
+
+  // 새 포트 생성
+  const created = await prisma.portRegistry.create({
+    data: {
+      port: service.port,
+      protocol: 'tcp',
+      projectId: service.id,
+      projectName: service.name,
+      description: service.description,
+      category: portCategory,
+      environment,
+      status: service.status === 'running' ? 'active' : 'reserved',
+      internalUrl: `http://localhost:${service.port}`,
+      externalUrl: service.url ?? null,
+    },
+    include: {
+      createdBy: {
+        select: { username: true },
+      },
+    },
+  })
+
+  return toPortRegistryDto(created)
+}
+
+/**
+ * 모든 Services의 포트를 Port Registry에 동기화합니다.
+ *
+ * @param services Services 배열
+ * @returns 동기화 결과 (생성/업데이트/스킵 개수)
+ */
+export async function syncAllServicesPorts(services: Array<{
+  id: string
+  name: string
+  description: string
+  category: string
+  status: string
+  port?: number
+  url?: string
+  path?: string
+}>): Promise<{ created: number; updated: number; skipped: number }> {
+  let created = 0
+  let updated = 0
+  let skipped = 0
+
+  for (const service of services) {
+    if (!service.port) {
+      skipped++
+      continue
+    }
+
+    const existing = await prisma.portRegistry.findUnique({
+      where: { port: service.port },
+    })
+
+    await syncServicePort(service)
+
+    if (existing) {
+      updated++
+    } else {
+      created++
+    }
+  }
+
+  return { created, updated, skipped }
+}
+
+// ============================================================
+// 포트 추천 함수
+// ============================================================
+
+/**
+ * 포트 추천 결과 타입
+ */
+export interface PortRecommendation {
+  port: number
+  category: PortCategory
+  environment: PortEnvironment
+  rangeInfo: {
+    start: number
+    end: number
+    description: string
+  }
+  alternativePorts: number[]
+}
+
+/**
+ * 카테고리와 환경에 따라 사용 가능한 포트를 추천합니다.
+ *
+ * 추천 로직:
+ * 1. 카테고리별 기본 범위 조회 (PORT_CATEGORY_RANGES)
+ * 2. 환경별 오프셋 적용 (PORT_ENVIRONMENT_OFFSET)
+ * 3. 해당 범위에서 사용 가능한 첫 번째 포트 반환
+ * 4. 대안 포트도 함께 제공 (최대 3개)
+ *
+ * @param category 포트 카테고리
+ * @param environment 환경 (development, staging, production)
+ * @returns 추천 포트 정보 또는 null (범위 내 사용 가능 포트 없음)
+ */
+export async function recommendPort(
+  category: PortCategory,
+  environment: PortEnvironment = 'development'
+): Promise<PortRecommendation | null> {
+  // 카테고리별 기본 범위 조회
+  const baseRange = PORT_CATEGORY_RANGES[category]
+  if (!baseRange) {
+    return null
+  }
+
+  // 환경별 오프셋 적용
+  const offset = PORT_ENVIRONMENT_OFFSET[environment]
+  const start = baseRange.start + offset
+  const end = baseRange.end + offset
+
+  // 범위 내 사용 중인 포트 목록 조회
+  const usedPorts = await prisma.portRegistry.findMany({
+    where: {
+      port: {
+        gte: start,
+        lte: end,
+      },
+    },
+    select: { port: true },
+    orderBy: { port: 'asc' },
+  })
+
+  const usedSet = new Set(usedPorts.map((p) => p.port))
+
+  // 사용 가능한 포트들 찾기
+  const availablePorts: number[] = []
+  for (let port = start; port <= end && availablePorts.length < 4; port++) {
+    if (!usedSet.has(port)) {
+      availablePorts.push(port)
+    }
+  }
+
+  // 사용 가능한 포트가 없으면 null 반환
+  if (availablePorts.length === 0) {
+    return null
+  }
+
+  return {
+    port: availablePorts[0],
+    category,
+    environment,
+    rangeInfo: {
+      start,
+      end,
+      description: baseRange.description,
+    },
+    alternativePorts: availablePorts.slice(1),
+  }
+}
+
+/**
+ * 모든 카테고리의 포트 사용 현황을 조회합니다.
+ *
+ * @returns 카테고리별 사용/전체 포트 수
+ */
+export async function getPortUsageByCategory(): Promise<
+  Record<PortCategory, { used: number; total: number; available: number }>
+> {
+  const result: Record<PortCategory, { used: number; total: number; available: number }> = {} as any
+
+  for (const [category, range] of Object.entries(PORT_CATEGORY_RANGES)) {
+    const usedCount = await prisma.portRegistry.count({
+      where: {
+        port: {
+          gte: range.start,
+          lte: range.end,
+        },
+      },
+    })
+
+    const total = range.end - range.start + 1
+    result[category as PortCategory] = {
+      used: usedCount,
+      total,
+      available: total - usedCount,
+    }
+  }
+
+  return result
 }

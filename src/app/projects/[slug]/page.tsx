@@ -10,7 +10,7 @@ import {
   Calendar,
   CheckCircle2,
 } from "lucide-react";
-import { projects, getProjectBySlug } from "@/config/projects";
+import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
@@ -24,12 +24,19 @@ import {
 } from "@/types/project";
 import { getIcon } from "@/lib/icons";
 
+// 동적 렌더링 강제 (새로 등록된 프로젝트도 표시)
+export const dynamic = "force-dynamic";
+
+// 동적 파라미터 허용 (빌드 시점에 없는 slug도 허용)
+export const dynamicParams = true;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// 정적 생성 파라미터
+// 정적 생성 파라미터 (빌드 시점에 알려진 프로젝트)
 export async function generateStaticParams() {
+  const projects = await getAllProjects();
   return projects.map((project) => ({
     slug: project.slug,
   }));
@@ -38,7 +45,7 @@ export async function generateStaticParams() {
 // 메타데이터 생성
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return { title: "Project Not Found" };
 
   return {
@@ -90,6 +97,16 @@ const techColors: Record<string, string> = {
   Bash: "bg-gray-500/20 text-gray-600 dark:text-gray-400",
   "Framer Motion": "bg-pink-500/20 text-pink-600 dark:text-pink-400",
   SQLite: "bg-blue-400/20 text-blue-600 dark:text-blue-400",
+  // 추가 기술 스택
+  YAML: "bg-amber-500/20 text-amber-600 dark:text-amber-400",
+  JSON: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400",
+  "Express.js": "bg-gray-600/20 text-gray-600 dark:text-gray-400",
+  Jest: "bg-red-600/20 text-red-600 dark:text-red-400",
+  Cypress: "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
+  JWT: "bg-purple-600/20 text-purple-600 dark:text-purple-400",
+  "Socket.IO": "bg-gray-800/20 text-gray-800 dark:text-gray-300",
+  WebSocket: "bg-violet-500/20 text-violet-600 dark:text-violet-400",
+  MongoDB: "bg-green-600/20 text-green-600 dark:text-green-400",
 };
 
 // 날짜 포맷 함수
@@ -105,7 +122,7 @@ function formatDate(dateString?: string): string {
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     notFound();
@@ -251,23 +268,29 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <CardTitle className="text-base">Tech Stack</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech) => (
-                <a
-                  key={tech.name}
-                  href={tech.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "inline-flex items-center rounded-md px-2 py-1 text-sm font-medium transition-opacity",
-                    techColors[tech.name] || "bg-secondary text-secondary-foreground",
-                    tech.url && "hover:opacity-80"
-                  )}
-                >
-                  {tech.name}
-                </a>
-              ))}
-            </div>
+            {project.techStack.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {project.techStack.map((tech) => (
+                  <a
+                    key={tech.name}
+                    href={tech.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      "inline-flex items-center rounded-md px-2 py-1 text-sm font-medium transition-opacity",
+                      techColors[tech.name] || "bg-secondary text-secondary-foreground",
+                      tech.url && "hover:opacity-80"
+                    )}
+                  >
+                    {tech.name}
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                기술 스택 정보가 없습니다
+              </p>
+            )}
           </CardContent>
         </Card>
 

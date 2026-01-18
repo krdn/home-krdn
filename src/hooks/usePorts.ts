@@ -24,6 +24,8 @@ import type {
   PortFilterOptions,
   CreatePortInput,
   UpdatePortInput,
+  PortCategory,
+  PortEnvironment,
 } from '@/types/port';
 
 // ============================================================
@@ -55,6 +57,26 @@ interface CheckPortResponse {
   success: boolean;
   available: boolean;
   conflict?: PortRegistryDto;
+  error?: string;
+}
+
+interface PortRecommendation {
+  port: number;
+  category: PortCategory;
+  environment: PortEnvironment;
+  rangeInfo: {
+    start: number;
+    end: number;
+    description: string;
+  };
+  alternativePorts: number[];
+}
+
+interface PortRecommendResponse {
+  success: boolean;
+  recommendation?: PortRecommendation;
+  usage?: Record<PortCategory, { used: number; total: number; available: number }>;
+  ranges?: Record<PortCategory, { start: number; end: number; description: string }>;
   error?: string;
 }
 
@@ -137,6 +159,35 @@ async function checkPort(port: number, excludeId?: string): Promise<CheckPortRes
   return response.json();
 }
 
+/**
+ * 포트 추천
+ * @param category 카테고리
+ * @param environment 환경
+ */
+async function fetchPortRecommendation(
+  category?: PortCategory,
+  environment?: PortEnvironment
+): Promise<PortRecommendResponse> {
+  const params = new URLSearchParams();
+  if (category) params.set('category', category);
+  if (environment) params.set('environment', environment);
+
+  const queryString = params.toString();
+  const url = queryString ? `/api/ports/recommend?${queryString}` : '/api/ports/recommend';
+
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok && response.status !== 404) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '포트 추천에 실패했습니다');
+  }
+
+  return response.json();
+}
+
 // ============================================================
 // Query 훅
 // ============================================================
@@ -197,6 +248,34 @@ export function useCheckPort() {
       return checkPort(port, excludeId);
     },
   });
+}
+
+/**
+ * 포트 추천 훅
+ * 카테고리와 환경에 맞는 사용 가능한 포트를 추천합니다.
+ *
+ * @param category 카테고리
+ * @param environment 환경
+ */
+export function usePortRecommendation(
+  category?: PortCategory,
+  environment?: PortEnvironment
+) {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['portRecommend', category, environment],
+    queryFn: () => fetchPortRecommendation(category, environment),
+    staleTime: 10 * 1000, // 10초
+    enabled: true, // 항상 활성화 (category 없으면 전체 사용 현황 반환)
+  });
+
+  return {
+    recommendation: data?.success ? data.recommendation : null,
+    usage: data?.usage,
+    ranges: data?.ranges,
+    isLoading,
+    error: error as Error | null,
+    refetch,
+  };
 }
 
 // ============================================================

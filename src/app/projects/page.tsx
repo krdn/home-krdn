@@ -1,21 +1,63 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X, Star } from "lucide-react";
-import { projects, getProjectsByCategory, getFeaturedProjects } from "@/config/projects";
+import { useState, useMemo, useEffect } from "react";
+import { Search, X, Star, Loader2 } from "lucide-react";
 import { ProjectGrid } from "@/components/projects/ProjectGrid";
 import { Button } from "@/components/ui/Button";
-import type { ProjectCategory } from "@/types/project";
+import type { Project, ProjectCategory } from "@/types/project";
 import { cn } from "@/lib/utils";
 
+/**
+ * 공개 프로젝트 페이지
+ * API를 통해 프로젝트 목록을 가져와 표시합니다.
+ */
 export default function ProjectsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | "all">("all");
+  // 프로젝트 데이터 상태
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 필터 상태
+  const [selectedCategory, setSelectedCategory] = useState<
+    ProjectCategory | "all"
+  >("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
 
+  // 프로젝트 목록 가져오기
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/projects");
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || "프로젝트 조회 실패");
+        }
+
+        setProjects(data.projects);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "프로젝트를 불러오는데 실패했습니다"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchProjects();
+  }, []);
+
   // 필터링된 프로젝트 목록
   const filteredProjects = useMemo(() => {
-    let result = getProjectsByCategory(selectedCategory);
+    let result = [...projects];
+
+    // 카테고리 필터링
+    if (selectedCategory !== "all") {
+      result = result.filter((p) => p.category === selectedCategory);
+    }
 
     // 검색어 필터링
     if (searchQuery) {
@@ -42,11 +84,33 @@ export default function ProjectsPage() {
       if (b.order !== undefined) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [selectedCategory, searchQuery, showFeaturedOnly]);
+  }, [projects, selectedCategory, searchQuery, showFeaturedOnly]);
 
   // 통계
-  const featuredCount = getFeaturedProjects().length;
+  const featuredCount = projects.filter((p) => p.featured === true).length;
   const activeCount = projects.filter((p) => p.status === "active").length;
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center py-24">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -88,7 +152,9 @@ export default function ProjectsPage() {
             onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
             className="gap-2"
           >
-            <Star className={cn("h-4 w-4", showFeaturedOnly && "fill-current")} />
+            <Star
+              className={cn("h-4 w-4", showFeaturedOnly && "fill-current")}
+            />
             Featured only ({featuredCount})
           </Button>
         </div>

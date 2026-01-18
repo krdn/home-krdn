@@ -9,15 +9,43 @@
       "category": "web",
       "status": "active",
       "techStack": [
-        { "name": "Next.js 16", "icon": "nextjs", "url": "https://nextjs.org" },
-        { "name": "React 19", "icon": "react", "url": "https://react.dev" },
-        { "name": "TypeScript", "icon": "typescript", "url": "https://typescriptlang.org" },
-        { "name": "Tailwind CSS", "icon": "tailwindcss", "url": "https://tailwindcss.com" },
-        { "name": "Framer Motion", "icon": "framer", "url": "https://framer.com/motion" }
+        {
+          "name": "Next.js 16",
+          "icon": "nextjs",
+          "url": "https://nextjs.org"
+        },
+        {
+          "name": "React 19",
+          "icon": "react",
+          "url": "https://react.dev"
+        },
+        {
+          "name": "TypeScript",
+          "icon": "typescript",
+          "url": "https://typescriptlang.org"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "tailwindcss",
+          "url": "https://tailwindcss.com"
+        },
+        {
+          "name": "Framer Motion",
+          "icon": "framer",
+          "url": "https://framer.com/motion"
+        }
       ],
       "links": [
-        { "type": "github", "url": "https://github.com/krdn/home-krdn", "label": "GitHub" },
-        { "type": "demo", "url": "https://home.krdn.kr", "label": "Live Demo" }
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/home-krdn",
+          "label": "GitHub"
+        },
+        {
+          "type": "demo",
+          "url": "https://home.krdn.kr",
+          "label": "Live Demo"
+        }
       ],
       "images": [
         {
@@ -50,17 +78,52 @@
       "category": "automation",
       "status": "active",
       "techStack": [
-        { "name": "Docker", "icon": "docker", "url": "https://docker.com" },
-        { "name": "Docker Compose", "icon": "docker" },
-        { "name": "n8n", "icon": "n8n", "url": "https://n8n.io" },
-        { "name": "PostgreSQL", "icon": "postgresql", "url": "https://postgresql.org" },
-        { "name": "Redis", "icon": "redis", "url": "https://redis.io" },
-        { "name": "Nginx", "icon": "nginx", "url": "https://nginx.org" }
+        {
+          "name": "Docker",
+          "icon": "docker",
+          "url": "https://docker.com"
+        },
+        {
+          "name": "Docker Compose",
+          "icon": "docker"
+        },
+        {
+          "name": "n8n",
+          "icon": "n8n",
+          "url": "https://n8n.io"
+        },
+        {
+          "name": "PostgreSQL",
+          "icon": "postgresql",
+          "url": "https://postgresql.org"
+        },
+        {
+          "name": "Redis",
+          "icon": "redis",
+          "url": "https://redis.io"
+        },
+        {
+          "name": "Nginx",
+          "icon": "nginx",
+          "url": "https://nginx.org"
+        }
       ],
       "links": [
-        { "type": "github", "url": "https://github.com/krdn/docker-n8n", "label": "GitHub" },
-        { "type": "demo", "url": "https://n8n.krdn.kr", "label": "n8n Instance" },
-        { "type": "docs", "url": "https://docs.n8n.io", "label": "n8n Docs" }
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/docker-n8n",
+          "label": "GitHub"
+        },
+        {
+          "type": "demo",
+          "url": "https://n8n.krdn.kr",
+          "label": "n8n Instance"
+        },
+        {
+          "type": "docs",
+          "url": "https://docs.n8n.io",
+          "label": "n8n Docs"
+        }
       ],
       "images": [
         {
@@ -90,15 +153,41 @@
       "category": "ai",
       "status": "active",
       "techStack": [
-        { "name": "Next.js", "icon": "nextjs", "url": "https://nextjs.org" },
-        { "name": "TypeScript", "icon": "typescript" },
-        { "name": "TipTap", "icon": "tiptap", "url": "https://tiptap.dev" },
-        { "name": "Claude API", "icon": "anthropic", "url": "https://anthropic.com" },
-        { "name": "Prisma", "icon": "prisma", "url": "https://prisma.io" },
-        { "name": "SQLite", "icon": "sqlite" }
+        {
+          "name": "Next.js",
+          "icon": "nextjs",
+          "url": "https://nextjs.org"
+        },
+        {
+          "name": "TypeScript",
+          "icon": "typescript"
+        },
+        {
+          "name": "TipTap",
+          "icon": "tiptap",
+          "url": "https://tiptap.dev"
+        },
+        {
+          "name": "Claude API",
+          "icon": "anthropic",
+          "url": "https://anthropic.com"
+        },
+        {
+          "name": "Prisma",
+          "icon": "prisma",
+          "url": "https://prisma.io"
+        },
+        {
+          "name": "SQLite",
+          "icon": "sqlite"
+        }
       ],
       "links": [
-        { "type": "github", "url": "https://github.com/krdn/ai-note-taking", "label": "GitHub" }
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/ai-note-taking",
+          "label": "GitHub"
+        }
       ],
       "images": [
         {
@@ -128,14 +217,52 @@
       "category": "infra",
       "status": "active",
       "techStack": [
-        { "name": "TypeScript", "icon": "typescript" },
-        { "name": "Claude API", "icon": "anthropic" },
-        { "name": "Node.js", "icon": "nodejs" },
-        { "name": "Bash", "icon": "bash" }
+        {
+          "name": "TypeScript",
+          "icon": "typescript",
+          "url": "https://typescriptlang.org"
+        },
+        {
+          "name": "Claude API",
+          "icon": "anthropic",
+          "url": "https://anthropic.com"
+        },
+        {
+          "name": "Node.js",
+          "icon": "nodejs",
+          "url": "https://nodejs.org"
+        },
+        {
+          "name": "Bash",
+          "icon": "bash",
+          "url": "https://www.gnu.org/software/bash/"
+        },
+        {
+          "name": "YAML",
+          "icon": "yaml",
+          "url": "https://yaml.org"
+        },
+        {
+          "name": "JSON",
+          "icon": "json"
+        }
       ],
       "links": [
-        { "type": "github", "url": "https://github.com/krdn/krdn-claude", "label": "GitHub" },
-        { "type": "docs", "url": "https://github.com/krdn/krdn-claude/wiki", "label": "Wiki" }
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/krdn-claude",
+          "label": "GitHub"
+        },
+        {
+          "type": "docs",
+          "url": "https://github.com/krdn/krdn-claude/wiki",
+          "label": "Wiki"
+        },
+        {
+          "type": "demo",
+          "url": "https://home.krdn.kr",
+          "label": "적용 사이트"
+        }
       ],
       "images": [
         {
@@ -165,16 +292,45 @@
       "category": "ai",
       "status": "active",
       "techStack": [
-        { "name": "Django", "icon": "django", "url": "https://djangoproject.com" },
-        { "name": "FastAPI", "icon": "fastapi", "url": "https://fastapi.tiangolo.com" },
-        { "name": "Celery", "icon": "celery" },
-        { "name": "Streamlit", "icon": "streamlit", "url": "https://streamlit.io" },
-        { "name": "PostgreSQL", "icon": "postgresql" },
-        { "name": "Redis", "icon": "redis" }
+        {
+          "name": "Django",
+          "icon": "django",
+          "url": "https://djangoproject.com"
+        },
+        {
+          "name": "FastAPI",
+          "icon": "fastapi",
+          "url": "https://fastapi.tiangolo.com"
+        },
+        {
+          "name": "Celery",
+          "icon": "celery"
+        },
+        {
+          "name": "Streamlit",
+          "icon": "streamlit",
+          "url": "https://streamlit.io"
+        },
+        {
+          "name": "PostgreSQL",
+          "icon": "postgresql"
+        },
+        {
+          "name": "Redis",
+          "icon": "redis"
+        }
       ],
       "links": [
-        { "type": "github", "url": "https://github.com/krdn/news-sentiment-analyzer", "label": "GitHub" },
-        { "type": "demo", "url": "https://news.krdn.kr", "label": "Live Demo" }
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/news-sentiment-analyzer",
+          "label": "GitHub"
+        },
+        {
+          "type": "demo",
+          "url": "https://news.krdn.kr",
+          "label": "Live Demo"
+        }
       ],
       "images": [
         {
@@ -194,7 +350,154 @@
       "startDate": "2024-07-01",
       "featured": false,
       "order": 5
+    },
+    {
+      "id": "claude-code-auto",
+      "slug": "claude-code-auto",
+      "name": "Claude Code Auto",
+      "description": "AI Orchestrator Framework - Claude Code 중심의 AI 워크플로우 프레임워크",
+      "longDescription": "Claude Code CLI와 API를 활용한 AI 오케스트레이터 프레임워크입니다. Planner, Coder, Reviewer 에이전트를 통해 자동화된 소프트웨어 개발 워크플로우를 제공합니다. Git 자동화, 프롬프트 시스템, 환경별 설정 관리 등 실무에 필요한 기능을 갖추고 있습니다.",
+      "category": "ai",
+      "status": "active",
+      "techStack": [
+        {
+          "name": "Claude API",
+          "icon": "anthropic",
+          "url": "https://anthropic.com"
+        },
+        {
+          "name": "TypeScript",
+          "icon": "typescript",
+          "url": "https://typescriptlang.org"
+        },
+        {
+          "name": "Node.js",
+          "icon": "nodejs",
+          "url": "https://nodejs.org"
+        },
+        {
+          "name": "Git",
+          "icon": "git",
+          "url": "https://git-scm.com"
+        },
+        {
+          "name": "Bash",
+          "icon": "bash"
+        }
+      ],
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/claude-code-auto",
+          "label": "GitHub"
+        },
+        {
+          "type": "demo",
+          "url": "https://claude.krdn.kr",
+          "label": "Live Demo"
+        }
+      ],
+      "images": [
+        {
+          "src": "/images/projects/claude-code-auto.svg",
+          "alt": "Claude Code Auto 아키텍처 다이어그램",
+          "isPrimary": true
+        }
+      ],
+      "features": [
+        "LLM 통합 - Anthropic Claude API (Opus 4, Sonnet 4, Haiku 4)",
+        "CLI 인증 - Claude Max Plan 구독으로 무제한 사용",
+        "하이브리드 모드 - CLI 실패 시 API 키로 자동 폴백",
+        "Git 자동화 - 실제 Git 작업 (status, diff, add, commit)",
+        "프롬프트 시스템 - prompts/ 폴더로 프롬프트 분리 및 템플릿화",
+        "설정 관리 - 환경별 설정 (dev/prod), .env 지원",
+        "AgentExecutor - Planner, Coder, Reviewer 모두 실제 LLM 호출",
+        "SkillExecutor - commit 스킬 실제 구현 (LLM 생성 커밋 메시지)"
+      ],
+      "startDate": "2026-01-03",
+      "featured": true,
+      "order": 7
+    },
+    {
+      "id": "8e59b9b9-da3f-45d7-8424-9bf674b22922",
+      "slug": "gonsai2",
+      "name": "gonsai2",
+      "description": "AI-Optimized Project with n8n and MongoDB integration",
+      "longDescription": "> AI-Optimized Project Structure following Kent Beck's Augmented Coding Principles gonsai2는 n8n 워크플로우 자동화와 MongoDB를 활용한 AI 기반 프로젝트입니다. Kent Beck의 Augmented Coding 원칙에 따라 AI와 개발자가 효과적으로 협업할 수 있도록 설계되었습니다.",
+      "category": "automation",
+      "status": "active",
+      "techStack": [
+        {
+          "name": "TypeScript",
+          "icon": "typescript",
+          "url": "https://typescriptlang.org"
+        },
+        {
+          "name": "Express.js",
+          "icon": "express",
+          "url": "https://expressjs.com"
+        },
+        {
+          "name": "Redis",
+          "icon": "redis",
+          "url": "https://redis.io"
+        },
+        {
+          "name": "Jest",
+          "icon": "jest",
+          "url": "https://jestjs.io"
+        },
+        {
+          "name": "Cypress",
+          "icon": "cypress",
+          "url": "https://cypress.io"
+        },
+        {
+          "name": "JWT",
+          "icon": "jwt"
+        },
+        {
+          "name": "Socket.IO",
+          "icon": "socketio",
+          "url": "https://socket.io"
+        },
+        {
+          "name": "WebSocket",
+          "icon": "websocket"
+        }
+      ],
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/krdn/gonsai2",
+          "label": "GitHub"
+        },
+        {
+          "type": "demo",
+          "url": "https://gonsai.krdn.kr",
+          "label": "Live Demo"
+        }
+      ],
+      "images": [
+        {
+          "src": "/images/projects/gonsai2-architecture.svg",
+          "alt": "gonsai2 아키텍처",
+          "isPrimary": true
+        }
+      ],
+      "features": [
+        "TypeScript 기반 타입 안전 개발",
+        "Express.js REST API 서버",
+        "Redis 캐싱 및 세션 관리",
+        "단위 테스트 환경 구성",
+        "E2E 테스트 자동화",
+        "실시간 양방향 통신 지원",
+        "프로덕션 빌드 지원",
+        "코드 린팅 및 포맷팅"
+      ],
+      "startDate": "2025-11-11",
+      "featured": false
     }
   ],
-  "lastUpdated": "2026-01-15T00:00:00.000Z"
+  "lastUpdated": "2026-01-18T01:35:54.633Z"
 }

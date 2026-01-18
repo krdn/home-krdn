@@ -58,7 +58,7 @@ function requireAdmin(role: UserRole): boolean {
 
 /**
  * GET /api/ports
- * 포트 목록 조회 (VIEWER 이상 권한 필요)
+ * 포트 목록 조회 (공개 - 인증 불필요)
  *
  * Query Parameters:
  * - category: 카테고리 필터
@@ -69,24 +69,7 @@ function requireAdmin(role: UserRole): boolean {
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // 1. 인증 확인
-    const payload = await getAuthPayload()
-    if (!payload) {
-      return NextResponse.json(
-        { success: false, error: '인증이 필요합니다', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      )
-    }
-
-    // 2. 권한 확인 (VIEWER 이상)
-    if (!requireViewer(payload.role as UserRole)) {
-      return NextResponse.json(
-        { success: false, error: '포트 조회 권한이 없습니다', code: 'FORBIDDEN' },
-        { status: 403 }
-      )
-    }
-
-    // 3. 쿼리 파라미터 파싱
+    // 1. 쿼리 파라미터 파싱 (인증 불필요 - 공개 조회)
     const { searchParams } = new URL(request.url)
     const filterInput = {
       category: searchParams.get('category') || undefined,
@@ -96,7 +79,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       search: searchParams.get('search') || undefined,
     }
 
-    // 4. 필터 검증
+    // 2. 필터 검증
     const parseResult = PortFilterInputSchema.safeParse(filterInput)
     if (!parseResult.success) {
       return NextResponse.json(
@@ -110,10 +93,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    // 5. 포트 목록 조회
+    // 3. 포트 목록 조회
     const ports = await getAllPorts(parseResult.data)
 
-    // 6. 성공 응답
+    // 4. 성공 응답
     return NextResponse.json({
       success: true,
       ports,

@@ -44,6 +44,30 @@ export const PORT_RANGE = {
   WELL_KNOWN_MAX: 1023, // well-known 포트 상한
 } as const
 
+/**
+ * 카테고리별 권장 포트 범위
+ * 신규 프로젝트 포트 예약 시 이 범위에서 빈 포트를 추천합니다.
+ */
+export const PORT_CATEGORY_RANGES: Record<PortCategory, { start: number; end: number; description: string }> = {
+  ai: { start: 8000, end: 8099, description: 'AI/ML 서비스 (FastAPI, Flask 등)' },
+  web: { start: 3000, end: 3099, description: '웹 프론트엔드 (Next.js, React 등)' },
+  n8n: { start: 5600, end: 5699, description: 'N8N 워크플로우 자동화' },
+  system: { start: 9000, end: 9099, description: '시스템 서비스 (내부 API 등)' },
+  database: { start: 5400, end: 5499, description: '데이터베이스 (PostgreSQL, MySQL 등)' },
+  monitoring: { start: 9100, end: 9199, description: '모니터링 (Prometheus, Grafana 등)' },
+  other: { start: 10000, end: 10099, description: '기타 서비스' },
+} as const
+
+/**
+ * 환경별 포트 오프셋
+ * 같은 프로젝트의 dev/staging/prod를 구분하기 위한 오프셋
+ */
+export const PORT_ENVIRONMENT_OFFSET: Record<PortEnvironment, number> = {
+  development: 0,    // 기본 범위 사용
+  staging: 100,      // +100 오프셋
+  production: 200,   // +200 오프셋
+} as const
+
 // ============================================================
 // DTO 타입 정의
 // ============================================================

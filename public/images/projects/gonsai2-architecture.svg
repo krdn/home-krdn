@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f3460"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="n8nGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6d5a"/>
+      <stop offset="100%" style="stop-color:#e94560"/>
+    </linearGradient>
+    <linearGradient id="mongoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00684a"/>
+      <stop offset="100%" style="stop-color:#00ed64"/>
+    </linearGradient>
+    <linearGradient id="apiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#1d4ed8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff08" stroke-width="1"/>
+  </pattern>
+  <rect width="800" height="500" fill="url(#grid)"/>
+
+  <!-- Title -->
+  <text x="400" y="45" font-family="system-ui, sans-serif" font-size="24" font-weight="bold" fill="#e94560" text-anchor="middle">gonsai2 Architecture</text>
+  <text x="400" y="70" font-family="system-ui, sans-serif" font-size="12" fill="#8892b0" text-anchor="middle">AI-Optimized Project with n8n and MongoDB</text>
+
+  <!-- Express.js API Server -->
+  <g transform="translate(350, 120)">
+    <rect x="0" y="0" width="100" height="60" rx="8" fill="url(#apiGrad)" stroke="#60a5fa" stroke-width="2"/>
+    <text x="50" y="28" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Express.js</text>
+    <text x="50" y="45" font-family="system-ui, sans-serif" font-size="10" fill="#bfdbfe" text-anchor="middle">REST API</text>
+  </g>
+
+  <!-- n8n Workflow -->
+  <g transform="translate(100, 200)">
+    <rect x="0" y="0" width="120" height="70" rx="8" fill="url(#n8nGrad)" stroke="#ff6d5a" stroke-width="2"/>
+    <text x="60" y="30" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">n8n</text>
+    <text x="60" y="50" font-family="system-ui, sans-serif" font-size="10" fill="#fecaca" text-anchor="middle">Workflow Engine</text>
+  </g>
+
+  <!-- MongoDB -->
+  <g transform="translate(580, 200)">
+    <rect x="0" y="0" width="120" height="70" rx="8" fill="url(#mongoGrad)" stroke="#00ed64" stroke-width="2"/>
+    <text x="60" y="30" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">MongoDB</text>
+    <text x="60" y="50" font-family="system-ui, sans-serif" font-size="10" fill="#bbf7d0" text-anchor="middle">Data Store</text>
+  </g>
+
+  <!-- Socket.IO -->
+  <g transform="translate(350, 320)">
+    <rect x="0" y="0" width="100" height="50" rx="8" fill="url(#nodeGrad)" stroke="#a78bfa" stroke-width="2"/>
+    <text x="50" y="22" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#a78bfa" text-anchor="middle">Socket.IO</text>
+    <text x="50" y="38" font-family="system-ui, sans-serif" font-size="9" fill="#8892b0" text-anchor="middle">Real-time</text>
+  </g>
+
+  <!-- Redis -->
+  <g transform="translate(230, 200)">
+    <rect x="0" y="0" width="90" height="50" rx="8" fill="url(#nodeGrad)" stroke="#ef4444" stroke-width="2"/>
+    <text x="45" y="22" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ef4444" text-anchor="middle">Redis</text>
+    <text x="45" y="38" font-family="system-ui, sans-serif" font-size="9" fill="#8892b0" text-anchor="middle">Cache/Queue</text>
+  </g>
+
+  <!-- Jest/Cypress Testing -->
+  <g transform="translate(480, 200)">
+    <rect x="0" y="0" width="90" height="50" rx="8" fill="url(#nodeGrad)" stroke="#22c55e" stroke-width="2"/>
+    <text x="45" y="22" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" fill="#22c55e" text-anchor="middle">Jest/Cypress</text>
+    <text x="45" y="38" font-family="system-ui, sans-serif" font-size="9" fill="#8892b0" text-anchor="middle">Testing</text>
+  </g>
+
+  <!-- Connection lines -->
+  <g stroke="#4a5568" stroke-width="2" fill="none">
+    <!-- API to n8n -->
+    <path d="M350 150 Q250 150 220 200" stroke-dasharray="5,3"/>
+    <!-- API to MongoDB -->
+    <path d="M450 150 Q550 150 580 200" stroke-dasharray="5,3"/>
+    <!-- API to Redis -->
+    <path d="M380 180 L320 200"/>
+    <!-- API to Testing -->
+    <path d="M420 180 L480 200"/>
+    <!-- API to Socket.IO -->
+    <path d="M400 180 L400 320"/>
+    <!-- n8n to Redis -->
+    <path d="M220 235 L230 225"/>
+  </g>
+
+  <!-- Flow arrows -->
+  <g fill="#60a5fa">
+    <polygon points="580,205 570,200 570,210"/>
+    <polygon points="220,205 210,200 210,210"/>
+    <polygon points="400,315 395,305 405,305"/>
+  </g>
+
+  <!-- Kent Beck quote -->
+  <g transform="translate(400, 420)">
+    <rect x="-180" y="0" width="360" height="50" rx="8" fill="#0f3460" stroke="#3b82f6" stroke-width="1" opacity="0.8"/>
+    <text x="0" y="22" font-family="system-ui, sans-serif" font-size="11" fill="#60a5fa" text-anchor="middle" font-style="italic">"Augmented Coding Principles"</text>
+    <text x="0" y="40" font-family="system-ui, sans-serif" font-size="10" fill="#8892b0" text-anchor="middle">AI-Human Collaboration Pattern - Kent Beck</text>
+  </g>
+</svg>

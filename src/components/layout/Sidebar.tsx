@@ -13,6 +13,7 @@ import {
   Bell,
   BellRing,
   Wrench,
+  Network,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ const navigation = [
   { name: "DevOps", href: "/admin/devops", icon: Wrench },
   { name: "Projects", href: "/admin/projects", icon: FolderKanban },
   { name: "Services", href: "/admin/services", icon: Layers },
+  { name: "Ports", href: "/admin/ports", icon: Network },
   { name: "Containers", href: "/admin/containers", icon: Box },
   { name: "Logs", href: "/admin/logs", icon: ScrollText },
   { name: "Log Alerts", href: "/admin/log-alerts", icon: BellRing },

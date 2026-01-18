@@ -73,13 +73,15 @@ const statusColors: Record<PortStatus, 'default' | 'secondary' | 'destructive'> 
 
 interface PortListProps {
   onEdit?: (port: PortRegistryDto) => void;
+  /** 읽기 전용 모드 (삭제 버튼 숨김) */
+  readOnly?: boolean;
 }
 
 // ============================================================
 // 컴포넌트
 // ============================================================
 
-export function PortList({ onEdit }: PortListProps) {
+export function PortList({ onEdit, readOnly = false }: PortListProps) {
   // 필터 상태
   const [categoryFilter, setCategoryFilter] = useState<PortCategory | ''>('');
   const [environmentFilter, setEnvironmentFilter] = useState<PortEnvironment | ''>('');
@@ -238,9 +240,11 @@ export function PortList({ onEdit }: PortListProps) {
             <div className="py-12 text-center">
               <Network className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
               <p className="text-muted-foreground">등록된 포트가 없습니다</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                "포트 추가" 버튼을 클릭하여 새 포트를 등록하세요
-              </p>
+              {!readOnly && (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  "포트 추가" 버튼을 클릭하여 새 포트를 등록하세요
+                </p>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -252,7 +256,9 @@ export function PortList({ onEdit }: PortListProps) {
                     <th className="hidden pb-3 pr-4 font-medium sm:table-cell">환경</th>
                     <th className="hidden pb-3 pr-4 font-medium md:table-cell">상태</th>
                     <th className="hidden pb-3 pr-4 font-medium lg:table-cell">URL</th>
-                    <th className="pb-3 text-right font-medium">액션</th>
+                    {!readOnly && (
+                      <th className="pb-3 text-right font-medium">액션</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -333,30 +339,32 @@ export function PortList({ onEdit }: PortListProps) {
                       </td>
 
                       {/* 액션 */}
-                      <td className="py-3 text-right">
-                        <div className="flex justify-end gap-1">
-                          {onEdit && (
+                      {!readOnly && (
+                        <td className="py-3 text-right">
+                          <div className="flex justify-end gap-1">
+                            {onEdit && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => onEdit(port)}
+                                title="수정"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => onEdit(port)}
-                              title="수정"
+                              onClick={() => handleDelete(port)}
+                              disabled={deletePort.isPending}
+                              className="text-destructive hover:text-destructive"
+                              title="삭제"
                             >
-                              <Edit className="h-4 w-4" />
+                              <Trash2 className="h-4 w-4" />
                             </Button>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(port)}
-                            disabled={deletePort.isPending}
-                            className="text-destructive hover:text-destructive"
-                            title="삭제"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

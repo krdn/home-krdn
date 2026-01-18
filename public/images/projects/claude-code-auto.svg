@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="claudeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d97706"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="plannerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="coderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+    <linearGradient id="reviewerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#a78bfa"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff08" stroke-width="1"/>
+  </pattern>
+  <rect width="800" height="500" fill="url(#grid)"/>
+
+  <!-- Title -->
+  <text x="400" y="45" font-family="system-ui, sans-serif" font-size="24" font-weight="bold" fill="#f59e0b" text-anchor="middle">AI Orchestrator Framework</text>
+  <text x="400" y="70" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">Claude Code 중심의 AI 워크플로우 프레임워크</text>
+
+  <!-- User/Orchestrator -->
+  <g transform="translate(350, 100)">
+    <rect x="0" y="0" width="100" height="50" rx="25" fill="url(#claudeGrad)" stroke="#fbbf24" stroke-width="2"/>
+    <text x="50" y="30" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">User</text>
+  </g>
+
+  <!-- Arrow down -->
+  <path d="M400 150 L400 180" stroke="#fbbf24" stroke-width="2" fill="none" marker-end="url(#arrowYellow)"/>
+  <defs>
+    <marker id="arrowYellow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <!-- Agents Row -->
+  <!-- Planner -->
+  <g transform="translate(100, 200)">
+    <rect x="0" y="0" width="140" height="80" rx="8" fill="url(#plannerGrad)" stroke="#60a5fa" stroke-width="2"/>
+    <text x="70" y="30" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Planner</text>
+    <text x="70" y="50" font-family="system-ui, sans-serif" font-size="10" fill="#bfdbfe" text-anchor="middle">계획 수립</text>
+    <text x="70" y="65" font-family="system-ui, sans-serif" font-size="9" fill="#93c5fd" text-anchor="middle">Plan → Approve</text>
+  </g>
+
+  <!-- Coder -->
+  <g transform="translate(330, 200)">
+    <rect x="0" y="0" width="140" height="80" rx="8" fill="url(#coderGrad)" stroke="#34d399" stroke-width="2"/>
+    <text x="70" y="30" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Coder</text>
+    <text x="70" y="50" font-family="system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">코드 작성</text>
+    <text x="70" y="65" font-family="system-ui, sans-serif" font-size="9" fill="#6ee7b7" text-anchor="middle">Execute → Build</text>
+  </g>
+
+  <!-- Reviewer -->
+  <g transform="translate(560, 200)">
+    <rect x="0" y="0" width="140" height="80" rx="8" fill="url(#reviewerGrad)" stroke="#a78bfa" stroke-width="2"/>
+    <text x="70" y="30" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Reviewer</text>
+    <text x="70" y="50" font-family="system-ui, sans-serif" font-size="10" fill="#ddd6fe" text-anchor="middle">코드 검토</text>
+    <text x="70" y="65" font-family="system-ui, sans-serif" font-size="9" fill="#c4b5fd" text-anchor="middle">Review → Verify</text>
+  </g>
+
+  <!-- Connection arrows -->
+  <g stroke="#475569" stroke-width="2" fill="none">
+    <path d="M400 180 Q170 180 170 200"/>
+    <path d="M400 180 L400 200"/>
+    <path d="M400 180 Q630 180 630 200"/>
+    <!-- Horizontal flow -->
+    <path d="M240 240 L330 240" stroke-dasharray="5,3"/>
+    <path d="M470 240 L560 240" stroke-dasharray="5,3"/>
+  </g>
+
+  <!-- LLM Box -->
+  <g transform="translate(300, 320)">
+    <rect x="0" y="0" width="200" height="60" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="100" y="25" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#f59e0b" text-anchor="middle">Claude API</text>
+    <text x="100" y="45" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Opus 4 / Sonnet 4 / Haiku 4</text>
+  </g>
+
+  <!-- Git Box -->
+  <g transform="translate(100, 320)">
+    <rect x="0" y="0" width="140" height="60" rx="8" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+    <text x="70" y="25" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#f97316" text-anchor="middle">Git Automation</text>
+    <text x="70" y="45" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">commit, push, PR</text>
+  </g>
+
+  <!-- Skills Box -->
+  <g transform="translate(560, 320)">
+    <rect x="0" y="0" width="140" height="60" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="2"/>
+    <text x="70" y="25" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#06b6d4" text-anchor="middle">Skills</text>
+    <text x="70" y="45" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">commit, test, lint</text>
+  </g>
+
+  <!-- Workflow -->
+  <g transform="translate(150, 420)">
+    <rect x="0" y="0" width="500" height="50" rx="8" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+    <text x="250" y="22" font-family="system-ui, sans-serif" font-size="11" fill="#60a5fa" text-anchor="middle">Workflow - 계획 → 승인 → 실행 → 검증</text>
+    <text x="250" y="40" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">User as Orchestrator, AI as Developer</text>
+  </g>
+</svg>

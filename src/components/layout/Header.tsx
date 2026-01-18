@@ -9,6 +9,7 @@ import {
   Settings,
   Menu,
   X,
+  Network,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Services", href: "/services", icon: Layers },
   { name: "Projects", href: "/projects", icon: FolderKanban },
+  { name: "Ports", href: "/ports", icon: Network },
   { name: "Admin", href: "/admin", icon: Settings },
 ];
 
