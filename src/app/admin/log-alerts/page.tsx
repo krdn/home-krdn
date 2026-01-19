@@ -15,6 +15,7 @@
 import dynamic from 'next/dynamic';
 import { BellRing, Loader2 } from 'lucide-react';
 import { AdminOnly } from '@/components/admin/RoleGuard';
+import { HelpButton } from '@/components/help';
 
 // Dynamic Import: LogAlertRuleList 지연 로딩
 const LogAlertRuleList = dynamic(
@@ -51,7 +52,10 @@ export default function LogAlertsPage() {
             <BellRing className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Log Alerts</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              Log Alerts
+              <HelpButton helpId="page-admin-log-alerts" size="sm" />
+            </h1>
             <p className="text-sm text-muted-foreground">
               로그 패턴 기반 알림 규칙 관리
             </p>

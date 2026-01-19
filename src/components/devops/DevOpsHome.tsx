@@ -25,6 +25,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { HelpButton } from '@/components/help';
 import { useDevOpsSummary } from '@/hooks/useDevOpsSummary';
 import type { DevOpsSummary } from '@/types/devops';
 
@@ -277,7 +278,10 @@ export function DevOpsHome() {
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">DevOps Dashboard</h2>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            DevOps Dashboard
+            <HelpButton helpId="page-admin-devops" size="sm" />
+          </h2>
           <p className="text-sm text-muted-foreground">
             개발 도구 상태 요약
           </p>

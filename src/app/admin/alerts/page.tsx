@@ -7,6 +7,7 @@ import { AlertHistoryPanel } from '@/components/admin/AlertHistoryPanel';
 import { EmailSettings } from '@/components/admin/EmailSettings';
 import { SlackSettings } from '@/components/admin/SlackSettings';
 import { Bell, Loader2 } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 
 // Dynamic Import: AlertRuleForm은 402줄의 복잡한 폼이므로 지연 로딩
 const AlertRuleForm = dynamic(
@@ -62,7 +63,10 @@ export default function AlertsPage() {
           <Bell className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">알림 설정</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            알림 설정
+            <HelpButton helpId="page-alerts" size="sm" />
+          </h1>
           <p className="text-sm text-muted-foreground">
             시스템 알림 규칙을 관리하고 알림 히스토리를 확인합니다.
           </p>

@@ -17,6 +17,7 @@ import { Network, Plus, Loader2, List, Scan, BookOpen, GitCompare } from 'lucide
 import { Button } from '@/components/ui/Button';
 import { PortList } from '@/components/ports/PortList';
 import { AdminOnly } from '@/components/admin/RoleGuard';
+import { HelpButton } from '@/components/help';
 import { cn } from '@/lib/utils';
 import type { PortRegistryDto } from '@/types/port';
 
@@ -135,7 +136,10 @@ export default function PortsPage() {
               <Network className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">포트 레지스트리</h1>
+              <h1 className="text-2xl font-bold flex items-center gap-2">
+                포트 레지스트리
+                <HelpButton helpId="page-admin-ports" size="sm" />
+              </h1>
               <p className="text-sm text-muted-foreground">
                 포트 할당 관리, 시스템 스캔, 신규 개발 가이드
               </p>

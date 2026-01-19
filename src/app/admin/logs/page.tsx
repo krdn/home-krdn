@@ -16,6 +16,7 @@
 import dynamic from 'next/dynamic';
 import { ScrollText, Loader2 } from 'lucide-react';
 import { AdminOnly } from '@/components/admin/RoleGuard';
+import { HelpButton } from '@/components/help';
 
 // Dynamic Import: LogViewer 지연 로딩 (초기 번들 크기 최적화)
 const LogViewer = dynamic(
@@ -52,7 +53,10 @@ export default function AdminLogsPage() {
             <ScrollText className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Logs</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              Logs
+              <HelpButton helpId="page-admin-logs" size="sm" />
+            </h1>
             <p className="text-sm text-muted-foreground">
               실시간 로그 조회 및 검색
             </p>

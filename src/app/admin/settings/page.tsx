@@ -19,6 +19,7 @@ import {
   CardContent,
 } from '@/components/ui/Card';
 import { Settings, Moon, Sun, Bell, Mail, Loader2 } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 
 /**
  * 토글 스위치 컴포넌트
@@ -151,7 +152,10 @@ export default function SettingsPage() {
       <div className="flex items-center gap-3">
         <Settings className="h-8 w-8 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">설정</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            설정
+            <HelpButton helpId="page-settings" size="sm" />
+          </h1>
           <p className="text-muted-foreground">
             대시보드 환경을 설정합니다
           </p>

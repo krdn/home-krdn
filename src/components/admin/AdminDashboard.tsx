@@ -31,6 +31,7 @@ import { LazyMetricsCharts } from '@/components/admin/LazyMetricsCharts';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { RoleBanner } from '@/components/admin/RoleBanner';
 import { WidgetCustomizer } from '@/components/admin/WidgetCustomizer';
+import { HelpButton } from '@/components/help';
 import { getRunningServices } from '@/config/services';
 import { getServiceProdUrl, getServiceDevUrl } from '@/lib/service-utils';
 import { useDashboardStore, parseDashboardLayout } from '@/stores/dashboardStore';
@@ -474,7 +475,10 @@ export function AdminDashboard() {
       {/* Header */}
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            Dashboard
+            <HelpButton helpId="page-admin-dashboard" size="sm" />
+          </h1>
           <p className="text-muted-foreground">시스템 상태 및 서비스 개요</p>
         </div>
         <div className="flex items-center gap-3">

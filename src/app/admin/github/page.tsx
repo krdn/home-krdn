@@ -18,6 +18,7 @@ import dynamic from 'next/dynamic';
 import { Github, Loader2, ArrowLeft, GitBranch, PlayCircle } from 'lucide-react';
 import { AdminOnly } from '@/components/admin/RoleGuard';
 import { Button } from '@/components/ui/Button';
+import { HelpButton } from '@/components/help';
 import { useGitHubSettings } from '@/hooks/useGitHub';
 import type { GitHubRepo, GitHubWorkflow } from '@/types/github';
 
@@ -125,7 +126,10 @@ export default function GitHubAdminPage() {
               <Github className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">GitHub 연동</h1>
+              <h1 className="text-2xl font-bold flex items-center gap-2">
+                GitHub 연동
+                <HelpButton helpId="page-admin-github" size="sm" />
+              </h1>
               <p className="text-sm text-muted-foreground">
                 GitHub 레포지토리와 CI/CD 워크플로우를 관리합니다.
               </p>

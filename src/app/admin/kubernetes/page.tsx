@@ -19,6 +19,7 @@ import dynamic from 'next/dynamic';
 import { Server, Loader2, ArrowLeft, Layers, Box, Globe, FolderOpen, Network } from 'lucide-react';
 import { AdminOnly } from '@/components/admin/RoleGuard';
 import { Button } from '@/components/ui/Button';
+import { HelpButton } from '@/components/help';
 import { useK8sNamespaces } from '@/hooks/useKubernetes';
 import type { KubernetesClusterDto } from '@/types/kubernetes';
 
@@ -200,7 +201,10 @@ export default function KubernetesAdminPage() {
               <Server className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Kubernetes 관리</h1>
+              <h1 className="text-2xl font-bold flex items-center gap-2">
+                Kubernetes 관리
+                <HelpButton helpId="page-admin-kubernetes" size="sm" />
+              </h1>
               <p className="text-sm text-muted-foreground">
                 Kubernetes 클러스터와 리소스를 관리합니다.
               </p>
