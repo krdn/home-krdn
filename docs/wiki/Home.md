@@ -90,7 +90,7 @@ docker-compose up -d
 | 환경 | URL | 포트 |
 |------|-----|------|
 | 개발 | http://localhost:3000 | 3000 |
-| 프로덕션 | https://home.krdn.kr | 443 |
+| 프로덕션 | https://all.krdn.kr | 443 |
 
 ## 문서
 

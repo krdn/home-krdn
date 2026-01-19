@@ -4,7 +4,7 @@
 
 ```
 Development: http://localhost:3000/api
-Production: https://home.krdn.kr/api
+Production: https://all.krdn.kr/api
 ```
 
 ## Authentication
