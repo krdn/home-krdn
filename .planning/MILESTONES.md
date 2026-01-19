@@ -1,5 +1,31 @@
 # Project Milestones: Home-KRDN
 
+## v2.4 Help System (Shipped: 2026-01-19)
+
+**Delivered:** 모든 페이지와 위젯에 상세한 한국어 도움말 시스템 제공
+
+**Phases completed:** 44-46 (6 plans total)
+
+**Key accomplishments:**
+- HelpButton + HelpModal 컴포넌트 구현 (ghost style, Framer Motion 애니메이션)
+- 44개 도움말 콘텐츠 저장소 구조화 (페이지/위젯별 카테고리)
+- 15개 페이지에 도움말 아이콘 배치 (Public 5개 + Admin 10개)
+- 20개 위젯에 도움말 아이콘 배치 (Dashboard/Port 7개 + Admin/DevOps/Team 13개)
+- HelpContext 전역 상태 관리 (ESC/backdrop 닫기, focus trap, ARIA)
+- 모든 도움말 한국어로 작성 (기능 설명 + 상태 의미 + 관련 설정 안내)
+
+**Stats:**
+- 62 files modified
+- +4,611 lines of TypeScript added
+- 3 phases, 6 plans, 37 requirements
+- v2.3 → v2.4: same day release (~3 hours)
+
+**Git range:** `feat(44-01)` → `docs(46)`
+
+**What's next:** 다음 마일스톤 계획 대기
+
+---
+
 ## v2.3 Port Scanner & Guide (Shipped: 2026-01-19)
 
 **Delivered:** 시스템 실제 포트 현황 조회 및 신규 개발 포트 가이드 제공

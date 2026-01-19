@@ -90,16 +90,18 @@
 - ✓ 카테고리별 포트 사용률 시각화 — Phase 43
 - ✓ 신규 개발 포트 추천 가이드 UI (4탭) — Phase 43
 
+**v2.4 Help System (신규 구현)**
+- ✓ 도움말 시스템 인프라 (HelpButton, HelpModal 컴포넌트) — Phase 44
+- ✓ 도움말 콘텐츠 저장소 (44개 페이지/위젯별 한국어 도움말) — Phase 44
+- ✓ 모든 페이지에 도움말 아이콘 배치 (15개 페이지) — Phase 45
+- ✓ 각 위젯/카드 영역에 도움말 아이콘 배치 (20개 위젯) — Phase 46
+- ✓ HelpContext 전역 상태 관리 (ESC/backdrop 닫기, focus trap) — Phase 44
+
 ### Active
 
 <!-- 다음 버전 빌드 목표 -->
 
-**v2.4 Help System (현재 진행)**
-- [ ] 도움말 시스템 인프라 (HelpButton, HelpModal 컴포넌트)
-- [ ] 도움말 콘텐츠 저장소 (페이지/영역별 한국어 도움말)
-- [ ] 모든 페이지에 도움말 아이콘 배치
-- [ ] 각 위젯/카드 영역에 도움말 아이콘 배치
-- [ ] 상세 도움말 콘텐츠 작성 (기능 설명 + 상태 표시 의미 + 관련 설정 안내)
+(다음 마일스톤 계획 대기)
 
 ### Out of Scope
 
@@ -133,13 +135,14 @@
 - **파일 구조**: Feature-based 컴포넌트 + 중앙화된 설정
 - **PWA**: Service Worker 캐싱, 오프라인 지원
 
-### 현재 상태 (v2.3 완료)
+### 현재 상태 (v2.4 완료)
 
-- **코드베이스**: ~270 TypeScript 파일
+- **코드베이스**: ~280 TypeScript 파일 (~58,000 LOC)
 - **테스트**: 378개 (Vitest 단위/통합 + Playwright E2E)
-- **컴포넌트**: 83+개
+- **컴포넌트**: 90+개 (HelpButton, HelpModal, GlobalHelpModal 추가)
 - **API 라우트**: 57+개
-- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 → v2.2 → v2.3 완료
+- **도움말 콘텐츠**: 44개 (15 페이지 + 20 위젯 + 예약 ID)
+- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 → v2.2 → v2.3 → v2.4 완료
 
 ## Constraints
 
@@ -170,4 +173,4 @@
 | React Flow (XyFlow) | DOM 기반 커스텀 노드, React 네이티브 | ✅ Validated |
 
 ---
-*Last updated: 2026-01-19 after v2.4 milestone start*
+*Last updated: 2026-01-19 after v2.4 milestone complete*
