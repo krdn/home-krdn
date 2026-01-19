@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Rocket, Code } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { HelpButton } from "@/components/help";
 import { StatusBadge } from "./StatusBadge";
 import { TechBadge } from "./TechBadge";
 import { getIcon } from "@/lib/icons";
@@ -70,6 +71,7 @@ export function ServiceCard({ service, showControls = true }: ServiceCardProps) 
             <Button asChild variant="outline" size="sm" className="flex-1">
               <Link href={`/services/${service.id}`}>상세 보기</Link>
             </Button>
+            <HelpButton helpId="widget-service-card" size="sm" />
             {prodUrl && (
               <Button asChild variant="ghost" size="sm">
                 <a

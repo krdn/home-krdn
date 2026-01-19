@@ -10,6 +10,7 @@
 
 import { useMemo } from 'react';
 import { Box, Loader2, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import { useK8sPods } from '@/hooks/useKubernetes';
 import type { K8sPod } from '@/types/kubernetes';
 
@@ -137,7 +138,10 @@ export function K8sPodList({ clusterId, namespace, refreshInterval = 30000 }: K8
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>총 {pods.length}개 Pod</span>
+        <span className="flex items-center gap-2">
+          총 {pods.length}개 Pod
+          <HelpButton helpId="widget-k8s-pods" size="sm" />
+        </span>
       </div>
       {pods.map((pod) => (
         <PodItem key={`${pod.namespace}/${pod.name}`} pod={pod} />

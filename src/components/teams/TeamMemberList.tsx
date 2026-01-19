@@ -12,6 +12,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserCircle, ChevronDown, Trash2, Shield, User, Eye } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import { useRemoveMember, useUpdateMemberRole } from '@/hooks/useTeams';
 import type { TeamMemberDto } from '@/lib/team-service';
 
@@ -81,6 +82,12 @@ export function TeamMemberList({
 
   return (
     <div className="space-y-2">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium text-muted-foreground">
+          팀 멤버 ({members.length})
+        </span>
+        <HelpButton helpId="widget-team-members" size="sm" />
+      </div>
       <AnimatePresence mode="popLayout">
         {members.map((member) => {
           const isOwner = member.userId === ownerId;

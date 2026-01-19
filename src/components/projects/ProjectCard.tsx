@@ -2,10 +2,11 @@
 
 import { memo } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Github, FileText, Globe, Rocket, Code } from "lucide-react";
+import { ExternalLink, Github, FileText, Globe, Rocket, Code, HelpCircle } from "lucide-react";
 import { ProjectImage } from "./ProjectImage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { HelpButton } from "@/components/help";
 import { cn } from "@/lib/utils";
 import type { Project, ProjectLink } from "@/types/project";
 import {
@@ -180,6 +181,7 @@ function ProjectCardComponent({ project, showControls = true }: ProjectCardProps
               상세 보기
             </span>
             <div className="flex gap-1" onClick={handleExternalClick}>
+              <HelpButton helpId="widget-project-card" size="sm" />
               {githubLink && (
                 <Button asChild variant="ghost" size="sm">
                   <a

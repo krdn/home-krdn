@@ -23,6 +23,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { HelpButton } from '@/components/help';
 import { useWorkflows } from '@/hooks/useGitHub';
 import type { GitHubWorkflow } from '@/types/github';
 
@@ -161,6 +162,7 @@ export function WorkflowList({
         <CardTitle className="flex items-center gap-2 text-base">
           <PlayCircle className="h-5 w-5" />
           워크플로우 ({workflows.length})
+          <HelpButton helpId="widget-workflow-list" size="sm" />
         </CardTitle>
         <Button
           variant="ghost"

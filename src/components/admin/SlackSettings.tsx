@@ -9,6 +9,7 @@ import { MessageSquare, Check, AlertCircle } from 'lucide-react';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useState, useEffect } from 'react';
 import { SLACK_CONFIG } from '@/config/constants';
+import { HelpButton } from '@/components/help';
 
 export function SlackSettings() {
   const { slackConfig, updateSlackConfig } = useNotificationStore();
@@ -42,6 +43,7 @@ export function SlackSettings() {
       <div className="mb-4 flex items-center gap-2">
         <MessageSquare className="h-5 w-5 text-primary" />
         <h3 className="font-semibold">Slack 알림 설정</h3>
+        <HelpButton helpId="widget-slack-settings" size="sm" />
       </div>
 
       <div className="space-y-4">

@@ -24,6 +24,7 @@ import {
   Loader2,
   Check,
 } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import { useTeamSettings, useUpdateTeamSettings } from '@/hooks/useTeams';
 
 interface TeamSettingsPanelProps {
@@ -105,6 +106,7 @@ export function TeamSettingsPanel({
                 <div className="flex items-center gap-2">
                   <Bell className="w-5 h-5 text-primary" />
                   <h2 className="font-semibold">팀 알림 설정</h2>
+                  <HelpButton helpId="widget-team-settings" size="sm" />
                 </div>
                 <button
                   onClick={onClose}

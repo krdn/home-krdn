@@ -9,6 +9,7 @@
  */
 
 import { Globe, Loader2, AlertCircle, Network, ExternalLink } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import { useK8sServices } from '@/hooks/useKubernetes';
 import type { K8sService } from '@/types/kubernetes';
 
@@ -137,7 +138,10 @@ export function K8sServiceList({ clusterId, namespace, refreshInterval = 60000 }
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>총 {services.length}개 Service</span>
+        <span className="flex items-center gap-2">
+          총 {services.length}개 Service
+          <HelpButton helpId="widget-k8s-services" size="sm" />
+        </span>
       </div>
       {services.map((service) => (
         <ServiceItem key={`${service.namespace}/${service.name}`} service={service} />

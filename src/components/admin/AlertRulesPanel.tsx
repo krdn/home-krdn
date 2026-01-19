@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Bell, Edit2, Trash2, Plus, Power, PowerOff } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import type { AlertRule, AlertSeverity, AlertCategory } from '@/types/alert';
 
 /**
@@ -169,6 +170,7 @@ export const AlertRulesPanel = memo(function AlertRulesPanel({
           <span className="text-sm text-muted-foreground">
             ({enabledCount}/{rules.length} 활성)
           </span>
+          <HelpButton helpId="widget-alert-rules" size="sm" />
         </div>
         <Button onClick={onAdd} size="sm">
           <Plus className="mr-1 h-4 w-4" />

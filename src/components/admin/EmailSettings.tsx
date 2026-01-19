@@ -8,6 +8,7 @@
 import { Mail, Check } from 'lucide-react';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useState, useEffect } from 'react';
+import { HelpButton } from '@/components/help';
 
 export function EmailSettings() {
   const { emailConfig, updateEmailConfig } = useNotificationStore();
@@ -30,6 +31,7 @@ export function EmailSettings() {
       <div className="mb-4 flex items-center gap-2">
         <Mail className="h-5 w-5 text-primary" />
         <h3 className="font-semibold">이메일 알림 설정</h3>
+        <HelpButton helpId="widget-email-settings" size="sm" />
       </div>
 
       <div className="space-y-4">

@@ -9,6 +9,7 @@
  */
 
 import { Layers, Loader2, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import { useK8sDeployments } from '@/hooks/useKubernetes';
 import type { K8sDeployment } from '@/types/kubernetes';
 
@@ -128,7 +129,10 @@ export function K8sDeploymentList({ clusterId, namespace, refreshInterval = 3000
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>총 {deployments.length}개 Deployment</span>
+        <span className="flex items-center gap-2">
+          총 {deployments.length}개 Deployment
+          <HelpButton helpId="widget-k8s-deployments" size="sm" />
+        </span>
       </div>
       {deployments.map((deployment) => (
         <DeploymentItem key={`${deployment.namespace}/${deployment.name}`} deployment={deployment} />

@@ -24,6 +24,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Globe, Layers, Box, Loader2, AlertCircle, Network } from 'lucide-react';
+import { HelpButton } from '@/components/help';
 import { useK8sTopology } from '@/hooks/useKubernetes';
 import type { ServiceTopology as ServiceTopologyType, TopologyNode } from '@/types/kubernetes';
 
@@ -276,6 +277,7 @@ export function ServiceTopology({
             <Box className="h-4 w-4 text-green-500" />
             Pods: {topology.nodes.filter((n) => n.type === 'pod').length}
           </span>
+          <HelpButton helpId="widget-service-topology" size="sm" />
         </div>
         <button
           onClick={() => {

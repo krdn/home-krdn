@@ -11,6 +11,7 @@ import { Search, Filter, X, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent } from '@/components/ui/Card';
+import { HelpButton } from '@/components/help';
 import { cn } from '@/lib/utils';
 import {
   LogLevel,
@@ -212,6 +213,7 @@ export const LogFilter = memo(function LogFilter({
                 {activeFilterCount}
               </Badge>
             )}
+            <HelpButton helpId="widget-log-filter" size="sm" />
           </div>
           <div className="flex items-center gap-2">
             {activeFilterCount > 0 && (
