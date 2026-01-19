@@ -579,7 +579,11 @@ Plans:
 **Depends on**: Phase 44
 **Research**: Unlikely
 **Status**: ○ Pending
-**Plans**: 0/2 complete
+**Plans**: 2 plans
+
+Plans:
+- [ ] 45-01-PLAN.md — Public 페이지 5개 (/, /services, /projects, /ports, /teams)
+- [ ] 45-02-PLAN.md — Admin 페이지 10개 (/admin, /admin/containers, /admin/alerts, /admin/settings, /admin/github, /admin/logs, /admin/log-alerts, /admin/kubernetes, /admin/devops, /admin/ports)
 
 **Requirements Covered:**
 - PAGE-01 ~ PAGE-15: 15개 페이지 도움말
@@ -643,4 +647,4 @@ Plans:
 15. ProjectCard / ServiceCard
 
 ---
-*Last updated: 2026-01-19 — Phase 44 plans created*
+*Last updated: 2026-01-19 — Phase 45 plans created*
