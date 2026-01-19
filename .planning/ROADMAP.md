@@ -16,6 +16,7 @@ None
 - ✅ **v2.1 Polish** — Phases 25-32 (shipped 2026-01-15) — [Archive](milestones/v2.1-Polish.md)
 - ✅ **v2.2 DevOps Tools** — Phases 33-42 (shipped 2026-01-16) — [Archive](milestones/v2.2-DevOps-Tools.md)
 - ✅ **v2.3 Port Scanner & Guide** — Phase 43 (shipped 2026-01-19) — [Archive](milestones/v2.3-Port-Scanner-Guide.md)
+- 🚧 **v2.4 Help System** — Phases 44-46 (in progress)
 
 ## Completed Milestones
 
@@ -530,6 +531,110 @@ All planned phases (1-43) completed. v2.3 Port Scanner & Guide shipped.
 | 41. Service Mesh Overview | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 42. DevOps Home | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 43. Port Scanner & Guide | v2.3 | 2/2 | ✅ Complete | 2026-01-19 |
+| 44. Help Infrastructure | v2.4 | 0/2 | ○ Pending | — |
+| 45. Page Help | v2.4 | 0/2 | ○ Pending | — |
+| 46. Widget Help | v2.4 | 0/2 | ○ Pending | — |
+
+### 🚧 v2.4 Help System (IN PROGRESS)
+
+**Milestone Goal:** 모든 페이지와 위젯에 상세한 한국어 도움말 시스템 제공
+
+#### Phase 44: Help Infrastructure ○
+
+**Goal**: 도움말 시스템의 핵심 인프라 구축 — 재사용 가능한 컴포넌트와 콘텐츠 저장소
+**Depends on**: v2.3 milestone complete
+**Research**: Unlikely (일반적인 UI 패턴)
+**Status**: ○ Pending
+**Plans**: 0/2 complete
+
+**Requirements Covered:**
+- INFRA-01: HelpButton 컴포넌트 구현
+- INFRA-02: HelpModal 컴포넌트 구현
+- INFRA-03: 도움말 콘텐츠 저장소 구조 정의
+- INFRA-04: 도움말 컨텍스트/훅 구현
+
+**Success Criteria:**
+1. HelpButton을 클릭하면 해당 helpId의 모달이 열린다
+2. HelpModal이 제목, 본문, 닫기 버튼을 올바르게 렌더링한다
+3. ESC 키 또는 외부 클릭으로 모달이 닫힌다
+4. 존재하지 않는 helpId에 대해 기본 메시지가 표시된다
+5. 모달이 접근성 요구사항을 충족한다 (focus trap, aria-modal)
+
+**Key Deliverables:**
+- `src/components/help/HelpButton.tsx`
+- `src/components/help/HelpModal.tsx`
+- `src/hooks/useHelp.ts`
+- `src/data/help/index.ts`
+- `src/types/help.ts`
+
+#### Phase 45: Page Help ○
+
+**Goal**: 모든 주요 페이지에 도움말 아이콘 배치 및 상세 콘텐츠 작성
+**Depends on**: Phase 44
+**Research**: Unlikely
+**Status**: ○ Pending
+**Plans**: 0/2 complete
+
+**Requirements Covered:**
+- PAGE-01 ~ PAGE-15: 15개 페이지 도움말
+- CONT-01 ~ CONT-03: 콘텐츠 품질 요구사항
+
+**Success Criteria:**
+1. 각 페이지 헤더 영역에 도움말 아이콘이 표시된다
+2. 도움말 클릭 시 해당 페이지의 전체 기능 설명이 모달로 표시된다
+3. 도움말 내용이 한국어로 작성되어 있다
+4. 각 도움말이 관련 설정이나 다음 단계를 안내한다
+
+**Pages to Update:**
+1. `/` (Dashboard)
+2. `/services`
+3. `/projects`
+4. `/ports`
+5. `/teams`
+6. `/admin`
+7. `/admin/containers`
+8. `/admin/alerts`
+9. `/admin/settings`
+10. `/admin/github`
+11. `/admin/logs`
+12. `/admin/log-alerts`
+13. `/admin/kubernetes`
+14. `/admin/devops`
+15. `/admin/ports`
+
+#### Phase 46: Widget Help ○
+
+**Goal**: 각 위젯/카드/영역에 상세 도움말 제공
+**Depends on**: Phase 45
+**Research**: Unlikely
+**Status**: ○ Pending
+**Plans**: 0/2 complete
+
+**Requirements Covered:**
+- WIDGET-01 ~ WIDGET-15: 15개 위젯 도움말
+
+**Success Criteria:**
+1. 각 주요 위젯/카드 헤더에 도움말 아이콘이 표시된다
+2. 도움말이 해당 위젯의 데이터 의미와 상태 색상을 설명한다
+3. 관련 설정 변경 방법을 안내한다
+4. 문제 해결 가이드가 포함된다
+
+**Widgets to Update:**
+1. SystemMonitor (CPU, Memory, Disk, Uptime)
+2. ContainerStats
+3. NetworkAreaChart
+4. MetricsLineChart (Process)
+5. AlertRulesPanel
+6. EmailSettings / SlackSettings
+7. LogFilter / LogViewer
+8. WorkflowList / WorkflowStatusBadge
+9. K8sPodList / K8sServiceList / K8sDeploymentList
+10. ServiceTopology
+11. PortScanner
+12. PortComparison
+13. PortGuide
+14. TeamMemberList / TeamSettingsPanel
+15. ProjectCard / ServiceCard
 
 ---
-*Last updated: 2026-01-19 — v2.3 milestone archived, ready for next milestone*
+*Last updated: 2026-01-19 — v2.4 Help System milestone started*

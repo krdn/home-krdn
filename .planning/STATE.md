@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** 통합 모니터링 허브 — 모든 서비스와 컨테이너를 한눈에 파악하고 관리하는 중앙 대시보드
-**Current focus:** 다음 마일스톤 계획 대기
+**Current focus:** v2.4 Help System — 모든 페이지와 위젯에 도움말 시스템 제공
 
 ## Current Position
 
-Phase: 43 of 43 complete (v2.3 Port Scanner & Guide shipped)
-Plan: All plans completed
-Status: ✅ v2.3 Milestone Complete
-Last activity: 2026-01-19 — v2.3 milestone archived
+Phase: 44 of 46 (v2.4 Help System)
+Plan: Not yet planned
+Status: 🚧 Phase 44 Ready for Planning
+Last activity: 2026-01-19 — v2.4 milestone initialized
 
-Progress: ██████████ 100% (v2.3 Port Scanner & Guide — Shipped)
+Progress: ░░░░░░░░░░ 0% (v2.4 Help System — Starting)
 
 ## Performance Metrics
 
@@ -36,6 +36,7 @@ Progress: ██████████ 100% (v2.3 Port Scanner & Guide — Shi
 | v2.1 Polish | 25-32 | 16 | ✅ Shipped | 2026-01-15 |
 | v2.2 DevOps Tools | 33-42 | 27 | ✅ Shipped | 2026-01-16 |
 | v2.3 Port Scanner & Guide | 43 | 2 | ✅ Shipped | 2026-01-19 |
+| v2.4 Help System | 44-46 | 0/6 | 🚧 In Progress | — |
 
 ## Accumulated Context
 
@@ -43,17 +44,16 @@ Progress: ██████████ 100% (v2.3 Port Scanner & Guide — Shi
 
 Decisions are logged in PROJECT.md Key Decisions table.
 
-Key technology decisions for v2.3:
-- ✅ ss 명령어: 시스템 TCP 포트 스캔 (netstat 폴백)
-- ✅ Docker API: 컨테이너 포트 바인딩 조회
-- ✅ React Query: 포트 스캔/비교 실시간 조회 (staleTime 10초/30초)
-- ✅ Dynamic Import: 탭 컴포넌트 지연 로딩으로 초기 로딩 최적화
+Key technology decisions for v2.4:
+- ○ HelpButton/HelpModal 컴포넌트 아키텍처 (pending)
+- ○ 도움말 콘텐츠 저장 방식 (pending)
 
 ### Constraints
 
 - 외부 API (GitHub, K8s) 연동 시 인증 정보 안전 관리
 - 로그 데이터 저장 시 디스크 용량 고려 (로테이션 필수)
 - 기존 모니터링 기능과 일관된 UX 유지
+- 도움말 콘텐츠는 한국어로 작성
 
 ### Deferred Issues
 
@@ -61,7 +61,10 @@ None.
 
 ### Pending Todos
 
-None - v2.3 완료 및 아카이브됨.
+v2.4 Help System 마일스톤:
+- Phase 44: Help Infrastructure (도움말 인프라)
+- Phase 45: Page Help (페이지 도움말)
+- Phase 46: Widget Help (위젯 도움말)
 
 ### Blockers/Concerns Carried Forward
 
@@ -75,10 +78,11 @@ None - v2.3 완료 및 아카이브됨.
 - v2.1 Polish completed: 8 phases (25-32), shipped 2026-01-15
 - v2.2 DevOps Tools completed: 10 phases (33-42), shipped 2026-01-16
 - v2.3 Port Scanner & Guide completed: 1 phase (43), shipped 2026-01-19
+- v2.4 Help System started: 3 phases (44-46), in progress
 
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: v2.3 마일스톤 아카이브 완료
+Stopped at: v2.4 마일스톤 초기화 완료
 Resume file: None
-Next action: /gsd:new-milestone (새 마일스톤 시작)
+Next action: /gsd:plan-phase 44 (Phase 44 계획)
