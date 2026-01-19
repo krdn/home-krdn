@@ -445,53 +445,324 @@ Personal Access Token (classic) 필요
     ],
   },
 
-  // === 위젯 도움말 ===
+  // === 위젯 도움말 (Phase 46) ===
   'widget-system-monitor': {
     id: 'widget-system-monitor',
     title: '시스템 모니터',
-    content: 'CPU, 메모리, 디스크 사용량을 실시간으로 표시합니다. (Phase 46에서 상세 내용 추가)',
+    content: `CPU, 메모리, 디스크, 업타임을 실시간으로 표시합니다.
+
+**주요 지표:**
+- **CPU:** 현재 사용률 (%) - 모든 코어 평균
+- **메모리:** 사용 중 / 전체 (GB)
+- **디스크:** 사용 중 / 전체 (GB)
+- **업타임:** 시스템 가동 시간
+
+**상태 색상:**
+- 🟢 녹색 (0-50%): 정상
+- 🔵 파란색 (50-70%): 보통
+- 🟡 노란색 (70-90%): 주의
+- 🔴 빨간색 (90-100%): 위험
+
+💡 **팁:** 알림 설정에서 임계값 알림 규칙을 추가하면 리소스 사용량이 특정 값을 초과할 때 알림을 받을 수 있습니다.`,
+    relatedLinks: [
+      { label: '알림 설정', href: '/admin/alerts' },
+    ],
   },
 
   'widget-container-stats': {
     id: 'widget-container-stats',
     title: '컨테이너 통계',
-    content: '컨테이너 실행 상태와 리소스 사용량을 표시합니다. (Phase 46에서 상세 내용 추가)',
+    content: `Docker 컨테이너 실행 상태를 요약하여 표시합니다.
+
+**주요 지표:**
+- **Running:** 현재 실행 중인 컨테이너 수
+- **Stopped:** 정지된 컨테이너 수
+- **Total:** 전체 컨테이너 수
+
+**상태 색상:**
+- 🟢 녹색: 실행 중 (running)
+- 🔴 빨간색: 중지됨 (stopped)
+- 🟡 노란색: 재시작 중 (restarting)
+
+**Progress Bar:** 실행 중인 컨테이너 비율을 시각화합니다.
+
+💡 **팁:** 상세 관리는 Admin > Containers 페이지에서 가능합니다.`,
+    relatedLinks: [
+      { label: '컨테이너 관리', href: '/admin/containers' },
+    ],
+  },
+
+  'widget-network-chart': {
+    id: 'widget-network-chart',
+    title: '네트워크 트래픽',
+    content: `네트워크 송수신 트래픽을 시계열 그래프로 표시합니다.
+
+**주요 지표:**
+- **RX (수신):** 들어오는 네트워크 트래픽 (MB)
+- **TX (송신):** 나가는 네트워크 트래픽 (MB)
+
+**그래프 읽기:**
+- **X축:** 시간 (최근 N분)
+- **Y축:** 트래픽 양 (MB)
+- **면적 채움:** 전체 트래픽 규모 시각화 (RX: 녹색, TX: 파란색)
+
+💡 **팁:** 급격한 트래픽 증가는 비정상 활동 징후일 수 있습니다.
+
+⚠️ **문제 해결:** 네트워크 트래픽이 0이면 Docker 네트워크 설정을 확인하세요.`,
+  },
+
+  'widget-process-chart': {
+    id: 'widget-process-chart',
+    title: '프로세스 메트릭',
+    content: `CPU/메모리 사용량 히스토리를 시계열 그래프로 표시합니다.
+
+**주요 지표:**
+- **CPU:** 시간별 CPU 사용률 추이
+- **Memory:** 시간별 메모리 사용률 추이
+
+**그래프 읽기:**
+- **X축:** 시간 (최근 N분)
+- **Y축:** 사용률 (%)
+- **라인 색상:** 각 메트릭별 고유 색상
+
+💡 **팁:** 추세 확인으로 리소스 부족을 예측할 수 있습니다.
+
+⚠️ **문제 해결:** 지속적인 90%+ 사용률은 스케일업이 필요하다는 신호입니다.`,
   },
 
   'widget-network-status': {
     id: 'widget-network-status',
     title: '네트워크 상태',
-    content: '네트워크 연결 상태와 트래픽을 모니터링합니다. (Phase 46에서 상세 내용 추가)',
+    content: `네트워크 연결 상태와 트래픽을 모니터링합니다.
+
+⚠️ 이 도움말은 deprecated되었습니다. widget-network-chart를 참고하세요.`,
   },
 
   'widget-disk-usage': {
     id: 'widget-disk-usage',
     title: '디스크 사용량',
-    content: '디스크 파티션별 사용량과 I/O를 표시합니다. (Phase 46에서 상세 내용 추가)',
+    content: `디스크 파티션별 사용량을 표시합니다.
+
+**주요 지표:**
+- **사용량:** 현재 사용 중인 용량 (GB)
+- **전체:** 총 디스크 용량 (GB)
+- **사용률:** 퍼센트 표시
+
+**상태 색상:**
+- 🟢 녹색 (0-70%): 여유
+- 🟡 노란색 (70-90%): 주의
+- 🔴 빨간색 (90-100%): 위험`,
   },
 
   'widget-alert-summary': {
     id: 'widget-alert-summary',
     title: '알림 요약',
-    content: '최근 발생한 알림을 요약해서 표시합니다. (Phase 46에서 상세 내용 추가)',
+    content: `최근 발생한 알림을 요약하여 표시합니다.
+
+**주요 정보:**
+- 최근 알림 목록
+- 알림 심각도 (info, warn, error)
+- 발생 시간
+
+💡 **팁:** 알림 클릭으로 상세 내용 확인 가능`,
   },
 
   'widget-service-status': {
     id: 'widget-service-status',
     title: '서비스 상태',
-    content: '등록된 서비스들의 상태를 한눈에 표시합니다. (Phase 46에서 상세 내용 추가)',
+    content: `등록된 서비스들의 상태를 한눈에 표시합니다.
+
+**상태 색상:**
+- 🟢 녹색: 실행 중 (running)
+- 🔴 빨간색: 중지됨 (stopped)
+
+💡 **팁:** 서비스 클릭으로 상세 페이지 이동`,
   },
 
   'widget-log-viewer': {
     id: 'widget-log-viewer',
     title: '로그 뷰어',
-    content: '최근 로그 메시지를 실시간으로 표시합니다. (Phase 46에서 상세 내용 추가)',
+    content: `최근 로그 메시지를 실시간으로 표시합니다.
+
+**로그 레벨:**
+- debug: 상세 디버그 정보
+- info: 일반 정보
+- warn: 경고
+- error: 오류
+
+💡 **팁:** 실시간 모드로 새 로그 자동 수신 가능`,
   },
 
   'widget-quick-actions': {
     id: 'widget-quick-actions',
     title: '빠른 작업',
-    content: '자주 사용하는 작업을 빠르게 실행할 수 있습니다. (Phase 46에서 상세 내용 추가)',
+    content: `자주 사용하는 작업을 빠르게 실행할 수 있습니다.
+
+**사용 가능 작업:**
+- 컨테이너 재시작
+- 캐시 초기화
+- 서비스 상태 갱신
+
+💡 **팁:** 버튼 클릭 시 확인 다이얼로그 표시`,
+  },
+
+  // === Port 위젯 도움말 (Phase 43) ===
+  'widget-port-scanner': {
+    id: 'widget-port-scanner',
+    title: '포트 스캐너',
+    content: `Docker 컨테이너 및 시스템의 활성 포트를 실시간 스캔합니다.
+
+**주요 기능:**
+- **Docker 포트:** 컨테이너 포트 바인딩 목록
+- **시스템 포트:** ss 명령어로 조회한 활성 포트
+- **마지막 스캔:** 스캔 시간 표시
+
+**소스 구분:**
+- 🐳 **Docker:** 컨테이너 포트 바인딩 (호스트 → 컨테이너)
+- 🖥️ **System:** 시스템 레벨 포트 (IPv4/IPv6)
+
+**테이블 컬럼:**
+- **호스트 포트:** 외부에서 접근 가능한 포트
+- **컨테이너 포트:** 컨테이너 내부 포트
+- **컨테이너:** 컨테이너 이름 및 ID
+- **상태:** running/stopped
+- **프로토콜:** tcp/udp
+
+💡 **팁:** 새로고침 버튼으로 최신 상태를 조회하세요.
+
+⚠️ **문제 해결:** 포트가 안 보이면 Docker 데몬 상태를 확인하세요.`,
+  },
+
+  'widget-port-comparison': {
+    id: 'widget-port-comparison',
+    title: '포트 비교',
+    content: `등록된 포트와 실제 활성 포트를 비교 분석합니다.
+
+**비교 결과:**
+- ✅ **정상 (녹색):** 등록 포트가 실제로 활성화됨
+- ⚠️ **주의 (노란색):** 등록되어 있으나 활성화되지 않음
+- 🔴 **미등록 (주황색):** 활성화되어 있으나 미등록됨
+
+**요약 카드:**
+- 등록 총 포트 / 활성 포트 / 비활성 포트 / 미등록 포트
+
+**섹션 구성:**
+1. **정상:** 등록 + 활성 포트 목록
+2. **주의:** 등록 + 비활성 포트 목록
+3. **미등록:** 미등록 + 활성 포트 목록
+
+💡 **팁:** 미등록 포트는 보안 위험일 수 있으니 확인 후 등록하세요.`,
+    relatedLinks: [
+      { label: '포트 관리', href: '/admin/ports' },
+    ],
+  },
+
+  'widget-port-guide': {
+    id: 'widget-port-guide',
+    title: '포트 가이드',
+    content: `신규 개발 시 사용할 포트 추천 및 할당 가이드입니다.
+
+**가이드 내용:**
+- **권장 포트 범위:** 카테고리별 포트 대역
+- **사용 가능 포트:** 현재 미사용 포트 목록
+- **충돌 검사:** 중복 할당 방지
+
+**포트 범위 안내:**
+| 범위 | 카테고리 | 용도 |
+|------|----------|------|
+| 3000-3999 | Web | 웹 프론트엔드 (Next.js, React) |
+| 4000-4999 | System | API 서버 (FastAPI, Express) |
+| 5000-5999 | Database | 데이터 서비스 (DB, Redis) |
+| 6000-6999 | Monitoring | 모니터링/인프라 |
+| 7000-7999 | AI | AI/ML 서비스 |
+| 8000-8999 | N8N | 워크플로우/자동화 |
+
+**Progress Bar:** 각 카테고리별 사용률 표시
+- 🟢 녹색: 여유 (0-60%)
+- 🟡 노란색: 보통 (60-80%)
+- 🔴 빨간색: 포화 (80-100%)
+
+💡 **팁:** 새 프로젝트 시작 전 포트 예약을 권장합니다.`,
+  },
+
+  // === Admin/DevOps 위젯 도움말 (Phase 46-02 placeholder) ===
+  'widget-alert-rules': {
+    id: 'widget-alert-rules',
+    title: '알림 규칙',
+    content: '알림 규칙을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-email-settings': {
+    id: 'widget-email-settings',
+    title: '이메일 설정',
+    content: '이메일 알림 설정을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-slack-settings': {
+    id: 'widget-slack-settings',
+    title: 'Slack 설정',
+    content: 'Slack 알림 설정을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-log-filter': {
+    id: 'widget-log-filter',
+    title: '로그 필터',
+    content: '로그 필터링 및 검색 기능입니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-workflow-list': {
+    id: 'widget-workflow-list',
+    title: '워크플로우 목록',
+    content: 'GitHub 워크플로우 실행 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-k8s-pods': {
+    id: 'widget-k8s-pods',
+    title: 'Kubernetes Pods',
+    content: 'Kubernetes Pod 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-k8s-services': {
+    id: 'widget-k8s-services',
+    title: 'Kubernetes Services',
+    content: 'Kubernetes Service 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-k8s-deployments': {
+    id: 'widget-k8s-deployments',
+    title: 'Kubernetes Deployments',
+    content: 'Kubernetes Deployment 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-service-topology': {
+    id: 'widget-service-topology',
+    title: '서비스 토폴로지',
+    content: '서비스 간 연결 관계를 시각화합니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  // === Team/Project/Service 위젯 도움말 (Phase 46-02 placeholder) ===
+  'widget-team-members': {
+    id: 'widget-team-members',
+    title: '팀 멤버',
+    content: '팀 멤버 목록을 표시합니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-team-settings': {
+    id: 'widget-team-settings',
+    title: '팀 설정',
+    content: '팀 설정을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-project-card': {
+    id: 'widget-project-card',
+    title: '프로젝트 카드',
+    content: '프로젝트 정보 카드입니다. (Phase 46-02에서 상세 내용 추가)',
+  },
+
+  'widget-service-card': {
+    id: 'widget-service-card',
+    title: '서비스 카드',
+    content: '서비스 정보 카드입니다. (Phase 46-02에서 상세 내용 추가)',
   },
 
   // === 일반 도움말 ===

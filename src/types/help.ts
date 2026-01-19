@@ -31,14 +31,37 @@ export type PageHelpId =
 
 // 위젯 도움말 ID
 export type WidgetHelpId =
+  // Dashboard 위젯
   | 'widget-system-monitor'
   | 'widget-container-stats'
-  | 'widget-network-status'
+  | 'widget-network-chart'
+  | 'widget-process-chart'
   | 'widget-disk-usage'
   | 'widget-alert-summary'
   | 'widget-service-status'
   | 'widget-log-viewer'
-  | 'widget-quick-actions';
+  | 'widget-quick-actions'
+  // Port 위젯 (Phase 43)
+  | 'widget-port-scanner'
+  | 'widget-port-comparison'
+  | 'widget-port-guide'
+  // Admin/DevOps 위젯 (Phase 46-02)
+  | 'widget-alert-rules'
+  | 'widget-email-settings'
+  | 'widget-slack-settings'
+  | 'widget-log-filter'
+  | 'widget-workflow-list'
+  | 'widget-k8s-pods'
+  | 'widget-k8s-services'
+  | 'widget-k8s-deployments'
+  | 'widget-service-topology'
+  // Team/Project/Service 위젯 (Phase 46-02)
+  | 'widget-team-members'
+  | 'widget-team-settings'
+  | 'widget-project-card'
+  | 'widget-service-card'
+  // Legacy (deprecated - widget-network-status → widget-network-chart)
+  | 'widget-network-status';
 
 // 일반 도움말 ID
 export type GeneralHelpId =
