@@ -3,6 +3,7 @@
 import { Box, CircleCheck, CircleX, Container } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { HelpButton } from '@/components/help';
 import { useContainers } from '@/hooks/useContainers';
 
 /**
@@ -52,6 +53,7 @@ export function ContainerStats() {
         <CardTitle className="flex items-center gap-2">
           <Box className="h-5 w-5" />
           Containers
+          <HelpButton helpId="widget-container-stats" size="sm" />
         </CardTitle>
       </CardHeader>
       <CardContent>

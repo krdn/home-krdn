@@ -3,6 +3,7 @@
 import { Cpu, MemoryStick, HardDrive, Server, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { HelpButton } from '@/components/help';
 import { useSystemMetrics } from '@/hooks/useSystemMetrics';
 
 function ProgressBar({
@@ -165,6 +166,7 @@ export function SystemMonitor() {
           <CardTitle className="flex items-center gap-2">
             <Server className="h-5 w-5" />
             System Information
+            <HelpButton helpId="widget-system-monitor" size="sm" />
           </CardTitle>
           <Button onClick={() => refetch()} variant="ghost" size="sm">
             <RefreshCw className="mr-2 h-4 w-4" />

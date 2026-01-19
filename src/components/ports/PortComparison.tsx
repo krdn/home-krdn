@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { HelpButton } from '@/components/help';
 import { usePortComparison } from '@/hooks/usePortScanner';
 
 // ============================================================
@@ -121,7 +122,10 @@ export function PortComparison() {
             <CheckCircle className="h-5 w-5 text-purple-500" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold">포트 비교</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">포트 비교</h2>
+              <HelpButton helpId="widget-port-comparison" size="sm" />
+            </div>
             <p className="flex items-center gap-1 text-sm text-muted-foreground">
               <Clock className="h-3 w-3" />
               마지막 비교: {formatRelativeTime(comparedAt)}

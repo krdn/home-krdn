@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { ChartTooltip } from './ChartTooltip';
+import { HelpButton } from '@/components/help';
 
 /**
  * 메트릭 데이터 포인트 타입
@@ -73,7 +74,10 @@ export const MetricsLineChart = memo(function MetricsLineChart({
 
   return (
     <div className="h-64 w-full">
-      <h3 className="mb-2 text-sm font-medium text-foreground">{title}</h3>
+      <div className="mb-2 flex items-center gap-2">
+        <h3 className="text-sm font-medium text-foreground">{title}</h3>
+        <HelpButton helpId="widget-process-chart" size="sm" />
+      </div>
       <ResponsiveContainer width="100%" height="90%">
         <LineChart
           data={data}

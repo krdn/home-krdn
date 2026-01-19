@@ -13,6 +13,7 @@ import { RefreshCw, Container, Server, AlertCircle, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { HelpButton } from '@/components/help';
 import { usePortScan } from '@/hooks/usePortScanner';
 
 // ============================================================
@@ -91,7 +92,10 @@ export function PortScanner() {
             <Container className="h-5 w-5 text-blue-500" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold">포트 스캐너</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">포트 스캐너</h2>
+              <HelpButton helpId="widget-port-scanner" size="sm" />
+            </div>
             <p className="flex items-center gap-1 text-sm text-muted-foreground">
               <Clock className="h-3 w-3" />
               마지막 스캔: {formatRelativeTime(scannedAt)}

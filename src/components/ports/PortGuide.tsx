@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { HelpButton } from '@/components/help';
 import { usePortRecommendation } from '@/hooks/usePorts';
 import {
   PORT_CATEGORIES,
@@ -132,7 +133,10 @@ export function PortGuide() {
           <Lightbulb className="h-5 w-5 text-amber-500" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold">포트 가이드</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold">포트 가이드</h2>
+            <HelpButton helpId="widget-port-guide" size="sm" />
+          </div>
           <p className="text-sm text-muted-foreground">
             카테고리별 포트 사용 현황과 신규 포트 추천
           </p>

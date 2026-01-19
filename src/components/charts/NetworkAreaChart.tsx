@@ -12,6 +12,7 @@ import {
   Legend,
 } from 'recharts';
 import { ChartTooltip } from './ChartTooltip';
+import { HelpButton } from '@/components/help';
 
 /**
  * 네트워크 데이터 포인트 타입
@@ -75,7 +76,10 @@ export const NetworkAreaChart = memo(function NetworkAreaChart({
 
   return (
     <div className="h-64 w-full">
-      <h3 className="mb-2 text-sm font-medium text-foreground">{title}</h3>
+      <div className="mb-2 flex items-center gap-2">
+        <h3 className="text-sm font-medium text-foreground">{title}</h3>
+        <HelpButton helpId="widget-network-chart" size="sm" />
+      </div>
       <ResponsiveContainer width="100%" height="90%">
         <AreaChart
           data={data}
