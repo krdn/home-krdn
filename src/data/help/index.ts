@@ -685,84 +685,369 @@ Personal Access Token (classic) 필요
 💡 **팁:** 새 프로젝트 시작 전 포트 예약을 권장합니다.`,
   },
 
-  // === Admin/DevOps 위젯 도움말 (Phase 46-02 placeholder) ===
+  // === Admin/DevOps 위젯 도움말 (Phase 46-02) ===
   'widget-alert-rules': {
     id: 'widget-alert-rules',
     title: '알림 규칙',
-    content: '알림 규칙을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `시스템 알림 규칙을 생성하고 관리합니다.
+
+**주요 기능:**
+- 규칙 생성/수정/삭제
+- 규칙 활성화/비활성화
+- 알림 히스토리 확인
+
+**규칙 타입:**
+- **threshold:** 임계값 초과 시 알림 (예: CPU > 90%)
+- **pattern:** 패턴 매칭 시 알림 (예: "error" 키워드)
+- **comparison:** 이전 값과 비교 시 알림 (예: 급격한 변화)
+
+**심각도:**
+- 🔵 info: 정보
+- 🟡 warning: 경고
+- 🔴 critical: 심각
+
+💡 **팁:** 여러 규칙을 조합하여 정교한 알림 설정 가능`,
+    relatedLinks: [
+      { label: '알림 설정 페이지', href: '/admin/alerts' },
+    ],
   },
 
   'widget-email-settings': {
     id: 'widget-email-settings',
-    title: '이메일 설정',
-    content: '이메일 알림 설정을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+    title: '이메일 알림 설정',
+    content: `Resend API를 통한 이메일 알림 채널 설정
+
+**설정 항목:**
+- Resend API Key: 이메일 전송 인증 키
+- 발신 이메일: 알림 발송 이메일 주소
+- 수신 이메일: 알림 받을 이메일 주소
+
+**옵션:**
+- Critical만 발송: 심각한 알림만 이메일로 전송
+- 쿨다운 설정: 동일 알림 재발송 대기 시간
+
+**테스트:** 설정 후 테스트 이메일 발송으로 확인
+
+💡 **팁:** Resend 무료 플랜은 일 100회 이메일 발송 가능
+
+**문제 해결:**
+- API Key 오류 시 Resend 대시보드에서 키 재발급
+- 환경 변수 RESEND_API_KEY 설정 필요`,
+    relatedLinks: [
+      { label: 'Resend 대시보드', href: 'https://resend.com/dashboard' },
+    ],
   },
 
   'widget-slack-settings': {
     id: 'widget-slack-settings',
-    title: 'Slack 설정',
-    content: 'Slack 알림 설정을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+    title: 'Slack 알림 설정',
+    content: `Slack Webhook을 통한 알림 채널 설정
+
+**설정 항목:**
+- Webhook URL: Slack Incoming Webhook URL
+- 채널명: 알림 전송 채널 (옵션)
+
+**옵션:**
+- Critical만 발송: 심각한 알림만 Slack으로 전송
+- Block Kit: 구조화된 메시지 포맷 지원
+
+**테스트:** 설정 후 테스트 메시지 발송으로 확인
+
+💡 **팁:** Slack App 생성 후 Incoming Webhook 활성화 필요
+
+**설정 방법:**
+1. api.slack.com/apps에서 앱 생성
+2. Incoming Webhooks 활성화
+3. Add New Webhook to Workspace 클릭
+4. 채널 선택 후 URL 복사
+
+**문제 해결:**
+- Webhook URL 유효성 확인 (https://hooks.slack.com/)`,
+    relatedLinks: [
+      { label: 'Slack Apps', href: 'https://api.slack.com/apps' },
+    ],
   },
 
   'widget-log-filter': {
     id: 'widget-log-filter',
     title: '로그 필터',
-    content: '로그 필터링 및 검색 기능입니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `로그 검색 및 필터링
+
+**필터 옵션:**
+- 키워드 검색: 로그 메시지 내 텍스트 검색
+- 소스 필터: Docker, Journal, App
+- 레벨 필터: trace, debug, info, warn, error, fatal
+- 시간 범위: 최근 1시간, 6시간, 24시간, 7일
+
+**실시간 모드:** ON 시 새 로그 자동 수신
+
+**레벨 색상:**
+- ⚪ trace/debug: 회색
+- 🔵 info: 파란색
+- 🟡 warn: 노란색
+- 🔴 error/fatal: 빨간색
+
+💡 **팁:** "error" 키워드로 오류 로그만 빠르게 검색
+
+**문제 해결:**
+- 검색 결과 없음 - 필터 조건 완화 후 재시도
+- 초기화 버튼으로 모든 필터 해제`,
+    relatedLinks: [
+      { label: '로그 뷰어', href: '/admin/logs' },
+    ],
   },
 
   'widget-workflow-list': {
     id: 'widget-workflow-list',
-    title: '워크플로우 목록',
-    content: 'GitHub 워크플로우 실행 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+    title: 'GitHub 워크플로우',
+    content: `GitHub Actions 워크플로우 실행 기록 조회
+
+**표시 정보:**
+- 워크플로우 이름
+- 실행 상태 (success/failure/in_progress)
+- 트리거 이벤트 (push, pull_request, schedule)
+- 실행 시간
+
+**상태 색상:**
+- ✅ 녹색: 성공 (success)
+- ❌ 빨간색: 실패 (failure)
+- 🔄 노란색: 진행 중 (in_progress)
+- ⏸️ 회색: 취소됨 (cancelled)
+
+**상호작용:**
+- 워크플로우 클릭: 해당 워크플로우만 필터링
+- 외부 링크: GitHub Actions 페이지에서 상세 로그 확인
+
+💡 **팁:** 워크플로우 클릭으로 GitHub에서 상세 로그 확인`,
+    relatedLinks: [
+      { label: 'GitHub 연동', href: '/admin/github' },
+    ],
   },
 
   'widget-k8s-pods': {
     id: 'widget-k8s-pods',
     title: 'Kubernetes Pods',
-    content: 'Kubernetes Pod 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `K8s 클러스터의 Pod 목록 및 상태 조회
+
+**표시 정보:**
+- Pod 이름
+- Namespace
+- 상태 (Running/Pending/Failed/Succeeded)
+- Ready 컨테이너 수
+- Age (생성 후 경과 시간)
+- Restart 횟수
+
+**상태 색상:**
+- 🟢 Running: 정상 실행 중
+- 🟡 Pending: 대기 중 (스케줄링/이미지 풀링)
+- 🔴 Failed: 실패
+- ⚪ Succeeded: 완료됨 (Job)
+
+💡 **팁:** Pending 상태가 오래 지속되면 리소스 부족 확인
+
+**문제 해결:**
+- Pod 재시작 반복: 로그 및 이벤트 확인
+- ImagePullBackOff: 이미지 경로 및 레지스트리 인증 확인`,
+    relatedLinks: [
+      { label: 'Kubernetes 관리', href: '/admin/kubernetes' },
+    ],
   },
 
   'widget-k8s-services': {
     id: 'widget-k8s-services',
     title: 'Kubernetes Services',
-    content: 'Kubernetes Service 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `K8s 클러스터의 Service 목록 조회
+
+**표시 정보:**
+- Service 이름
+- Namespace
+- 타입 (ClusterIP/NodePort/LoadBalancer)
+- Cluster IP
+- 포트 정보
+
+**Service 타입:**
+- **ClusterIP:** 클러스터 내부 접근 전용
+- **NodePort:** 노드 IP + 포트로 외부 접근
+- **LoadBalancer:** 외부 로드밸런서 연결
+- **ExternalName:** 외부 DNS로 리다이렉트
+
+**타입별 색상:**
+- 🟢 LoadBalancer: 초록색
+- 🔵 NodePort: 파란색
+- 🟣 ClusterIP: 보라색
+
+💡 **팁:** 외부 접근 필요시 NodePort 또는 LoadBalancer 사용`,
+    relatedLinks: [
+      { label: 'Kubernetes 관리', href: '/admin/kubernetes' },
+    ],
   },
 
   'widget-k8s-deployments': {
     id: 'widget-k8s-deployments',
     title: 'Kubernetes Deployments',
-    content: 'Kubernetes Deployment 목록입니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `K8s 클러스터의 Deployment 목록 및 상태 조회
+
+**표시 정보:**
+- Deployment 이름
+- Namespace
+- Ready 레플리카 수 (예: 3/3)
+- Available 레플리카 수
+- Updated 레플리카 수
+- Age (생성 후 경과 시간)
+- Strategy (RollingUpdate/Recreate)
+
+**상태 해석:**
+- ✅ Ready: 3/3 - 모든 레플리카 정상
+- ⚠️ Ready: 2/3 - 일부 레플리카 문제
+- ❌ Ready: 0/3 - 전체 장애
+
+💡 **팁:** Ready 수가 원하는 레플리카 수와 다르면 Pod 상태 확인
+
+**문제 해결:**
+- 레플리카 부족: 리소스 제한 및 노드 상태 확인
+- 롤아웃 중단: rollout status 확인`,
+    relatedLinks: [
+      { label: 'Kubernetes 관리', href: '/admin/kubernetes' },
+    ],
   },
 
   'widget-service-topology': {
     id: 'widget-service-topology',
     title: '서비스 토폴로지',
-    content: '서비스 간 연결 관계를 시각화합니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `Kubernetes 서비스 간 연결 관계를 시각화
+
+**시각화 요소:**
+- 🔵 Service: 파란색 노드
+- 🟣 Deployment: 보라색 노드
+- 🟢 Pod: 초록색 노드
+- 엣지: 서비스 간 연결 (selector 기반)
+
+**노드 정보:**
+- 상태 인디케이터 (우측 상단 점)
+- 리소스 타입 및 이름
+- 메타데이터 (레플리카, IP 등)
+
+**상호작용:**
+- 드래그: 노드 위치 이동
+- 휠: 확대/축소
+- 클릭: 노드 선택
+- 새로고침: 최신 상태 갱신
+
+💡 **팁:** 복잡한 마이크로서비스 아키텍처 파악에 유용`,
+    relatedLinks: [
+      { label: 'Kubernetes 관리', href: '/admin/kubernetes' },
+    ],
   },
 
-  // === Team/Project/Service 위젯 도움말 (Phase 46-02 placeholder) ===
+  // === Team/Project/Service 위젯 도움말 (Phase 46-02) ===
   'widget-team-members': {
     id: 'widget-team-members',
     title: '팀 멤버',
-    content: '팀 멤버 목록을 표시합니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `팀 멤버 목록 조회 및 관리
+
+**표시 정보:**
+- 멤버 이름/이메일
+- 역할 (ADMIN/USER/VIEWER)
+- 가입 날짜
+
+**역할 권한:**
+- 🛡️ **ADMIN:** 멤버 관리, 설정 변경, 모든 권한
+- 👤 **USER:** 프로젝트 접근, 편집 권한
+- 👁️ **VIEWER:** 읽기 전용 접근
+
+**관리 기능 (ADMIN만):**
+- 역할 변경: 드롭다운으로 역할 선택
+- 멤버 제거: 휴지통 아이콘 클릭
+
+**특별 배지:**
+- "소유자": 팀 생성자 (삭제 불가)
+- "나": 현재 로그인 사용자
+
+💡 **팁:** 멤버 추가는 초대 링크를 통해 가능`,
+    relatedLinks: [
+      { label: '팀 관리', href: '/teams' },
+    ],
   },
 
   'widget-team-settings': {
     id: 'widget-team-settings',
     title: '팀 설정',
-    content: '팀 설정을 관리합니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `팀 기본 정보 및 알림 설정 관리
+
+**알림 채널 설정:**
+- 이메일 알림: 모든 팀 멤버에게 이메일 발송
+- Slack 알림: Webhook URL로 Slack 메시지 발송
+
+**알림 대상 설정:**
+- ⚠️ 시스템 경고: CPU, 메모리, 디스크 임계값 초과 시
+- ➕ 멤버 가입: 새 멤버가 팀에 가입했을 때
+- ➖ 멤버 탈퇴: 멤버가 팀을 나갔을 때
+
+💡 **팁:** ADMIN만 팀 설정 변경 가능
+
+⚠️ **주의:** 팀 삭제는 소유자만 가능하며 되돌릴 수 없음`,
+    relatedLinks: [
+      { label: '팀 관리', href: '/teams' },
+    ],
   },
 
   'widget-project-card': {
     id: 'widget-project-card',
     title: '프로젝트 카드',
-    content: '프로젝트 정보 카드입니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `개별 프로젝트 정보 카드
+
+**표시 정보:**
+- 프로젝트 이름
+- 설명
+- 카테고리 (Web/API/AI/Data/Infra/Tool)
+- 상태 (active/archived/planned)
+- 기술 스택 태그 (최대 5개)
+- Featured 배지
+
+**상태 배지:**
+- 🟢 **active:** 현재 개발/운영 중
+- ⚪ **archived:** 보관됨
+- 🔵 **planned:** 계획 중
+
+**액션 버튼:**
+- 상세 보기: 프로젝트 상세 페이지로 이동
+- GitHub: 저장소 열기
+- 🚀 Production: 운영 환경 열기
+- 💻 Development: 개발 환경 열기
+
+💡 **팁:** 카드 클릭으로 프로젝트 상세 페이지 이동`,
+    relatedLinks: [
+      { label: '프로젝트 갤러리', href: '/projects' },
+    ],
   },
 
   'widget-service-card': {
     id: 'widget-service-card',
     title: '서비스 카드',
-    content: '서비스 정보 카드입니다. (Phase 46-02에서 상세 내용 추가)',
+    content: `개별 서비스 정보 카드
+
+**표시 정보:**
+- 서비스 이름
+- 설명
+- 카테고리 (AI/n8n/Infrastructure)
+- 상태 (running/stopped)
+- 기술 스택 태그 (최대 3개)
+- 포트 번호
+- URL 링크
+
+**상태 색상:**
+- 🟢 녹색: 실행 중 (running)
+- 🔴 빨간색: 중지됨 (stopped)
+
+**액션 버튼:**
+- 상세 보기: 서비스 상세 페이지로 이동
+- 🚀 Production: 운영 환경 열기
+- 💻 Development: 개발 환경 열기
+
+💡 **팁:** 서비스 URL 클릭으로 해당 서비스로 바로 이동`,
+    relatedLinks: [
+      { label: '서비스 카탈로그', href: '/services' },
+    ],
   },
 
   // === 일반 도움말 ===
