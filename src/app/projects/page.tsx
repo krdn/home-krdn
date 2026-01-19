@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, X, Star, Loader2 } from "lucide-react";
 import { ProjectGrid } from "@/components/projects/ProjectGrid";
 import { Button } from "@/components/ui/Button";
+import { HelpButton } from "@/components/help";
 import type { Project, ProjectCategory } from "@/types/project";
 import { cn } from "@/lib/utils";
 
@@ -116,7 +117,10 @@ export default function ProjectsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* 헤더 */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold sm:text-4xl">Projects</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-bold sm:text-4xl">Projects</h1>
+          <HelpButton helpId="page-projects" />
+        </div>
         <p className="mt-2 text-lg text-muted-foreground">
           {projects.length}개의 프로젝트 중 {activeCount}개 활성 중
         </p>

@@ -3,8 +3,8 @@
  * 포트 레지스트리를 조회하고 빠른 예약 기능을 제공하는 페이지
  */
 
-import { Network } from "lucide-react";
 import { PortsContent } from "./PortsContent";
+import { PortsHeader } from "./PortsHeader";
 import { getAllServices } from "@/lib/services";
 import { getAllProjects } from "@/lib/projects";
 
@@ -22,19 +22,9 @@ export default async function PortsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Header */}
+      {/* Header (Client Component for HelpButton) */}
       <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 p-2">
-            <Network className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold sm:text-4xl">Port Registry</h1>
-            <p className="mt-1 text-lg text-muted-foreground">
-              개발 서버 포트 할당 현황 및 예약
-            </p>
-          </div>
-        </div>
+        <PortsHeader />
       </div>
 
       {/* Content (Client Component) */}

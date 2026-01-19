@@ -34,8 +34,7 @@ export function Hero() {
                 Development Hub
               </span>
             </h1>
-            {/* 테스트용 HelpButton - Phase 45에서 제거 예정 */}
-            <HelpButton helpId="page-dashboard" />
+            <HelpButton helpId="page-home" />
           </div>
 
           {/* Description */}

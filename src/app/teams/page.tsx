@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import { Users, Plus } from 'lucide-react';
 import { useMyTeams } from '@/hooks/useTeams';
 import { TeamCard } from '@/components/teams/TeamCard';
+import { HelpButton } from '@/components/help';
 
 export default function TeamsPage() {
   const { teams, isLoading, error } = useMyTeams();
@@ -25,6 +26,7 @@ export default function TeamsPage() {
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Users className="w-7 h-7 text-primary" />
             내 팀
+            <HelpButton helpId="page-teams" />
           </h1>
           <p className="text-muted-foreground mt-1">
             팀을 만들고 멤버들과 협업하세요
