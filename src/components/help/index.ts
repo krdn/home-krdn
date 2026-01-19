@@ -11,3 +11,4 @@
 
 export { HelpButton } from './HelpButton';
 export { HelpModal } from './HelpModal';
+export { GlobalHelpModal } from './GlobalHelpModal';

@@ -19,7 +19,7 @@
  */
 
 import { HelpCircle } from 'lucide-react';
-import { useHelp } from '@/hooks/useHelp';
+import { useHelpContext } from '@/contexts/HelpContext';
 import { cn } from '@/lib/utils';
 import type { HelpId } from '@/types/help';
 
@@ -45,7 +45,7 @@ export function HelpButton({
   className,
   size = 'sm',
 }: HelpButtonProps) {
-  const { openHelp } = useHelp();
+  const { openHelp } = useHelpContext();
 
   // 아이콘 크기 매핑
   const iconSize = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';

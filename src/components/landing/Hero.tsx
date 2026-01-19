@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Layers, Settings } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getRunningServices } from "@/config/services";
+import { HelpButton } from "@/components/help";
 
 export function Hero() {
   const runningCount = getRunningServices().length;
@@ -26,12 +27,16 @@ export function Hero() {
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-            <span className="block">krdn</span>
-            <span className="block bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Development Hub
-            </span>
-          </h1>
+          <div className="flex items-start justify-center gap-2">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+              <span className="block">krdn</span>
+              <span className="block bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                Development Hub
+              </span>
+            </h1>
+            {/* 테스트용 HelpButton - Phase 45에서 제거 예정 */}
+            <HelpButton helpId="page-dashboard" />
+          </div>
 
           {/* Description */}
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">

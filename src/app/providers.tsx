@@ -4,6 +4,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { getQueryClient } from '@/lib/queryClient';
 import { ToastProvider } from '@/components/providers/ToastProvider';
+import { HelpProvider } from '@/contexts/HelpContext';
+import { GlobalHelpModal } from '@/components/help/GlobalHelpModal';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -22,7 +24,10 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>{children}</ToastProvider>
+      <HelpProvider>
+        <ToastProvider>{children}</ToastProvider>
+        <GlobalHelpModal />
+      </HelpProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
