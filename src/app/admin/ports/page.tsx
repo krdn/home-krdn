@@ -4,20 +4,27 @@
  * 포트 레지스트리 관리 페이지
  *
  * Phase 33: Port Registry System
+ * Phase 43: Port Scanner & Guide 확장
  *
  * Admin 권한으로 포트 레지스트리를 관리합니다.
  * 포트 목록 조회, 생성, 수정, 삭제 기능을 제공합니다.
+ * 탭 UI로 포트 스캐너와 가이드 기능을 통합합니다.
  */
 
 import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { Network, Plus, Loader2 } from 'lucide-react';
+import { Network, Plus, Loader2, List, Scan, BookOpen, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PortList } from '@/components/ports/PortList';
 import { AdminOnly } from '@/components/admin/RoleGuard';
+import { cn } from '@/lib/utils';
 import type { PortRegistryDto } from '@/types/port';
 
-// Dynamic Import: PortForm은 Dialog 폼이므로 지연 로딩
+// ============================================================
+// Dynamic Imports
+// ============================================================
+
+// PortForm: Dialog 폼이므로 지연 로딩
 const PortForm = dynamic(
   () => import('@/components/ports/PortForm').then((mod) => mod.PortForm),
   {
@@ -29,14 +36,71 @@ const PortForm = dynamic(
         </div>
       </div>
     ),
-    ssr: false, // 모달은 클라이언트에서만 필요
+    ssr: false,
   }
 );
+
+// 로딩 스피너 컴포넌트
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center py-12">
+      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+    </div>
+  );
+}
+
+// PortScanner: 탭 전환 시 지연 로딩
+const PortScanner = dynamic(
+  () => import('@/components/ports/PortScanner').then((mod) => mod.PortScanner),
+  { loading: LoadingSpinner, ssr: false }
+);
+
+// PortComparison: 탭 전환 시 지연 로딩
+const PortComparison = dynamic(
+  () => import('@/components/ports/PortComparison').then((mod) => mod.PortComparison),
+  { loading: LoadingSpinner, ssr: false }
+);
+
+// PortGuide: 탭 전환 시 지연 로딩
+const PortGuide = dynamic(
+  () => import('@/components/ports/PortGuide').then((mod) => mod.PortGuide),
+  { loading: LoadingSpinner, ssr: false }
+);
+
+// ============================================================
+// 타입 정의
+// ============================================================
+
+type TabType = 'list' | 'scanner' | 'comparison' | 'guide';
+
+interface TabConfig {
+  id: TabType;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+// ============================================================
+// 상수
+// ============================================================
+
+const TABS: TabConfig[] = [
+  { id: 'list', label: '포트 목록', icon: List },
+  { id: 'scanner', label: '포트 스캐너', icon: Scan },
+  { id: 'comparison', label: '포트 비교', icon: GitCompare },
+  { id: 'guide', label: '포트 가이드', icon: BookOpen },
+];
+
+// ============================================================
+// 컴포넌트
+// ============================================================
 
 /**
  * 포트 레지스트리 관리 페이지 컴포넌트
  */
 export default function PortsPage() {
+  // 탭 상태
+  const [activeTab, setActiveTab] = useState<TabType>('list');
+
   // 포트 편집 상태
   const [editingPort, setEditingPort] = useState<PortRegistryDto | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -73,27 +137,58 @@ export default function PortsPage() {
             <div>
               <h1 className="text-2xl font-bold">포트 레지스트리</h1>
               <p className="text-sm text-muted-foreground">
-                개발 프로젝트의 포트 할당을 관리합니다.
+                포트 할당 관리, 시스템 스캔, 신규 개발 가이드
               </p>
             </div>
           </div>
 
-          {/* 포트 추가 버튼 */}
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" />
-            포트 추가
-          </Button>
+          {/* 포트 추가 버튼 - list 탭에서만 표시 */}
+          {activeTab === 'list' && (
+            <Button onClick={handleAdd}>
+              <Plus className="mr-2 h-4 w-4" />
+              포트 추가
+            </Button>
+          )}
         </div>
 
-        {/* 포트 목록 */}
-        <PortList onEdit={handleEdit} />
+        {/* 탭 네비게이션 */}
+        <div className="flex border-b">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                className={cn(
+                  'flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors',
+                  activeTab === tab.id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/50'
+                )}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
 
-        {/* 포트 추가/수정 폼 */}
-        <PortForm
-          port={editingPort ?? undefined}
-          open={isFormOpen}
-          onOpenChange={handleFormClose}
-        />
+        {/* 탭 콘텐츠 */}
+        <div className="mt-4">
+          {activeTab === 'list' && (
+            <>
+              <PortList onEdit={handleEdit} />
+              <PortForm
+                port={editingPort ?? undefined}
+                open={isFormOpen}
+                onOpenChange={handleFormClose}
+              />
+            </>
+          )}
+          {activeTab === 'scanner' && <PortScanner />}
+          {activeTab === 'comparison' && <PortComparison />}
+          {activeTab === 'guide' && <PortGuide />}
+        </div>
       </div>
     </AdminOnly>
   );
