@@ -150,74 +150,299 @@ export const helpContents: Record<HelpId, HelpContent> = {
   'page-containers': {
     id: 'page-containers',
     title: '컨테이너 관리',
-    content: 'Docker 컨테이너의 상태를 확인하고 제어합니다. (Phase 45에서 상세 내용 추가)',
+    content: `Docker 컨테이너 상태 모니터링 및 제어
+
+**목적:** Docker 컨테이너의 실시간 상태를 확인하고 제어합니다.
+
+**주요 기능:**
+- 컨테이너 목록 및 상태 (running/stopped/restarting)
+- 시작/중지/재시작 제어
+- 자동 갱신 (10초마다)
+
+**상태 색상:**
+- 🟢 녹색: 실행 중
+- 🔴 빨간색: 중지됨
+- 🟡 노란색: 재시작 중
+
+💡 **팁:** 컨테이너 이름 클릭으로 상세 정보 확인`,
+    relatedLinks: [
+      { label: 'Admin 대시보드', href: '/admin' },
+    ],
   },
 
   'page-settings': {
     id: 'page-settings',
     title: '설정',
-    content: '애플리케이션 설정을 관리합니다. (Phase 45에서 상세 내용 추가)',
+    content: `대시보드 개인 설정 관리
+
+**목적:** 사용자 개인 설정을 관리합니다.
+
+**주요 기능:**
+- 테마 설정 (다크/라이트 모드)
+- 이메일 알림 ON/OFF
+- 푸시 알림 ON/OFF
+
+**동기화:** 설정은 서버에 저장되어 다른 기기에서도 동일하게 적용됩니다.
+
+💡 **팁:** 로그인 상태에서만 설정 변경 가능`,
+    relatedLinks: [
+      { label: '알림 설정', href: '/admin/alerts' },
+    ],
   },
 
   'page-admin': {
     id: 'page-admin',
     title: '관리자 페이지',
-    content: '관리자 전용 기능을 제공합니다. (Phase 45에서 상세 내용 추가)',
+    content: `관리자 전용 기능 허브
+
+**목적:** 시스템 관리 및 DevOps 기능에 접근합니다.
+
+**접근 가능 메뉴:**
+- 컨테이너 관리
+- 알림 설정
+- GitHub 연동
+- 로그 뷰어
+- Kubernetes 관리
+- 포트 관리
+
+⚠️ **주의:** Admin 역할이 필요합니다.`,
+    relatedLinks: [
+      { label: 'Admin 대시보드', href: '/admin' },
+    ],
   },
 
   'page-alerts': {
     id: 'page-alerts',
-    title: '알림 관리',
-    content: '알림 규칙과 히스토리를 관리합니다. (Phase 45에서 상세 내용 추가)',
+    title: '알림 설정',
+    content: `시스템 알림 규칙 관리 및 히스토리 확인
+
+**목적:** 알림 규칙을 설정하고 알림 히스토리를 확인합니다.
+
+**주요 기능:**
+- 알림 규칙 생성/수정/삭제
+- 알림 히스토리 조회
+- 채널 설정 (이메일, Slack)
+
+**알림 타입:**
+- threshold: 임계값 기반 알림
+- pattern: 패턴 매칭 알림
+- comparison: 비교 기반 알림
+
+**채널:**
+- 이메일 (Resend)
+- Slack (Block Kit)
+- 푸시 알림
+
+💡 **팁:** 이메일/Slack 설정은 하단 채널 카드에서`,
+    relatedLinks: [
+      { label: '로그 알림', href: '/admin/log-alerts' },
+    ],
   },
 
   'page-logs': {
     id: 'page-logs',
     title: '로그 뷰어',
-    content: '시스템 및 컨테이너 로그를 조회합니다. (Phase 45에서 상세 내용 추가)',
+    content: `시스템 및 컨테이너 로그 실시간 조회
+
+**목적:** 시스템 로그를 실시간으로 조회하고 검색합니다.
+
+**주요 기능:**
+- 로그 검색 (키워드)
+- 소스/레벨 필터
+- 실시간 스트리밍 모드
+
+**로그 레벨:**
+- debug: 디버그 정보
+- info: 일반 정보
+- warn: 경고
+- error: 오류
+
+**소스:**
+- docker: 컨테이너 로그
+- file: 파일 로그
+- app: 애플리케이션 로그
+
+💡 **팁:** 실시간 모드 ON으로 새 로그 자동 수신`,
+    relatedLinks: [
+      { label: '로그 알림', href: '/admin/log-alerts' },
+    ],
   },
 
-  // Admin 페이지 상세 (Phase 45-02에서 상세 내용 추가 예정)
+  // === Admin 페이지 상세 도움말 (Phase 45-02) ===
   'page-admin-dashboard': {
     id: 'page-admin-dashboard',
     title: 'Admin 대시보드',
-    content: '관리자용 대시보드입니다. (Phase 45-02에서 상세 내용 추가)',
+    content: `시스템 전체 상태를 한눈에 파악하는 관리자 허브
+
+**목적:** 시스템의 핵심 지표와 서비스 상태를 종합적으로 모니터링합니다.
+
+**주요 기능:**
+- 시스템 메트릭 (CPU, 메모리, 디스크)
+- 컨테이너 상태 요약
+- 실행 중인 서비스 목록
+- 위젯 커스터마이징 (표시/숨김, 순서 변경)
+
+💡 **팁:** 각 위젯의 (?) 버튼으로 위젯별 상세 도움말 확인`,
+    relatedLinks: [
+      { label: '컨테이너 관리', href: '/admin/containers' },
+      { label: '설정', href: '/admin/settings' },
+    ],
   },
 
   'page-admin-github': {
     id: 'page-admin-github',
-    title: 'GitHub 관리',
-    content: 'GitHub 연동 설정을 관리합니다. (Phase 45-02에서 상세 내용 추가)',
+    title: 'GitHub 연동',
+    content: `GitHub 레포지토리 및 CI/CD 워크플로우 관리
+
+**목적:** GitHub 레포지토리와 연동하여 CI/CD 워크플로우를 관리합니다.
+
+**주요 기능:**
+- Personal Access Token 등록
+- 레포지토리 목록 조회
+- 워크플로우 실행 기록
+
+**설정 방법:**
+Personal Access Token (classic) 필요
+- 필수 권한: repo, workflow
+
+**워크플로우 상태:**
+- ✅ success: 성공
+- ❌ failure: 실패
+- 🔄 in_progress: 진행 중
+
+💡 **팁:** 워크플로우 클릭으로 해당 워크플로우만 필터링`,
+    relatedLinks: [
+      { label: 'GitHub 토큰 생성', href: 'https://github.com/settings/tokens' },
+    ],
   },
 
   'page-admin-logs': {
     id: 'page-admin-logs',
-    title: '로그 관리',
-    content: '시스템 로그를 조회합니다. (Phase 45-02에서 상세 내용 추가)',
+    title: '로그 뷰어',
+    content: `시스템 및 컨테이너 로그 실시간 조회
+
+**목적:** 다양한 소스의 로그를 실시간으로 조회하고 검색합니다.
+
+**주요 기능:**
+- 로그 검색 (키워드 검색)
+- 소스/레벨 필터링
+- 실시간 스트리밍 모드
+- 로그 통계 시각화
+
+**로그 레벨:**
+- debug: 상세 디버그 정보
+- info: 일반 정보 메시지
+- warn: 경고 메시지
+- error: 오류 메시지
+
+**소스 타입:**
+- docker: 컨테이너 로그
+- file: 파일 기반 로그
+- app: 애플리케이션 로그
+
+💡 **팁:** 실시간 모드 ON으로 새 로그 자동 수신`,
+    relatedLinks: [
+      { label: '로그 알림', href: '/admin/log-alerts' },
+    ],
   },
 
   'page-admin-log-alerts': {
     id: 'page-admin-log-alerts',
     title: '로그 알림',
-    content: '로그 기반 알림을 설정합니다. (Phase 45-02에서 상세 내용 추가)',
+    content: `로그 패턴 기반 알림 규칙 관리
+
+**목적:** 특정 로그 패턴 발생 시 알림을 받도록 규칙을 설정합니다.
+
+**주요 기능:**
+- 키워드/패턴/빈도 규칙 생성
+- 규칙 활성화/비활성화
+- 트리거 히스토리 조회
+
+**규칙 타입:**
+- **keyword:** 특정 키워드 포함 시 알림
+- **pattern:** 정규식 패턴 매칭 시 알림
+- **frequency:** 시간 윈도우 내 N회 발생 시 알림
+
+💡 **팁:** "error" 키워드 규칙으로 에러 로그 즉시 알림 가능`,
+    relatedLinks: [
+      { label: '로그 뷰어', href: '/admin/logs' },
+    ],
   },
 
   'page-admin-kubernetes': {
     id: 'page-admin-kubernetes',
     title: 'Kubernetes 관리',
-    content: 'Kubernetes 클러스터를 관리합니다. (Phase 45-02에서 상세 내용 추가)',
+    content: `Kubernetes 클러스터 및 리소스 관리
+
+**목적:** Kubernetes 클러스터를 등록하고 리소스를 관리합니다.
+
+**주요 기능:**
+- 클러스터 등록 (kubeconfig 또는 토큰 인증)
+- Pod/Service/Deployment 목록 조회
+- Service Topology 시각화
+
+**탭 구성:**
+- Topology: 서비스 간 연결 맵
+- Pods: Pod 목록
+- Services: Service 목록
+- Deployments: Deployment 목록
+
+**상태 색상:**
+- 🟢 Running: 정상 실행
+- 🟡 Pending: 대기 중
+- 🔴 Failed: 실패
+
+💡 **팁:** Topology 탭에서 서비스 간 연결 관계 시각화`,
   },
 
   'page-admin-devops': {
     id: 'page-admin-devops',
-    title: 'DevOps 도구',
-    content: 'DevOps 관련 도구를 제공합니다. (Phase 45-02에서 상세 내용 추가)',
+    title: 'DevOps 대시보드',
+    content: `DevOps 도구 통합 상태 요약
+
+**목적:** 모든 DevOps 도구의 상태를 한눈에 파악합니다.
+
+**주요 기능:**
+- GitHub/K8s/Ports/Log Alerts 상태 요약
+- 연결 상태 확인
+- 최근 활동 및 주요 지표
+
+**표시 정보:**
+- 연결 상태 (연결됨/미연결)
+- 리소스 수량
+- 최근 활동 요약
+
+💡 **팁:** 각 카드 클릭으로 상세 페이지 이동`,
+    relatedLinks: [
+      { label: 'GitHub 연동', href: '/admin/github' },
+      { label: 'Kubernetes 관리', href: '/admin/kubernetes' },
+      { label: '포트 관리', href: '/admin/ports' },
+    ],
   },
 
   'page-admin-ports': {
     id: 'page-admin-ports',
     title: '포트 관리',
-    content: '포트 스캐너 및 관리 기능을 제공합니다. (Phase 45-02에서 상세 내용 추가)',
+    content: `개발 서버 포트 할당 관리 (Admin 전용)
+
+**목적:** 개발 환경의 포트 할당을 체계적으로 관리합니다.
+
+**주요 기능:**
+- 포트 목록: 포트 생성/수정/삭제
+- 포트 스캐너: Docker/시스템 포트 실시간 스캔
+- 포트 비교: 등록 포트 vs 실제 활성 포트 비교
+- 포트 가이드: 신규 개발 시 포트 추천
+
+**탭 구성:**
+- 목록: 등록된 포트 관리
+- 스캐너: 실시간 포트 스캔
+- 비교: 등록 vs 활성 포트 비교
+- 가이드: 포트 할당 가이드
+
+💡 **팁:** 포트 비교 탭에서 미등록 활성 포트 발견 가능`,
+    relatedLinks: [
+      { label: '포트 목록 (Public)', href: '/ports' },
+    ],
   },
 
   // === 위젯 도움말 ===
