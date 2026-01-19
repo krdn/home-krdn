@@ -618,7 +618,11 @@ Plans:
 **Depends on**: Phase 45
 **Research**: Unlikely
 **Status**: ○ Pending
-**Plans**: 0/2 complete
+**Plans**: 2 plans
+
+Plans:
+- [ ] 46-01-PLAN.md — Dashboard/Port 위젯 7개 (SystemMonitor, ContainerStats, NetworkAreaChart, MetricsLineChart, PortScanner, PortComparison, PortGuide)
+- [ ] 46-02-PLAN.md — Admin/DevOps/Team 위젯 8개 (AlertRulesPanel, EmailSettings/SlackSettings, LogFilter, WorkflowList, K8s Lists, ServiceTopology, TeamMemberList/TeamSettingsPanel, ProjectCard/ServiceCard)
 
 **Requirements Covered:**
 - WIDGET-01 ~ WIDGET-15: 15개 위젯 도움말
@@ -647,4 +651,4 @@ Plans:
 15. ProjectCard / ServiceCard
 
 ---
-*Last updated: 2026-01-19 — Phase 45 plans created*
+*Last updated: 2026-01-19 — Phase 46 plans created*
