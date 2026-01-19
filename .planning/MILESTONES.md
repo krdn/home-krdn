@@ -1,5 +1,30 @@
 # Project Milestones: Home-KRDN
 
+## v2.3 Port Scanner & Guide (Shipped: 2026-01-19)
+
+**Delivered:** 시스템 실제 포트 현황 조회 및 신규 개발 포트 가이드 제공
+
+**Phases completed:** 43 (2 plans total)
+
+**Key accomplishments:**
+- Docker API 기반 컨테이너 포트 바인딩 조회
+- ss 명령어 기반 시스템 포트 스캔 (IPv4/IPv6 지원)
+- 등록 포트 vs 실제 활성 포트 비교 분석 (3분류)
+- 카테고리별 포트 사용률 Progress Bar 시각화
+- 신규 개발 포트 추천 가이드 UI (4탭 Admin 페이지)
+
+**Stats:**
+- 14 files modified
+- ~1,678 lines of TypeScript added
+- 1 phase, 2 plans
+- v2.2 → v2.3: 3 days
+
+**Git range:** `feat(43-01)` → `docs(43)`
+
+**What's next:** 다음 마일스톤 계획 대기
+
+---
+
 ## v2.2 DevOps Tools (Shipped: 2026-01-16)
 
 **Delivered:** CI/CD 파이프라인 시각화, 로그 관리, Kubernetes 지원, 포트 레지스트리로 DevOps 통합 경험 제공

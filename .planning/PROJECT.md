@@ -84,21 +84,23 @@
 - ✓ Service Mesh 시각화 (React Flow 토폴로지) — Phase 41
 - ✓ DevOps 통합 대시보드 홈 — Phase 42
 
+**v2.3 Port Scanner & Guide (신규 구현)**
+- ✓ 시스템 실제 포트 현황 조회 (ss 명령어, Docker API) — Phase 43
+- ✓ 등록 포트 vs 실제 포트 비교 분석 (3분류) — Phase 43
+- ✓ 카테고리별 포트 사용률 시각화 — Phase 43
+- ✓ 신규 개발 포트 추천 가이드 UI (4탭) — Phase 43
+
 ### Active
 
 <!-- 다음 버전 빌드 목표 -->
 
-**v2.3 Port Scanner & Guide (계획)**
-- [ ] 시스템 실제 포트 현황 조회 (ss -tlnp)
-- [ ] 등록 포트 vs 실제 포트 비교
-- [ ] 신규 개발 포트 가이드 UI
+(다음 마일스톤 계획 대기)
 
 ### Out of Scope
 
 <!-- 명시적 경계 -->
 
 - 모바일 네이티브 앱 (React Native)
-- Kubernetes 지원 (별도 도구 사용)
 - 외부 클라우드 서비스 통합
 
 ## Context
@@ -126,13 +128,13 @@
 - **파일 구조**: Feature-based 컴포넌트 + 중앙화된 설정
 - **PWA**: Service Worker 캐싱, 오프라인 지원
 
-### 현재 상태 (v2.2 완료)
+### 현재 상태 (v2.3 완료)
 
-- **코드베이스**: ~264 TypeScript 파일
+- **코드베이스**: ~270 TypeScript 파일
 - **테스트**: 378개 (Vitest 단위/통합 + Playwright E2E)
-- **컴포넌트**: 80+개
-- **API 라우트**: 55+개
-- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 → v2.2 완료
+- **컴포넌트**: 83+개
+- **API 라우트**: 57+개
+- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 → v2.2 → v2.3 완료
 
 ## Constraints
 
@@ -163,4 +165,4 @@
 | React Flow (XyFlow) | DOM 기반 커스텀 노드, React 네이티브 | ✅ Validated |
 
 ---
-*Last updated: 2026-01-16 after v2.2 milestone*
+*Last updated: 2026-01-19 after v2.3 milestone*

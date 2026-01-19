@@ -17,31 +17,23 @@ None
 - ✅ **v2.2 DevOps Tools** — Phases 33-42 (shipped 2026-01-16) — [Archive](milestones/v2.2-DevOps-Tools.md)
 - ✅ **v2.3 Port Scanner & Guide** — Phase 43 (shipped 2026-01-19) — [Archive](milestones/v2.3-Port-Scanner-Guide.md)
 
-## Latest Completed Milestone: v2.3 Port Scanner & Guide
+## Completed Milestones
 
-**Milestone Goal:** 시스템 실제 포트 현황 조회 및 신규 개발 포트 가이드 제공
+<details>
+<summary>✅ v2.3 Port Scanner & Guide (Phase 43) — SHIPPED 2026-01-19</summary>
 
-### Phase 43: Port Scanner & Guide ✅
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 43 | Port Scanner & Guide - 포트 스캔, 비교, 가이드 | ✅ Complete |
 
-**Goal**: 시스템의 실제 포트 사용 현황을 조회하고, 등록된 포트와 비교하며, 신규 개발 시 사용 가능한 포트를 안내하는 기능 구현
-**Depends on**: Phase 33 (Port Registry System)
-**Research**: Level 1 - Quick Verification (Docker 환경에서 호스트 포트 스캔 방법) - 완료
-**Status**: ✅ Complete (2026-01-19)
-**Plans**: 2/2 complete
-
-Plans:
-- [x] 43-01-PLAN.md — Port Scanner 백엔드 (타입, 서비스, API)
-- [x] 43-02-PLAN.md — Port Scanner UI (훅, 컴포넌트, Admin 통합)
-
-**Delivered:**
+**Key Accomplishments:**
 - Docker API 기반 컨테이너 포트 바인딩 조회
-- 등록된 포트 vs 실제 사용 중 포트 비교 분석
-- 카테고리별 사용 가능한 포트 범위 시각화
+- ss 명령어 기반 시스템 포트 스캔 (IPv4/IPv6)
+- 등록 포트 vs 실제 활성 포트 비교 분석
+- 카테고리별 포트 사용률 Progress Bar 시각화
 - 신규 개발 포트 추천 가이드 UI (4탭 Admin 페이지)
 
----
-
-## Completed Milestones
+</details>
 
 <details>
 <summary>✅ v1.0 MVP (Phases 1-8) — SHIPPED 2026-01-15</summary>
@@ -491,7 +483,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-All planned phases (1-42) completed. v2.3 Port Scanner & Guide in progress.
+All planned phases (1-43) completed. v2.3 Port Scanner & Guide shipped.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -540,4 +532,4 @@ All planned phases (1-42) completed. v2.3 Port Scanner & Guide in progress.
 | 43. Port Scanner & Guide | v2.3 | 2/2 | ✅ Complete | 2026-01-19 |
 
 ---
-*Last updated: 2026-01-19 — Phase 43 complete, v2.3 milestone shipped*
+*Last updated: 2026-01-19 — v2.3 milestone archived, ready for next milestone*
