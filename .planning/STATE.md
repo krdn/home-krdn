@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 
 ## Current Position
 
-Phase: 45 of 46 (v2.4 Help System)
-Plan: 02 of 2 complete
-Status: ✅ Phase 45 Complete
-Last activity: 2026-01-19 — Completed 45-02-PLAN.md (Admin 페이지 도움말)
+Phase: 46 of 46 (v2.4 Help System)
+Plan: 01 of 2 complete
+Status: In Progress
+Last activity: 2026-01-19 — Completed 46-01-PLAN.md (Dashboard/Port 위젯 도움말)
 
-Progress: ██████░░░░ 67% (v2.4 Help System — 4/6 plans complete)
+Progress: ████████░░ 83% (v2.4 Help System — 5/6 plans complete)
 
 ## Performance Metrics
 
@@ -25,7 +25,7 @@ Progress: ██████░░░░ 67% (v2.4 Help System — 4/6 plans com
 - Milestone v2.1: 16 plans completed
 - Milestone v2.2: 27 plans completed in ~1 day
 - Milestone v2.3: 2 plans completed in ~16min
-- Milestone v2.4: 4 plans completed in ~18min
+- Milestone v2.4: 5 plans completed in ~26min
 
 **By Milestone:**
 
@@ -37,7 +37,7 @@ Progress: ██████░░░░ 67% (v2.4 Help System — 4/6 plans com
 | v2.1 Polish | 25-32 | 16 | ✅ Shipped | 2026-01-15 |
 | v2.2 DevOps Tools | 33-42 | 27 | ✅ Shipped | 2026-01-16 |
 | v2.3 Port Scanner & Guide | 43 | 2 | ✅ Shipped | 2026-01-19 |
-| v2.4 Help System | 44-46 | 4/6 | 🚧 In Progress | — |
+| v2.4 Help System | 44-46 | 5/6 | 🚧 In Progress | — |
 
 ## Accumulated Context
 
@@ -52,6 +52,7 @@ Key technology decisions for v2.4:
 - ✅ HelpContext로 전역 상태 관리 (HelpButton-HelpModal 상태 공유)
 - ✅ page-home vs page-dashboard 구분 (메인 페이지 vs Admin 대시보드)
 - ✅ Server Component에서 HelpButton 사용 시 헤더 Client Component 분리 패턴
+- ✅ 위젯 헤더에 HelpButton size="sm" 배치 (정보 밀도 유지)
 
 ### Constraints
 
@@ -69,7 +70,7 @@ None.
 v2.4 Help System 마일스톤:
 - Phase 44: Help Infrastructure (도움말 인프라) — Plan 01 ✅, Plan 02 ✅ (Complete)
 - Phase 45: Page Help (페이지 도움말) — Plan 01 ✅, Plan 02 ✅ (Complete)
-- Phase 46: Widget Help (위젯 도움말)
+- Phase 46: Widget Help (위젯 도움말) — Plan 01 ✅, Plan 02 (In Progress)
 
 ### Blockers/Concerns Carried Forward
 
@@ -88,6 +89,6 @@ v2.4 Help System 마일스톤:
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 45-02-PLAN.md (Admin 페이지 도움말), Phase 45 complete
+Stopped at: Completed 46-01-PLAN.md (Dashboard/Port 위젯 도움말)
 Resume file: None
-Next action: /gsd:plan-phase 46 (Widget Help 계획)
+Next action: /gsd:execute-phase 46-02 (추가 위젯 도움말)
