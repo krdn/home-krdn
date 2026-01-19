@@ -15,6 +15,31 @@ None
 - ✅ **v2.0 Multi-User Foundation** — Phases 17-24 (shipped 2026-01-15) — [Archive](milestones/v2.0-Multi-User-Foundation.md)
 - ✅ **v2.1 Polish** — Phases 25-32 (shipped 2026-01-15) — [Archive](milestones/v2.1-Polish.md)
 - ✅ **v2.2 DevOps Tools** — Phases 33-42 (shipped 2026-01-16) — [Archive](milestones/v2.2-DevOps-Tools.md)
+- 🚧 **v2.3 Port Scanner & Guide** — Phase 43 (in progress)
+
+## Current Milestone: v2.3 Port Scanner & Guide
+
+**Milestone Goal:** 시스템 실제 포트 현황 조회 및 신규 개발 포트 가이드 제공
+
+### Phase 43: Port Scanner & Guide
+
+**Goal**: 시스템의 실제 포트 사용 현황을 조회하고, 등록된 포트와 비교하며, 신규 개발 시 사용 가능한 포트를 안내하는 기능 구현
+**Depends on**: Phase 33 (Port Registry System)
+**Research**: Level 1 - Quick Verification (Docker 환경에서 호스트 포트 스캔 방법) - 완료
+**Status**: Planned
+**Plans**: 2 plans
+
+Plans:
+- [ ] 43-01-PLAN.md — Port Scanner 백엔드 (타입, 서비스, API)
+- [ ] 43-02-PLAN.md — Port Scanner UI (훅, 컴포넌트, Admin 통합)
+
+**Scope:**
+- 시스템 실제 열린 포트 조회 (ss -tlnp 또는 Docker API)
+- 등록된 포트 vs 실제 사용 중 포트 비교
+- 카테고리별 사용 가능한 포트 범위 시각화
+- 신규 개발 포트 추천 가이드 UI
+
+---
 
 ## Completed Milestones
 
@@ -466,7 +491,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
+All planned phases (1-42) completed. v2.3 Port Scanner & Guide in progress.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -512,6 +537,7 @@ All planned phases (1-32) completed. v2.2 DevOps Tools in progress.
 | 40. K8s Dashboard | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 41. Service Mesh Overview | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 42. DevOps Home | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
+| 43. Port Scanner & Guide | v2.3 | 0/2 | 🚧 Planned | - |
 
 ---
-*Last updated: 2026-01-16 after v2.2 DevOps Tools milestone complete*
+*Last updated: 2026-01-19 — Phase 43 planned (2 plans in 2 waves)*
