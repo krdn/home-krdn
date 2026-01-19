@@ -531,7 +531,7 @@ All planned phases (1-43) completed. v2.3 Port Scanner & Guide shipped.
 | 41. Service Mesh Overview | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 42. DevOps Home | v2.2 | 3/3 | ✅ Complete | 2026-01-16 |
 | 43. Port Scanner & Guide | v2.3 | 2/2 | ✅ Complete | 2026-01-19 |
-| 44. Help Infrastructure | v2.4 | 0/2 | ○ Pending | — |
+| 44. Help Infrastructure | v2.4 | 0/2 | 🚧 Planned | — |
 | 45. Page Help | v2.4 | 0/2 | ○ Pending | — |
 | 46. Widget Help | v2.4 | 0/2 | ○ Pending | — |
 
@@ -539,13 +539,17 @@ All planned phases (1-43) completed. v2.3 Port Scanner & Guide shipped.
 
 **Milestone Goal:** 모든 페이지와 위젯에 상세한 한국어 도움말 시스템 제공
 
-#### Phase 44: Help Infrastructure ○
+#### Phase 44: Help Infrastructure 🚧
 
 **Goal**: 도움말 시스템의 핵심 인프라 구축 — 재사용 가능한 컴포넌트와 콘텐츠 저장소
 **Depends on**: v2.3 milestone complete
 **Research**: Unlikely (일반적인 UI 패턴)
-**Status**: ○ Pending
-**Plans**: 0/2 complete
+**Status**: 🚧 Planned
+**Plans**: 2 plans
+
+Plans:
+- [ ] 44-01-PLAN.md — 도움말 타입 + 콘텐츠 저장소 + useHelp 훅
+- [ ] 44-02-PLAN.md — HelpButton + HelpModal 컴포넌트
 
 **Requirements Covered:**
 - INFRA-01: HelpButton 컴포넌트 구현
@@ -637,4 +641,4 @@ All planned phases (1-43) completed. v2.3 Port Scanner & Guide shipped.
 15. ProjectCard / ServiceCard
 
 ---
-*Last updated: 2026-01-19 — v2.4 Help System milestone started*
+*Last updated: 2026-01-19 — Phase 44 plans created*
