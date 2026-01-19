@@ -94,7 +94,12 @@
 
 <!-- 다음 버전 빌드 목표 -->
 
-(다음 마일스톤 계획 대기)
+**v2.4 Help System (현재 진행)**
+- [ ] 도움말 시스템 인프라 (HelpButton, HelpModal 컴포넌트)
+- [ ] 도움말 콘텐츠 저장소 (페이지/영역별 한국어 도움말)
+- [ ] 모든 페이지에 도움말 아이콘 배치
+- [ ] 각 위젯/카드 영역에 도움말 아이콘 배치
+- [ ] 상세 도움말 콘텐츠 작성 (기능 설명 + 상태 표시 의미 + 관련 설정 안내)
 
 ### Out of Scope
 
@@ -165,4 +170,4 @@
 | React Flow (XyFlow) | DOM 기반 커스텀 노드, React 네이티브 | ✅ Validated |
 
 ---
-*Last updated: 2026-01-19 after v2.3 milestone*
+*Last updated: 2026-01-19 after v2.4 milestone start*
