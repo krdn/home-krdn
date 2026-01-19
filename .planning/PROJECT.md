@@ -73,11 +73,25 @@
 - ✓ Pino 기반 구조화된 로깅 — Phase 31
 - ✓ 번들 분석 및 최적화 — Phase 32
 
+**v2.2 DevOps Tools (신규 구현)**
+- ✓ Port Registry System (포트 할당 관리, 충돌 감지) — Phase 33
+- ✓ GitHub CI/CD 연동 (Octokit SDK, 워크플로우 시각화) — Phase 34-35
+- ✓ 로그 수집 백엔드 (Docker socket, 파일 로그, WebSocket) — Phase 36
+- ✓ 로그 뷰어 UI (필터링, 검색, 실시간 스트리밍) — Phase 37
+- ✓ 로그 패턴 기반 알림 (로그 알림 규칙 엔진) — Phase 38
+- ✓ Kubernetes 연동 (@kubernetes/client-node) — Phase 39
+- ✓ K8s 대시보드 (Pod/Service/Deployment 모니터링) — Phase 40
+- ✓ Service Mesh 시각화 (React Flow 토폴로지) — Phase 41
+- ✓ DevOps 통합 대시보드 홈 — Phase 42
+
 ### Active
 
 <!-- 다음 버전 빌드 목표 -->
 
-(현재 계획된 Active 항목 없음)
+**v2.3 Port Scanner & Guide (계획)**
+- [ ] 시스템 실제 포트 현황 조회 (ss -tlnp)
+- [ ] 등록 포트 vs 실제 포트 비교
+- [ ] 신규 개발 포트 가이드 UI
 
 ### Out of Scope
 
@@ -112,13 +126,13 @@
 - **파일 구조**: Feature-based 컴포넌트 + 중앙화된 설정
 - **PWA**: Service Worker 캐싱, 오프라인 지원
 
-### 현재 상태 (v2.1 완료)
+### 현재 상태 (v2.2 완료)
 
-- **코드베이스**: ~172 TypeScript 파일
+- **코드베이스**: ~264 TypeScript 파일
 - **테스트**: 378개 (Vitest 단위/통합 + Playwright E2E)
-- **컴포넌트**: 51개
-- **API 라우트**: 30개
-- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 완료
+- **컴포넌트**: 80+개
+- **API 라우트**: 55+개
+- **마일스톤**: v1.0 → v1.1 → v2.0 → v2.1 → v2.2 완료
 
 ## Constraints
 
@@ -144,6 +158,9 @@
 | Web Push (VAPID) | 표준 기반, 서버 측 푸시 알림 | ✅ Validated |
 | Native Service Worker | Workbox 대비 경량, Next.js 16 호환 | ✅ Validated |
 | Pino Logger | 성능 우수, JSON 기본, 작은 번들 | ✅ Validated |
+| Octokit SDK | GitHub REST API 공식 클라이언트, 타입 지원 | ✅ Validated |
+| @kubernetes/client-node | K8s API 공식 클라이언트, 프로그래매틱 kubeconfig | ✅ Validated |
+| React Flow (XyFlow) | DOM 기반 커스텀 노드, React 네이티브 | ✅ Validated |
 
 ---
-*Last updated: 2026-01-15 after v2.1 milestone*
+*Last updated: 2026-01-16 after v2.2 milestone*

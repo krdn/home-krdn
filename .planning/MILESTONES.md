@@ -1,5 +1,32 @@
 # Project Milestones: Home-KRDN
 
+## v2.2 DevOps Tools (Shipped: 2026-01-16)
+
+**Delivered:** CI/CD 파이프라인 시각화, 로그 관리, Kubernetes 지원, 포트 레지스트리로 DevOps 통합 경험 제공
+
+**Phases completed:** 33-42 (27 plans total)
+
+**Key accomplishments:**
+- Port Registry System (포트 할당 관리, 충돌 감지, 카테고리별 범위)
+- GitHub CI/CD 연동 (Octokit SDK, 워크플로우 상태, 실행 이력)
+- 로그 수집 백엔드 (Docker socket 스트리밍, 파일 로그, WebSocket)
+- 로그 뷰어 UI (필터링, 검색, 실시간 스트리밍, 가상화)
+- Kubernetes 연동 (@kubernetes/client-node, Pod/Service/Deployment)
+- Service Mesh 시각화 (React Flow 기반 서비스 토폴로지)
+- DevOps 통합 대시보드 (전체 도구 상태 요약 홈)
+
+**Stats:**
+- 264 TypeScript files
+- ~54,000 lines of TypeScript
+- 10 phases, 27 plans
+- v2.1 → v2.2: 1 day
+
+**Git range:** `feat(33-01)` → `feat(42-03)`
+
+**What's next:** Port Scanner & Guide — 시스템 포트 현황 조회 + 신규 개발 포트 가이드
+
+---
+
 ## v2.1 Polish (Shipped: 2026-01-15)
 
 **Delivered:** 테스트 커버리지 확대, E2E 다중 브라우저, 에러 핸들링 표준화, 접근성 개선, 성능 최적화, 문서화 강화, Pino 로깅
