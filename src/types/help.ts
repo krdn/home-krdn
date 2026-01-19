@@ -7,14 +7,27 @@
 
 // 페이지 도움말 ID
 export type PageHelpId =
-  | 'page-dashboard'
+  // Public 페이지
+  | 'page-home'
   | 'page-services'
   | 'page-projects'
+  | 'page-ports'
+  | 'page-teams'
+  // Admin 페이지
+  | 'page-dashboard'
   | 'page-containers'
   | 'page-settings'
   | 'page-admin'
   | 'page-alerts'
-  | 'page-logs';
+  | 'page-logs'
+  // Admin 페이지 상세 (Phase 45)
+  | 'page-admin-dashboard'
+  | 'page-admin-github'
+  | 'page-admin-logs'
+  | 'page-admin-log-alerts'
+  | 'page-admin-kubernetes'
+  | 'page-admin-devops'
+  | 'page-admin-ports';
 
 // 위젯 도움말 ID
 export type WidgetHelpId =
